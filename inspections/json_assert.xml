@@ -1,0 +1,13 @@
+<component name="InspectionProjectProfileManager">
+  <profile version="1.0">
+    <option name="myName" value="Project Default"/>
+    <inspection_tool class="SSBasedInspection" enabled="true" level="WARNING" enabled_by_default="true">
+      <searchConfiguration name="JSONAssert assertion is not used with static import" text="$JSON_ASSERT$.$ASSERTION$($PARAMETER$)" recursive="false" caseInsensitive="true"
+                           type="JAVA">
+        <constraint name="JSON_ASSERT" regexp="org.skyscreamer.jsonassert.JSONAssert" within="" contains=""/>
+        <constraint name="ASSERTION" regexp="assertEquals|assertNotEquals" target="true" within="" contains=""/>
+        <constraint name="PARAMETER" minCount="2" maxCount="2147483647" within="" contains=""/>
+      </searchConfiguration>
+    </inspection_tool>
+  </profile>
+</component>

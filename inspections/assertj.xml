@@ -1,0 +1,28 @@
+<component name="InspectionProjectProfileManager">
+  <profile version="1.0">
+    <option name="myName" value="Project Default"/>
+    <inspection_tool class="SSBasedInspection" enabled="true" level="WARNING" enabled_by_default="true">
+      <searchConfiguration name="AssertJ assertion or assumption is not used with static import." text="$Instance$.$MethodCall$($Parameter$)" recursive="false"
+                           caseInsensitive="true" type="JAVA">
+        <constraint name="Instance"
+                    regexp="org.assertj.core.api.Assertions|org.assertj.core.api.Assumptions|org.assertj.core.api.AssertionsForClassTypes|org.assertj.core.api.AssertionsForInterfaceTypes|org.assertj.core.api.BDDAssertions |org.assertj.core.api.Java6Assertions |org.assertj.core.api.Java6BDDAssertions "
+                    within="" contains=""/>
+        <constraint name="MethodCall" target="true" within="" contains=""/>
+        <constraint name="Parameter" minCount="0" maxCount="2147483647" within="" contains=""/>
+      </searchConfiguration>
+      <searchConfiguration name="There is no actual assertion called from AssertJ." text="org.assertj.core.api.Assertions.$ASSERTION_METHOD$($VALUE$);" recursive="false"
+                           caseInsensitive="true" type="JAVA">
+        <constraint name="ASSERTION_METHOD"
+                    regexp="assertThat|assertThatThrownBy|assertThatCode|assertThatExceptionOfType|assertThatNullPointerException|assertThatIllegalArgumentException|assertThatIOException|assertThatIllegalStateException"
+                    within="" contains=""/>
+        <constraint name="VALUE" within="" contains=""/>
+      </searchConfiguration>
+      <searchConfiguration name="There is no actual assertion called from AssertJ SoftAssertions." text="$VARIABLE$.$ASSERTION_METHOD$($VALUE$);" recursive="false"
+                           caseInsensitive="true" type="JAVA">
+        <constraint name="ASSERTION_METHOD" regexp="assertThat|assertThatCode|assertThatThrownBy" within="" contains=""/>
+        <constraint name="VALUE" within="" contains=""/>
+        <constraint name="VARIABLE" nameOfExprType="org\.assertj\.core\.api\.SoftAssertions" within="" contains=""/>
+      </searchConfiguration>
+    </inspection_tool>
+  </profile>
+</component>
