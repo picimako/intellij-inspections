@@ -8,6 +8,17 @@
         <constraint name="LoggerFactory" regexp="org\.slf4j\.LoggerFactory" within="" contains="" />
         <constraint name="LOG" regexp="LOG" target="true" within="" contains="" />
       </searchConfiguration>
+      <searchConfiguration name="@NonNull annotation is superfluous on a @Singular field. There is no possible way that the field gets a null value in such case." text="@$BuilderAnnotation$( )&#10;@$ValueAnnotation$( )&#10;class $Class$ {&#10;    @$SingularAnnotation$( )&#10;    @$NonNullAnnotation$( )&#10;    $FieldType$ $Field$ = $Init$;&#10;}" recursive="false" caseInsensitive="true" type="JAVA">
+        <constraint name="Class" within="" contains="" />
+        <constraint name="BuilderAnnotation" regexp="lombok\.Builder" within="" contains="" />
+        <constraint name="FieldType" maxCount="2147483647" within="" contains="" />
+        <constraint name="Field" maxCount="2147483647" target="true" within="" contains="" />
+        <constraint name="Init" minCount="0" within="" contains="" />
+        <constraint name="SingularAnnotation" regexp="lombok\.Singular" within="" contains="" />
+        <constraint name="__context__" within="" contains="" />
+        <constraint name="ValueAnnotation" regexp="lombok\.Value" within="" contains="" />
+        <constraint name="NonNullAnnotation" regexp="lombok\.NonNull" within="" contains="" />
+      </searchConfiguration>
     </inspection_tool>
   </profile>
 </component>
