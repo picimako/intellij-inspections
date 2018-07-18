@@ -19,6 +19,14 @@
         <constraint name="ValueAnnotation" regexp="lombok\.Value" within="" contains="" />
         <constraint name="NonNullAnnotation" regexp="lombok\.NonNull" within="" contains="" />
       </searchConfiguration>
+      <searchConfiguration name="The field is not initialized. In such case either the @Builder.Default annotation may be removed or the field should be initialized explicitly." text="@$BuilderAnnotation$( )&#10;class $Class$ {&#10;    @$BuilderDefaultAnnotation$( )&#10;    $FieldType$ $Field$ = $Init$;&#10;}" recursive="false" caseInsensitive="true" type="JAVA">
+        <constraint name="BuilderAnnotation" regexp="lombok\.Builder" within="" contains="" />
+        <constraint name="Class" within="" contains="" />
+        <constraint name="FieldType" maxCount="2147483647" within="" contains="" />
+        <constraint name="Field" maxCount="2147483647" target="true" within="" contains="" />
+        <constraint name="Init" minCount="0" maxCount="0" within="" contains="" />
+        <constraint name="BuilderDefaultAnnotation" regexp="lombok\.Builder\.Default" within="" contains="" />
+      </searchConfiguration>
     </inspection_tool>
   </profile>
 </component>
