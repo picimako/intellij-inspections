@@ -70,7 +70,7 @@
         <constraint name="BuilderDefaultAnnotation" within="" contains="" />
         <constraint name="FieldType" regexp="(java\.util\.(List|ArrayList|Iterable|Collection|Set|SortedSet|NavigableSet|HashSet|TreeSet|Map|SortedMap|NavigableMap|HashMap|TreeMap|))|(com\.google\.common\.collect\.(ImmutableCollection|ImmutableList|ImmutableSet|ImmutableSortedSet|ImmutableMap|ImmutableBiMap|ImmutableSortedMap|ImmutableTable))" within="" contains="" />
         <constraint name="Field" target="true" within="" contains="" />
-        <constraint name="Init" regexp="(new (ArrayList|HashSet|TreeSet|HashMap|TreeMap)&lt;&gt;\(\))|((ImmutableList|ImmutableMap|ImmutableBiMap|ImmutableSortedMap|ImmutableSet|ImmutableSortedSet|ImmutableTable)\.of\(.*\))" within="" contains="" />
+        <constraint name="Init" regexp="(new (ArrayList|HashSet|TreeSet|HashMap|TreeMap)&lt;&gt;\(\))|((ImmutableList|ImmutableMap|ImmutableBiMap|ImmutableSortedMap|ImmutableSet|ImmutableSortedSet|ImmutableTable)\.of\(\))" within="" contains="" />
       </searchConfiguration>
     </inspection_tool>
   </profile>
