@@ -65,6 +65,13 @@
         <constraint name="Field" maxCount="2147483647" target="true" within="" contains="" />
         <constraint name="Init" minCount="0" maxCount="2147483647" within="" contains="" />
       </searchConfiguration>
+      <searchConfiguration name="A @Singular field is not necessary to be explicitly initialized as an empty collection. The annotation initializes it as an empy collection." text="@$SingularAnnotation$&#10;@$BuilderDefaultAnnotation$&#10;$FieldType$ $Field$ = $Init$;" recursive="false" caseInsensitive="true" type="JAVA">
+        <constraint name="SingularAnnotation" within="" contains="" />
+        <constraint name="BuilderDefaultAnnotation" within="" contains="" />
+        <constraint name="FieldType" regexp="(java\.util\.(List|ArrayList|Iterable|Collection|Set|SortedSet|NavigableSet|HashSet|TreeSet|Map|SortedMap|NavigableMap|HashMap|TreeMap|))|(com\.google\.common\.collect\.(ImmutableCollection|ImmutableList|ImmutableSet|ImmutableSortedSet|ImmutableMap|ImmutableBiMap|ImmutableSortedMap|ImmutableTable))" within="" contains="" />
+        <constraint name="Field" target="true" within="" contains="" />
+        <constraint name="Init" regexp="(new (ArrayList|HashSet|TreeSet|HashMap|TreeMap)&lt;&gt;\(\))|((ImmutableList|ImmutableMap|ImmutableBiMap|ImmutableSortedMap|ImmutableSet|ImmutableSortedSet|ImmutableTable)\.of\(.*\))" within="" contains="" />
+      </searchConfiguration>
     </inspection_tool>
   </profile>
 </component>
