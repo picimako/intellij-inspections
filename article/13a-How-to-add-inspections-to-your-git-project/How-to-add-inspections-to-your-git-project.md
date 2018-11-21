@@ -9,10 +9,10 @@ In this article I would like to go through how you can add project specific insp
 ## Project specific inspections
 Inspections specific to an IntelliJ project are stored in the **.idea/inspectionProfiles/** folder probably under the file name **Project_Default.xml**, if you didn't rename it or didn't add a new one.
 
+![profile](images/How-to-add-project-specific-inspections-to-your-Git-project_Profile.PNG)
+
 To have inspections in that file, you can either create ones via the editor, having the Profile set to Project Default, or copy their xml representations from different sources, directly into **Project_Default.xml**. Using the latter method, the
 inspections appear automatically in the editor as well.
-
-![profile](images/How-to-add-project-specific-inspections-to-your-Git-project_Profile.PNG)
 
 ## Add to .gitignore
 To make the inspections a part of your git project, you need to tweak .gitignore, so that **Project_Default.xml** becomes visible by git and you can commit and push it to the repository.
@@ -30,13 +30,13 @@ Additionally, you first need to include the **inspectionProfiles** folder itself
 !/.idea/inspectionProfiles
 ```
 
-the ignore all of its contents
+then ignore all of its contents
 
 ```
 /.idea/inspectionProfiles/*
 ```
 
-and finally include only the files needed to be a part of of the project, in this case only **Project_Default.xml**
+and finally include only the files needed to be a part of the project, in this case only **Project_Default.xml**
 
 ```
 !/.idea/inspectionProfiles/Project_Default.xml
