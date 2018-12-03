@@ -75,3 +75,7 @@ Below you can find the XML representation of the template created, so that you c
     <constraint name="PARAMETER" within="" contains=""/>
 </searchConfiguration>
 ```
+
+### Update
+It is worth noting that this is also implemented in SonarJava (see https://rules.sonarsource.com/java/RSPEC-2970)
+and AssertJ library is also extended with the `@CheckReturnValue` annotation at many places (see https://github.com/joel-costigliola/assertj-core/pull/695) to be handled by FindBugs/SpotBugs
