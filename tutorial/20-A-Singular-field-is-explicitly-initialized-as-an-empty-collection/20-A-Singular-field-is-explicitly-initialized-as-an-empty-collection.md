@@ -78,7 +78,7 @@ The code highlight in the IDE will look like as the following:
 Below you can find the XML representation of the template created, so that you can easily copy and paste it into your template collection.
 
 ```xml
-<searchConfiguration name="Explicit @Singular field initialization as empty collection can be removed, @Singular itself initializes it as an empy collection." text="@$BuilderAnnotation$( )&#10;class $Class$ {&#10;    @$SingularAnnotation$( )&#10;    @$BuilderDefaultAnnotation$( )&#10;    @Modifier(&quot;Instance&quot;) $FieldType$ $Field$ = $Init$;&#10;}" recursive="false" caseInsensitive="true" type="JAVA">
+<searchConfiguration name="Explicit @Singular field initialization as empty collection can be removed, @Singular itself initializes it as an empty collection." text="@$BuilderAnnotation$( )&#10;class $Class$ {&#10;    @$SingularAnnotation$( )&#10;    @$BuilderDefaultAnnotation$( )&#10;    @Modifier(&quot;Instance&quot;) $FieldType$ $Field$ = $Init$;&#10;}" recursive="false" caseInsensitive="true" type="JAVA">
     <constraint name="SingularAnnotation" regexp="lombok\.Singular" within="" contains="" />
     <constraint name="BuilderDefaultAnnotation" regexp="lombok\.Builder\.Default" within="" contains="" />
     <constraint name="FieldType" regexp="(java\.util\.(List|ArrayList|Iterable|Collection|Set|SortedSet|NavigableSet|HashSet|TreeSet|Map|SortedMap|NavigableMap|HashMap|TreeMap|))|(com\.google\.common\.collect\.(ImmutableCollection|ImmutableList|ImmutableSet|ImmutableSortedSet|ImmutableMap|ImmutableBiMap|ImmutableSortedMap|ImmutableTable))" maxCount="2147483647" within="" contains="" />
