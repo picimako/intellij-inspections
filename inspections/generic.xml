@@ -3,7 +3,7 @@
     <option name="myName" value="Project Default"/>
     <inspection_tool class="SSBasedInspection" enabled="true" level="WARNING" enabled_by_default="true">
       <replaceConfiguration name="&quot;&quot;.equals() call can be replaced by String.isEmpty()" text="&quot;&quot;.equals($STRING_ARGUMENT$)" recursive="false" caseInsensitive="true" type="JAVA" reformatAccordingToStyle="true" shortenFQN="true" useStaticImport="true" replacement="$STRING_ARGUMENT$.isEmpty()">
-        <constraint name="STRING_ARGUMENT" nameOfExprType="java\.lang\.String" within="" contains="" />
+        <constraint name="STRING_ARGUMENT" regexp="^&quot;&quot;$" nameOfExprType="java\.lang\.String" negateName="true" within="" contains="" />
       </replaceConfiguration>
     </inspection_tool>
   </profile>
