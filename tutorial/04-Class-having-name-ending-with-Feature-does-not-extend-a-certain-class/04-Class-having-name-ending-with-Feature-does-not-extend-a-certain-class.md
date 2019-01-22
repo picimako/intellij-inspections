@@ -10,45 +10,42 @@ To start off with the creation process, we are going to use one of the predefine
 class $Class$ extends $Parent$ {}
 ```
 
-![editor](images/Class_having_name_ending_with_Feature_does_not_extend_a_certain_class_Editor.PNG)
+![editor](images/04-Class_having_name_ending_with_Feature_does_not_extend_a_certain_class_Editor.PNG)
 
 ## Class variable
-To target only classes which has the Feature suffix in their names, the **Text/regexp** field for the `$Class$` variable needs to be set as following:
+To target only classes which has the Feature suffix in their names, add a Text filter to the `$Class$` variable and set it as following:
 ```
 .*Feature$
 ```
 
 If you want to exclude interfaces and enums also add the `!__context__.interface && !__context__.enum` script constraint.
 
-To make the code highlighting a bit more obvious, tick the **This variable is target of the search** checkbox.
-By doing this the highlighting will look like
+To make the code highlighting a bit clearer, select *Class* from the **Search target** dropdown. By doing this the highlighting will look like
 
-![editor](images/Class_having_name_ending_with_Feature_does_not_extend_a_certain_class_Highlight_Class.PNG)
+![highlight_class](images/04-Class_having_name_ending_with_Feature_does_not_extend_a_certain_class_Highlight_Class.PNG)
 
 instead of
 
-![editor](images/Class_having_name_ending_with_Feature_does_not_extend_a_certain_class_Highlight_Complete_Match.PNG)
+![highlight_complete_match](images/04-Class_having_name_ending_with_Feature_does_not_extend_a_certain_class_Highlight_Complete_Match.PNG)
 
 Below you can find the properties of the `$Class$` variable:
 
-![editor](images/Class_having_name_ending_with_Feature_does_not_extend_a_certain_class_Class.PNG)
+![class](images/04-Class_having_name_ending_with_Feature_does_not_extend_a_certain_class_Class.PNG)
 
 ## Parent variable
 The criteria for the `$Parent$` variable consists of two parts.
 
-The first one is to define the class that needs to be extended. To do that set the **Text/regexp** field as:
+The first one is to define the class that needs to be extended. To do that add a Text filter with this value:
 ```
 ^picimako\.tutorial\.example\.BaseFeature$
 ```
 
-Then, since this template should mark the target only when the parent class is missing, the Maximum and Minimum count fields should be set to 0-0, in other words,
-there should be at least 0 and at most 0 occurrences of the `$Parent$` variable.
+Then, since this template should mark the target only when the parent class is missing, also add a Count filter with 0-0 values, in other words,
+`$Parent$` should be preset at least 0 and at most 0 times.
 
-![editor](images/Class_having_name_ending_with_Feature_does_not_extend_a_certain_class_Parent.PNG)
+![parent](images/04-Class_having_name_ending_with_Feature_does_not_extend_a_certain_class_Parent.PNG)
 
 ## Class name refinement
-http://nadavc.github.io/posts/structural-search-in-intellij/
-
 You may have noticed that the template with the conditions so far marks `BaseFeature` too as a matching target.
 
 Unfortunately this is the part I haven't been able to figure out how to solve.
@@ -62,7 +59,7 @@ Regardless of that I will revisit this template sometime in the future.
 
 The inspection will appear as following in the IDE:
 
-![editor](images/Class_having_name_ending_with_Feature_does_not_extend_a_certain_class_Highlight_Class.PNG)
+![highlight_class](images/04-Class_having_name_ending_with_Feature_does_not_extend_a_certain_class_Highlight_Class.PNG)
 
 Below you can find the XML representation of the template created, so that you can easily copy and paste it into your project specific templates.
 
