@@ -12,9 +12,9 @@ For this example we are again using the *annotated classes* predefined template:
 class $Class$ {}
 ```
 
-![editor](images/Class_having_name_ending_with_Feature_is_not_annotated_as_Feature_Editor.PNG)
+![editor](images/03-Class_having_name_ending_with_Feature_is_not_annotated_as_Feature_Editor.PNG)
 
-## Annotation criteria
+## Annotation variable
 
 Since this example still uses the same annotation as the previous one, we keep the Feature annotation pattern, and still use
 ```
@@ -25,16 +25,16 @@ picimako\.tutorial\.example\.annotation\.Feature
 This time however the configuration differs a little bit. Instead of checking if the annotation is present, we need to make sure that the class name is only validated
 when the Feature annotation is missing.
 
-For that we can use the **Minimum count** and **Maximum count** fields in the *Edit Variables* dialog, for the *Annotation* variable.
+For that we can add a Count filter for the `$Annotation$` variable.
 
 In the last example we set it to 1-1, meaning the annotation can be applied only once to a class.
 But in this example, to have the inspection applied only when the annotation is missing, we need to change both count fields to 0. In other words it means that the template is only applied
 when there is at least 0 and at most 0 Feature annotation applied to a class.
 
-![annotation](images/Class_having_name_ending_with_Feature_is_not_annotated_as_Feature_Annotation.PNG)
+![annotation](images/03-Class_having_name_ending_with_Feature_is_not_annotated_as_Feature_Annotation.PNG)
 
-## Class name criteria
-Since we only want to signal that a required annotation is missing, when the class name ends with Feature, we need to construct that pattern in the **Text/regexp** field accordingly.
+## Class variable
+Since we only want to signal that a required annotation is missing, when the class name ends with Feature, we need to construct that pattern in a Text filter accordingly.
 A viable solution is:
 ```
 .*Feature$
@@ -42,13 +42,13 @@ A viable solution is:
 
 This regex pattern might not be the most optimal, but for now this seems to be one of simplest, if not the, simplest one.
 
-![class](images/Class_having_name_ending_with_Feature_is_not_annotated_as_Feature_Class.PNG)
+![class](images/03-Class_having_name_ending_with_Feature_is_not_annotated_as_Feature_Class.PNG)
 
 ## Finalization
 
 The inspection will appear as following in the IDE:
 
-![code highlight](images/Class_having_name_ending_with_Feature_is_not_annotated_as_Feature_Highlight.PNG)
+![code highlight](images/03-Class_having_name_ending_with_Feature_is_not_annotated_as_Feature_Highlight.PNG)
 
 Below you can find the XML representation of the template created, so that you can easily copy and paste it into your project specific templates.
 
