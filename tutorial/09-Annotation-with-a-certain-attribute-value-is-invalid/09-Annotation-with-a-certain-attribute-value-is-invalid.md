@@ -14,12 +14,12 @@ I'm going to use this annotation for this template and for one or more I'm going
 ## Possible misuses of the annotation
 There are a couple ways this annotation can be used incorrectly:
 - The times attribute is set to 0.
-- The times attribute is set to 1 explicitly, which is signaled by IntelliJ but I think it is not visible enough.
+- The times attribute is set to 1 explicitly, which is signaled by IntelliJ but I think it is not visible enough due to the short nature of the number 1.
 - The times attribute is set explicitly to a too high value (which value should be determined by the team members)
 
 Obviously these scenarios should be handled by the code that handles the `@Retry` annotation but preventing such issues is always better, so why not create inspections for them?
 
-I going to go into details of the first one, checking for *times = 0*.
+Right now, I'm going to go into details of the first one, checking for *times = 0*.
 
 ## Template creation
 This template differs from the previous ones I posted in that this one is going to be a Replace template.
@@ -67,11 +67,11 @@ since if you don't want to do a retry, you don't need the annotation at all.
 
 In that case the Replacement template part should be left empty.
 
-![highlight](images/Annotation-with-a-certain-attribute-value-is-invalid_Editor.PNG)
+![editor](images/09-Annotation-with-a-certain-attribute-value-is-invalid_Editor.PNG)
 
 The code highlight and the replacement happens as the following:
 
-![highlight](images/Annotation-with-a-certain-attribute-value-is-invalid_QuickFix.gif)
+![invalid_quickfix](images/09-Annotation-with-a-certain-attribute-value-is-invalid_QuickFix.gif)
 
 ### Adding another quick fix option
 If you don't want to settle with only one option to offer as a quick fix, you can create more Replace templates with the same search template text, but with different replacement templates.
@@ -81,11 +81,11 @@ Another replacement for this template would be to remove the explicit attribute 
 @picimako.tutorial.example.annotation.Retry
 ```
 
-![highlight](images/Annotation-with-a-certain-attribute-value-is-invalid_EditorOther.PNG)
+![invalid_editor_other](images/09-Annotation-with-a-certain-attribute-value-is-invalid_EditorOther.PNG)
 
 You just need to save it with a different name and there you go, two separate quick fixes for the same problem. Then the code highlight and the replacement happens as the following:
 
-![highlight](images/Annotation-with-a-certain-attribute-value-is-invalid_QuickFixOther.gif)
+![invalid_quickfix_other](images/09-Annotation-with-a-certain-attribute-value-is-invalid_QuickFixOther.gif)
 
 ## Finalization
 Below you can find the XML representations of the templates created, so that you can easily copy and paste them into your template collection.
