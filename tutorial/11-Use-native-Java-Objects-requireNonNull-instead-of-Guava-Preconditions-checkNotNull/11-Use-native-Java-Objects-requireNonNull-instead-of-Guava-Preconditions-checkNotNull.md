@@ -19,8 +19,8 @@ com.google.common.base.Preconditions.$CHECK_METHOD$($ARGUMENTS$)
 ```
 
 In the replacement template you can use the same variables as you defined in the search template section, but only those.
-If you use a variable in the replacement section that is not defined in the search template you get the following message at the bottom of the editor dialog:
-*Status: Unsupported replacement pattern Replacement variable X is not defined.*
+If you use a variable in the replacement section that is not defined in the search template you get the following popup message pointing to the specific variable:
+*Malformed replacement pattern Replacement variable <variable_name> is not defined.*
 
 In this template the `$ARGUMENTS$` variable remains unchanged, and since we should use the native Java based solution, I replaced the `$CHECK_METHOD$` variable to the explicitly defined `java.util.Objects.requireNonNull`.
 
@@ -28,10 +28,10 @@ In this template the `$ARGUMENTS$` variable remains unchanged, and since we shou
 java.util.Objects.requireNonNull($ARGUMENTS$);
 ```
 
-![editor](images/Use-native-Java-Objects-requireNonNull-instead-of-Guava-Preconditions-checkNotNull_Editor.PNG)
+![editor](images/11-Use-native-Java-Objects-requireNonNull-instead-of-Guava-Preconditions-checkNotNull_Editor.PNG)
 
 ## Check_Method variable
-The only thing that is crucial in case of this variable is the name of the method we are searching for, which is *checkNotNull*, therefore the **Text/regexp** constraint will be
+The only thing that is crucial in case of this variable is the name of the method we are searching for, which is *checkNotNull*, therefore you need to add a Text filter with
 
 ```
 checkNotNull
@@ -43,24 +43,22 @@ or you may want to use
 ^checkNotNull$
 ```
 
-![checkmethod](images/Use-native-Java-Objects-requireNonNull-instead-of-Guava-Preconditions-checkNotNull_CheckMethod.PNG)
+![checkmethod](images/11-Use-native-Java-Objects-requireNonNull-instead-of-Guava-Preconditions-checkNotNull_CheckMethod.PNG)
 
 ## Arguments variable
 While `Preconditions.checkNotNull()` has multiple signatures with different parameter lists, `Objects.requireNonNull()` doesn't have matching method signatures for all of them.
-Therefore in this template I decided to set the minimum and maximum counts to 1-1, thus searching only for the method with only one parameter.
+Therefore in this template I decided not to add a Count filer, thus searching only for the method with only one parameter.
 
 Of course after this tutorial you will be able to easily create Replace templates for the matching method pairs.
-
-![arguments](images/Use-native-Java-Objects-requireNonNull-instead-of-Guava-Preconditions-checkNotNull_Arguments.PNG)
 
 ## Finalization
 This template finds usages of the `checkNotNull` method both as a statement
 
-![quickfixstatement](images/Use-native-Java-Objects-requireNonNull-instead-of-Guava-Preconditions-checkNotNull_QuickFixStatement.gif)
+![quickfixstatement](images/11-Use-native-Java-Objects-requireNonNull-instead-of-Guava-Preconditions-checkNotNull_QuickFixStatement.gif)
 
 and in assignments as well:
 
-![quickfixassignment](images/Use-native-Java-Objects-requireNonNull-instead-of-Guava-Preconditions-checkNotNull_QuickFixAssignment.gif)
+![quickfixassignment](images/11-Use-native-Java-Objects-requireNonNull-instead-of-Guava-Preconditions-checkNotNull_QuickFixAssignment.gif)
 
 Below you can find the XML representation of the template created, so that you can easily copy and paste it into your template collection.
 
