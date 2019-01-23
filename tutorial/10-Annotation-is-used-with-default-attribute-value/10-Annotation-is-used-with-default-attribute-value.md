@@ -2,7 +2,7 @@
 Please note that this post is an extension of [Annotation with a certain attribute value is invalid](https://ijnspector.wordpress.com/2018/11/05/annotation-with-a-certain-attribute-value-is-invalid/).
 
 I'm going to cover one template within this post that I mentioned in the previous one, regarding the `@Retry` annotation:
-> *The times attribute is set to 1 explicitly, which is signaled by IntelliJ but I think it is not visible enough.*
+> *The times attribute is set to 1 explicitly, which is signaled by IntelliJ but I think it is not visible enough due to the short nature of the number 1.*
 
 ## Template creation
 The search template part of this template is similar to the one mentioned in the previous example. The only difference is the value of the **times** attribute.
@@ -18,13 +18,15 @@ In terms of the replacement a straightforward solution is to remove the attribut
 @picimako.tutorial.example.annotation.Retry
 ```
 
-![highlight](images/Annotation-is-used-with-default-attribute-value_Editor.PNG)
+![editor](images/10-Annotation-is-used-with-default-attribute-value_Editor.PNG)
 
 ## Finalization
 
+Though IntelliJ also offers an option to remove redundant parameter in case you specified the default one explicitly, but that removes only the parameter but not the parenthesis. (#firstworldproblems)
+
 The code highlighting and the quick fix will happen as following when applied:
 
-![highlight](images/Annotation-is-used-with-default-attribute-value_QuickFix.gif)
+![quickfix](images/10-Annotation-is-used-with-default-attribute-value_QuickFix.gif)
 
 Below you can find the XML representation of the template created, so that you can easily copy and paste it into your template collection.
 
