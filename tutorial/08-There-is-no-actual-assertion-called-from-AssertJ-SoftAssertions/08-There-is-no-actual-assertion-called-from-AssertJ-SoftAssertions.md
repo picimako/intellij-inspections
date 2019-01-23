@@ -18,17 +18,20 @@ which resulted in
 $INSTANCE$.$ASSERTION_METHOD$($PARAMETER$);
 ```
 
-![editor](images/There_is_no_actual_assertion_called_from_AssertJ_SoftAssertions_Editor.PNG)
+![editor](images/08-There_is_no_actual_assertion_called_from_AssertJ_SoftAssertions_Editor.PNG)
 
 However there's going to be a little trick configuring this one.
 
 ## Instance
 Since assertion methods in `SoftAssertions` are not static, in order to collect multiple assertions you need to instantiate a `SoftAssertions` object to which you can add various assertions.
 
-Because of this the name of the instance doesn't matter, so we don't need to set anything in the **Text/regexp** field of the `$INSTANCE$` variable, however we need to make sure
-that the object we are inspecting is actually an instance of `SoftAssertions`. In order to do that we are going to use the **Expression type (regex)** field in the **Edit Variables** dialog.
+Because of this the name of the instance doesn't matter, so we don't need to set anything in a Text filter of the `$INSTANCE$` variable, however we need to make sure
+that the object we are inspecting is actually an instance of `SoftAssertions`. In order to do that we are going to use a Type filter.
 
 The official documentation defines the purpose of that field as the following:
+> The Type filter adds a type of value or expression that is expected for the specified variable.
+
+The previous version of this filter was defined as (leaving it here just in case):
 > if the calculated [*template*] variable is an expression, this constraint checks its type. For instance, for the foo($a$) expression the type of the method parameter would be checked.
 
 So basically the type of the expression (specifically the `$INSTANCE$` variable) will be
@@ -36,31 +39,29 @@ So basically the type of the expression (specifically the `$INSTANCE$` variable)
 org\.assertj\.core\.api\.SoftAssertions
 ```
 
-Just a quick note: I'm not yet familiar how exactly the **Apply constraint within type hierarchy** option works, but so far this template works without enabling that option.
+Just a quick note: I'm not yet familiar how exactly the **Within type hierarchy** option works, but so far this template works without enabling that option.
 
-![instance](images/There_is_no_actual_assertion_called_from_AssertJ_SoftAssertions_Instance.PNG)
+![instance](images/08-There_is_no_actual_assertion_called_from_AssertJ_SoftAssertions_Instance.PNG)
 
 ## Assertion_Method
-In case of the `$ASSERTION_METHOD$` variable the only constraint we have is the names of the methods, so we are going to set its **Text/regexp** field.
+In case of the `$ASSERTION_METHOD$` variable the only constraint we have is the names of the methods, so we are going to set them in a Text filter.
 
 Based on the `assert...` methods that may be called from `SoftAssertions` it will be the following regexp:
 ```
 assertThat|assertThatCode|assertThatThrownBy
 ```
 
-![assertionmethod](images/There_is_no_actual_assertion_called_from_AssertJ_SoftAssertions_AssertionMethod.PNG)
+![assertionmethod](images/08-There_is_no_actual_assertion_called_from_AssertJ_SoftAssertions_AssertionMethod.PNG)
 
 ## Parameter
 There is no special configuration required for this variable. Just like in case of `Assertions`,
-I left the minimum and maximum counts at 1-1, because all assert methods in the mentioned class accept only one parameter.
-
-![parameter](images/There_is_no_actual_assertion_called_from_AssertJ_SoftAssertions_Parameter.PNG)
+I didn't specify a Count filter, because all assert methods in the mentioned class accept only one parameter.
 
 ## Finalization
 
 The target of the search is again the complete match to have a more prominent code highlighting:
 
-![highlight](images/There_is_no_actual_assertion_called_from_AssertJ_SoftAssertions_Highlight.PNG)
+![highlight](images/08-There_is_no_actual_assertion_called_from_AssertJ_SoftAssertions_Highlight.PNG)
 
 Below you can find the XML representation of the template created, so that you can easily copy and paste it into your template collection.
 
