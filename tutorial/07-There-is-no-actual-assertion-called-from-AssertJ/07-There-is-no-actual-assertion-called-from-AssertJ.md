@@ -1,9 +1,9 @@
 # There is no actual assertion called from AssertJ
 
-AssertJ is a library that provides ["a rich set of assertions"](http://joel-costigliola.github.io/assertj/) in a fluent way and for multiple popular libraries.
+AssertJ is a library that provides ["a rich set of assertions"](http://joel-costigliola.github.io/assertj/) in a fluent way for multiple popular libraries.
 
 One of the main classes from which you can call fluent assertions is `org.assertj.core.api.Assertions`.
-It differs from other assertion libraries like Hamcrest in that the `assert...()` methods doesn't execute the assertion, but wrap the target object and you can
+If compared to e.g. Hamcrest it differs in a way that the `assert...()` methods doesn't execute the assertion, but wrap the target object and you can
 call assertion methods on that along with configuring the assertions beforehand in various ways.
 
 The issue that I ran into is that one may forget to call an actual assertion method after calling `assert...()` which will do no assertion, therefore make e.g. a unit test false positive.
@@ -37,23 +37,21 @@ Assertions.$ASSERTION_METHOD$($PARAMETER$);
 because IntelliJ won't find the class. If you want the template to work for multiple Assertions classes in different libraries, you can leave the template text
 in its predefined format and define a regexp in the `$Instance$` variable.
 
-![editor](images/There_is_no_actual_assertion_called_from_AssertJ_Editor.PNG)
+![editor](images/07-There_is_no_actual_assertion_called_from_AssertJ_Editor.PNG)
 
 ## Assertion method
 The only thing I configured in the `$ASSERTION_METHOD$` variable is the regexp to define the methods that need to be checked:
 
 ```
-assertThat|assertThatThrownBy|assertThatCode|assertThatExceptionOfType|assertThatNullPointerException|assertThatIllegalArgumentException|assertThatIOException|assertThatIllegalStateException
+assertThat(|ThrownBy|Code|ExceptionOfType|NullPointerException|IllegalArgumentException|IOException|IllegalStateException)
 ```
 
 I basically listed all assert methods from the `Assertions` class.
 
-![assertionmethod](images/There_is_no_actual_assertion_called_from_AssertJ_AssertionMethod.PNG)
+![assertionmethod](images/07-There_is_no_actual_assertion_called_from_AssertJ_AssertionMethod.PNG)
 
 ## Parameter
-There is no special configuration required for this variable. I left the minimum and maximum counts at 1-1, because all assert methods in the mentioned class accept only one parameter.
-
-![parameter](images/There_is_no_actual_assertion_called_from_AssertJ_Parameter.PNG)
+There is no special configuration required for this variable. Since all assert methods in the mentioned class accept only one parameter, I didn't add a Count filter.
 
 ## Finalization
 
@@ -62,20 +60,18 @@ This is partly because of there is no option (yet) to define the inspection seve
 
 If it doesn't suit your taste you can mark the `$ASSERTION_METHOD$` as the target of the search instead.
 
-![highlight](images/There_is_no_actual_assertion_called_from_AssertJ_Highlight.PNG)
+![highlight](images/07-There_is_no_actual_assertion_called_from_AssertJ_Highlight.PNG)
 
 Below you can find the XML representation of the template created, so that you can easily copy and paste it into your template collection.
 
 ```xml
-<searchConfiguration name="There is no actual assertion called from AssertJ." text="org.assertj.core.api.Assertions.$ASSERTION_METHOD$($PARAMETER$);" recursive="false"
-                           caseInsensitive="true" type="JAVA">
-    <constraint name="ASSERTION_METHOD"
-                regexp="assertThat|assertThatThrownBy|assertThatCode|assertThatExceptionOfType|assertThatNullPointerException|assertThatIllegalArgumentException|assertThatIOException|assertThatIllegalStateException"
-                within="" contains=""/>
-    <constraint name="PARAMETER" within="" contains=""/>
+<searchConfiguration name="There is no actual assertion called from AssertJ." text="org.assertj.core.api.Assertions.$ASSERTION_METHOD$($PARAMETER$);" recursive="true" caseInsensitive="true" type="JAVA">
+    <constraint name="ASSERTION_METHOD" regexp="assertThat(|ThrownBy|Code|ExceptionOfType|NullPointerException|IllegalArgumentException|IOException|IllegalStateException)" within="" contains="" />
+    <constraint name="PARAMETER" within="" contains="" />
+    <constraint name="__context__" within="" contains="" />
 </searchConfiguration>
 ```
 
 ### Update
 It is worth noting that this is also implemented in SonarJava (see https://rules.sonarsource.com/java/RSPEC-2970)
-and AssertJ library is also extended with the `@CheckReturnValue` annotation at many places (see https://github.com/joel-costigliola/assertj-core/pull/695) to be handled by FindBugs/SpotBugs
+and AssertJ library is also extended with the `@CheckReturnValue` annotation at many places (see https://github.com/joel-costigliola/assertj-core/pull/695) to be handled by FindBugs/SpotBugs.
