@@ -50,7 +50,7 @@ The replacement part is also an easy one, we just want to call `isEmpty()` on `$
 $STRING_ARGUMENT$.isEmpty()
 ```
 
-![editor](images/Empty-string-equals-call-can-be-replaced-with-String-isEmpty_Editor.PNG)
+![editor](images/12-Empty-string-equals-call-can-be-replaced-with-String-isEmpty_Editor.PNG)
 
 ## String_Argument variable
 There are multiple conditions this variable have to meet in order to make the template work.
@@ -58,13 +58,13 @@ There are multiple conditions this variable have to meet in order to make the te
 The first one is that the variable have to have the type `java.lang.String`. You may remember the same thing from the *[There is no actual assertion called from AssertJ SoftAssertions](https://ijnspector.wordpress.com/2018/10/29/there-is-no-actual-assertion-called-from-assertj/)* post.
 If you don't, please make sure that you read the Instance section of that post.
 
-To apply the condition we need to set the **Expression type (regexp)** to:
+To apply the condition we need to add a Type filter to this variable with the following value:
 
 ```
 java\.lang\.String
 ```
 
-However there is one more thing that is also worth adding. However there is one more thing that is also worth adding. In non-test code it doesn't make sense to compare string literals to `""`, thus the text constraint of this variable needs to be configured as well to not match against literals, only variables
+However there is one more thing that is also worth adding. It doesn't make sense to compare string literals to `""`, thus the text constraint of this variable needs to be configured as well to not match against literals, only variables.
 
 First you need to create a regexp for string literals (values starting and ending with the `"` character). I assembled the one below:
 
@@ -79,9 +79,9 @@ But leaving the configuration in its current state would match calls to `equals`
 "".equals("someStringValue")
 ```
 
-Therefore we need to do one final tweak by ticking the **Invert condition** checkbox. This will tell IntelliJ to look for occurrences that is not like the regexp specified.
+therefore we need to negate the regexp by adding an `!` at the beginning of it. This will tell IntelliJ to look for occurrences that is not like the regexp specified.
 
-![stringargument](images/Empty-string-equals-call-can-be-replaced-with-String-isEmpty_StringArgument.PNG)
+![stringargument](images/12-Empty-string-equals-call-can-be-replaced-with-String-isEmpty_StringArgument.PNG)
 
 ## Finalization
 
@@ -93,12 +93,13 @@ In its final form this template will only match calls like
 
 where `someString` is an instance of `java.util.String`.
 
-![quickfix](images/Empty-string-equals-call-can-be-replaced-with-String-isEmpty_QuickFix.gif)
+![quickfix](images/12-Empty-string-equals-call-can-be-replaced-with-String-isEmpty_QuickFix.gif)
 
 Below you can find the XML representation of the template created, so that you can easily copy and paste it into your template collection.
 
 ```xml
 <replaceConfiguration name="&quot;&quot;.equals() call can be replaced by String.isEmpty()" text="&quot;&quot;.equals($STRING_ARGUMENT$)" recursive="false" caseInsensitive="true" type="JAVA" reformatAccordingToStyle="true" shortenFQN="true" useStaticImport="true" replacement="$STRING_ARGUMENT$.isEmpty()">
-    <constraint name="STRING_ARGUMENT" regexp="^&quot;&quot;$" nameOfExprType="java\.lang\.String" negateName="true" within="" contains="" />
+    <constraint name="STRING_ARGUMENT" regexp="^&quot;.*&quot;$" nameOfExprType="java\.lang\.String" expressionTypes="java.lang.String" negateName="true" within="" contains="" />
+    <constraint name="__context__" within="" contains="" />
 </replaceConfiguration>
 ```
