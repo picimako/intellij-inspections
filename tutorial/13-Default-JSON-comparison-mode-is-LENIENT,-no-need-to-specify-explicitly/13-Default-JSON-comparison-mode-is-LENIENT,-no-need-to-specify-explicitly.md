@@ -7,7 +7,7 @@ You also design a method that accepts an optional `JSONCompareMode` parameter to
 JsonAssertionFlow matchesJson(String model, JSONCompareMode jsonCompareMode);
 ```
 
-Though you want e.g JSONCompareMode.LENIENT to be the default one, so you implement the following variant of the method:
+You also want JSONCompareMode.LENIENT to be the default one, so you implement the following variant of the method:
 
 ```java
 default JsonAssertionFlow matchesJson(String model) {
@@ -48,19 +48,19 @@ Finally, the replacement template for this will be the method call with only the
 $ASSERTION_FLOW$.matchesJson($MODEL$);
 ```
 
-![editor](images/Default-JSON-comparison-mode-is-LENIENT,-no-need-to-specify-explicitly_Editor.PNG)
+![editor](images/13-Default-JSON-comparison-mode-is-LENIENT,-no-need-to-specify-explicitly_Editor.PNG)
 
 ## ASSERTION_FLOW and MODEL variables
 There is no additional configuration needed for these two variables in order to work, you can leave everything in its default state.
 
 If you come across that another method signature matches this template from a different assertion flow, or the model parameter may be multiple types and you want to restrict the
-template to certain types, you can define the **Expression type** for them to make them work that way.
+template to certain types, you can define Type filter for them to make them work that way.
 
 ## Finalization
 
 Below you can find an application of the quick fix for this template:
 
-![quickfix](images/Default-JSON-comparison-mode-is-LENIENT,-no-need-to-specify-explicitly_QuickFix.gif)
+![quickfix](images/13-Default-JSON-comparison-mode-is-LENIENT,-no-need-to-specify-explicitly_QuickFix.gif)
 
 Below you can find the XML representation of the template created, so that you can easily copy and paste it into your template collection.
 
