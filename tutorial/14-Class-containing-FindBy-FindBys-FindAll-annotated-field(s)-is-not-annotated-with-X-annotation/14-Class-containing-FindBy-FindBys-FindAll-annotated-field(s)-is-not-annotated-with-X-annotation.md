@@ -53,7 +53,7 @@ In this template I combined three predefined templates:
 First I took *instance fields of the class*, and added the class level annotation:
 
 ```java
-@$ClassAnnotation$( )
+@$PageAnnotation$( )
 class $Class$ {
     @Modifier("Instance") $FieldType$ $Field$ = $Init$;
 }
@@ -62,9 +62,9 @@ class $Class$ {
 Then I also added an annotation to the field, since we are going to search for Selenium's `@Find...` annotations:
 
 ```java
-@$ClassAnnotation$( )
+@$PageAnnotation$( )
 class $Class$ {
-    @$Annotation$( )
+    @$FindAnnotation$( )
     @Modifier("Instance") $FieldType$ $Field$ = $Init$;
 }
 ```
@@ -73,52 +73,52 @@ Finally, I removed the `$Init$` variable because initialization is done by Selen
 and to be able to target not only `WebElement` type fields, but `List<WebElement>`s as well, I added the `<$GenericArgument$>` section:
 
 ```java
-@$ClassAnnotation$( )
+@$PageAnnotation$( )
 class $Class$ {
-    @$Annotation$( )
+    @$FindAnnotation$( )
     @Modifier("Instance") $FieldType$ <$GenericArgument$> $Field$;
 }
 ```
 
-![editor](images/Class-containing-FindBy-FindBys-FindAll-annotated-field(s)-is-not-annotated-with-X-annotation_Editor.PNG)
+![editor](images/14-Class-containing-FindBy-FindBys-FindAll-annotated-field(s)-is-not-annotated-with-X-annotation_Editor.PNG)
 
-## ClassAnnotation variable
+## PageAnnotation variable
 This is one of the crucial parts of this template. In this we need to configure that the `@Page` annotation is missing.
 
-To do that, first we need to specify the annotation itself in the **Text/regexp** field which will be (using an arbitrary package):
+To do that, first we need to specify the annotation itself in a Text filter which will be (using an arbitrary package):
 
 ```
-picimako\.tutorial\.example\.annotation\.Page
+picimako\.tutorial\.annotation\.Page
 ```
 
-Then we need to set the minimum and maximum counts to 0-0, so that it will be handled as missing.
+Then we need to add a Count filter with the minimum and maximum counts set to 0-0, so that it will be handled as missing.
 
-![classannotation](images/Class-containing-FindBy-FindBys-FindAll-annotated-field(s)-is-not-annotated-with-X-annotation_ClassAnnotation.PNG)
+![pageannotation](images/14-Class-containing-FindBy-FindBys-FindAll-annotated-field(s)-is-not-annotated-with-X-annotation_PageAnnotation.PNG)
 
 ## Class variable
-Though the class name is not important in this template, I left almost everything at its default state.
-The only thing I've changed is that I set it as the target of the search, so this being a search template, it won't affect any quick fix,
+Since the class name is not important in this template, I left almost everything at its default state.
+The only thing I've changed is that I set it as the Search target, so this being a search template, it won't affect any quick fix,
 but only which part of the code is highlighted.
 
-## Annotation variable
+## FindAnnotation variable
 This is another important part of the template. Here we need to tell IntelliJ to look for any of the `@Find...` annotations provided by Selenium, that can be:
 - @FindBy
 - @FindBys
 - @FindAll
 
-Based on this list set the **Text/regexp** field as following:
+Based on this list add a Text filter as following:
 
 ```
-org\.openqa\.selenium\.support\.FindBy|org\.openqa\.selenium\.support\.FindBys|org\.openqa\.selenium\.support\.FindAll
+org\.openqa\.selenium\.support\.(FindBy|FindBys|FindAll)
 ```
 
-![annotation](images/Class-containing-FindBy-FindBys-FindAll-annotated-field(s)-is-not-annotated-with-X-annotation_Annotation.PNG)
+![findannotation](images/14-Class-containing-FindBy-FindBys-FindAll-annotated-field(s)-is-not-annotated-with-X-annotation_FindAnnotation.PNG)
 
 ## FieldType and GenericArgument variables
 Since by default a `@Find...` annotated field can be `WebElement` or `List<WebElement>` as well, both cases need to be handled somehow.
 I couldn't manage to define them in only the `$FieldType$` variable, so I added the generic type separately and I handle the two together.
 
-So the `$FieldType$` can be a `WebElement` or a `List`, thus the **Text/regexp** will be the following:
+So the `$FieldType$` can be a `WebElement` or a `List`, thus its Text filter will be:
 ```
 org\.openqa\.selenium\.WebElement|java\.util\.List
 ```
@@ -131,12 +131,12 @@ org\.openqa\.selenium\.WebElement
 
 to be able to validate `List<WebElement>` type fields.
 
-One additional configuration is to set the Minimum and Maximum counts to 0-1, making this variable optional. This is in order to be able to handle `WebElement` type fields,
+One additional configuration is to set a Count filter with 0-1, making the `$GenericArgument$` variable optional. This is in order to be able to handle `WebElement` type fields,
 which doesn't have a generic type.
 
-![fieldtype](images/Class-containing-FindBy-FindBys-FindAll-annotated-field(s)-is-not-annotated-with-X-annotation_FieldType.PNG)
+![fieldtype](images/14-Class-containing-FindBy-FindBys-FindAll-annotated-field(s)-is-not-annotated-with-X-annotation_FieldType.PNG)
 
-![genericargument](images/Class-containing-FindBy-FindBys-FindAll-annotated-field(s)-is-not-annotated-with-X-annotation_GenericArgument.PNG)
+![genericargument](images/14-Class-containing-FindBy-FindBys-FindAll-annotated-field(s)-is-not-annotated-with-X-annotation_GenericArgument.PNG)
 
 ## Field variable
 The field name is also not important, you can leave everything at its default state here too.
@@ -146,15 +146,15 @@ Of course if you have custom wrapper type(s) for `WebElement`, by specifying tho
 
 The code highlight in the IDE will look like as below:
 
-![highlight](images/Class-containing-FindBy-FindBys-FindAll-annotated-field(s)-is-not-annotated-with-X-annotation_Highlight.PNG)
+![highlight](images/14-Class-containing-FindBy-FindBys-FindAll-annotated-field(s)-is-not-annotated-with-X-annotation_Highlight.PNG)
 
 Below you can find the XML representation of the template created, so that you can easily copy and paste it into your template collection.
 
 ```xml
-<searchConfiguration name="Class containing FindBy/FindBys/FindAll annotated field(s) is not annotated as Page." text="@$ClassAnnotation$( )&#10;class $Class$ {&#10;    @$Annotation$( )&#10;    @Modifier(&quot;Instance&quot;) $FieldType$ &lt;$GenericArgument$&gt; $Field$;&#10;}" recursive="false" caseInsensitive="true" type="JAVA">
-    <constraint name="ClassAnnotation" regexp="picimako\.tutorial\.example\.annotation\.Page" minCount="0" maxCount="0" within="" contains="" />
+<searchConfiguration name="Class containing FindBy/FindBys/FindAll annotated field(s) is not annotated as Page." text="@$PageAnnotation$( )&#10;class $Class$ {&#10;    @$FindAnnotation$( )&#10;    @Modifier(&quot;Instance&quot;) $FieldType$ &lt;$GenericArgument$&gt; $Field$;&#10;}" recursive="false" caseInsensitive="true" type="JAVA">
+    <constraint name="PageAnnotation" regexp="picimako\.tutorial\.annotation\.Page" minCount="0" maxCount="0" within="" contains="" />
     <constraint name="Class" target="true" within="" contains="" />
-    <constraint name="Annotation" regexp="org\.openqa\.selenium\.support\.FindBy|org\.openqa\.selenium\.support\.FindBys|org\.openqa\.selenium\.support\.FindAll" within="" contains="" />
+    <constraint name="FindAnnotation" regexp="org\.openqa\.selenium\.support\.(FindBy|FindBys|FindAll)" within="" contains="" />
     <constraint name="FieldType" regexp="org\.openqa\.selenium\.WebElement|java\.util\.List" within="" contains="" />
     <constraint name="Field" within="" contains="" />
     <constraint name="__context__" within="" contains="" />
