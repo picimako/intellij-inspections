@@ -136,7 +136,7 @@ which doesn't have a generic type.
 
 ![fieldtype](images/14-Class-containing-FindBy-FindBys-FindAll-annotated-field(s)-is-not-annotated-with-X-annotation_FieldType.PNG)
 
-![genericargument](images/14-Class-containing-FindBy-FindBys-FindAll-annotated-field(s)-is-not-annotated-with-X-annotation_GenericArgument.PNG)
+![genericargument](images/14-Class-containing-FindBy-FindBys-FindAll-annotated-field(s)-GenericArgument.PNG)
 
 ## Field variable
 The field name is also not important, you can leave everything at its default state here too.
