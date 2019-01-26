@@ -6,7 +6,7 @@ It can happen that you annotate an instance field as Lombok's `@Builder.Default`
 - or you don't want to create a builder but for some reason you added `@Builder.Default` in which case it should be removed, because it won't have any effect.
 
 ## Template creation
-The template is the same as it was in [*Lombok @Builder.Default field is not initialized*](https://ijnspector.wordpress.com/2018/12/03/lombok-builder-default-field-is-not-initialized/) but of course there will be changes in its configuration.
+The template is almost the same as it was in [*Lombok @Builder.Default field is not initialized*](https://ijnspector.wordpress.com/2018/12/03/lombok-builder-default-field-is-not-initialized/) (removed `$SingularAnnotation$`) but of course there will be changes in its configuration.
 
 ```java
 @$BuilderAnnotation$( )
@@ -16,7 +16,7 @@ class $Class$ {
 }
 ```
 
-![editor](images/Field-in-a-non-Builder-class-is-annotated-as-Builder-Default_Editor.PNG)
+![editor](images/19-Field-in-a-non-Builder-class-is-annotated-as-Builder-Default_Editor.PNG)
 
 ## BuilderAnnotation and BuilderDefaultAnnotation variables
 This time we want to tell IntelliJ to search for `@Builder.Default` annotated instance fields in classes that are not annotated as `@Builder`.
@@ -35,9 +35,9 @@ lombok\.Builder
 
 it needs to be set as missing, thus setting both the minimum and maximum counts to 0-0.
 
-![builderannotation](images/Field-in-a-non-Builder-class-is-annotated-as-Builder-Default_BuilderAnnotation.PNG)
+![builderannotation](images/19-Field-in-a-non-Builder-class-is-annotated-as-Builder-Default_BuilderAnnotation.PNG)
 
-![builderdefaultannotation](images/Field-in-a-non-Builder-class-is-annotated-as-Builder-Default_BuilderDefaultAnnotation.PNG)
+![builderdefaultannotation](images/19-Field-in-a-non-Builder-class-is-annotated-as-Builder-Default_BuilderDefaultAnnotation.PNG)
 
 ## Class variable
 The class name is not important in this template, so no additional configuration is required.
@@ -47,19 +47,17 @@ In case of these two variables only their number of occurrences are important. T
 
 I also marked `$Field$` as the target of the search, so only the field name gets highlighted in case of a match.
 
-![fieldtype](images/Field-in-a-non-Builder-class-is-annotated-as-Builder-Default_FieldType.PNG)
-
-![field](images/Field-in-a-non-Builder-class-is-annotated-as-Builder-Default_Field.PNG)
+![field](images/19-Field-in-a-non-Builder-class-is-annotated-as-Builder-Default_Field.PNG)
 
 ## Init variable
 This variable is optional, since we are not looking for either if it is present, or if it is missing. So to make it optional just set its minimum count to 0 and leave the maximum count at 1.
 
-![init](images/Field-in-a-non-Builder-class-is-annotated-as-Builder-Default_Init.PNG)
+![init](images/19-Field-in-a-non-Builder-class-is-annotated-as-Builder-Default_Init.PNG)
 
 ## Finalization
 You can find how the IDE signals the template match:
 
-![highlight](images/Field-in-a-non-Builder-class-is-annotated-as-Builder-Default_Highlight.PNG)
+![highlight](images/19-Field-in-a-non-Builder-class-is-annotated-as-Builder-Default_Highlight.PNG)
 
 Below you can find the XML representation of the template created, so that you can easily copy and paste it into your template collection.
 
