@@ -11,6 +11,8 @@ The template for this inspection is almost the same as for the one in the previo
 
 The last template targeted instance fields using the `@Modifier` annotation, but since this time we are looking for static fields I replaced the modifier with the `static` keyword.
 
+I also removed the `$SingularAnnotation$` variable since it is irrelevant for this inspection.
+
 ```java
 @$BuilderAnnotation$( )
 class $Class$ {
@@ -19,11 +21,11 @@ class $Class$ {
 }
 ```
 
-![editor](images/Static-field-in-a-Builder-class-is-annotated-as-Builder-Default_Editor.PNG)
+![editor](images/18-Static-field-in-a-Builder-class-is-annotated-as-Builder-Default_Editor.PNG)
 
 ## BuilderAnnotation and BuilderDefaultAnnotation variables
-We are looking for `@Builder.Default` annotated static fields in `@Builder` annotated classes, so in order to target those both variables' **Text/regexp** fields
-need to be configured with the proper references to these annotations:
+We are looking for `@Builder.Default` annotated static fields in `@Builder` annotated classes, so in order to target those, both variables' Text filter
+need to be configured with the proper references to those annotations:
 
 For `$BuilderAnnotation$` it is
 
@@ -37,9 +39,9 @@ and for `$BuilderDefaultAnnotation$` it is
 lombok\.Builder\.Default
 ```
 
-![builderannotation](images/Static-field-in-a-Builder-class-is-annotated-as-Builder-Default_BuilderAnnotation.PNG)
+![builderannotation](images/18-Static-field-in-a-Builder-class-is-annotated-as-Builder-Default_BuilderAnnotation.PNG)
 
-![builderdefaultannotation](images/Static-field-in-a-Builder-class-is-annotated-as-Builder-Default_BuilderDefaultAnnotation.PNG)
+![builderdefaultannotation](images/18-Static-field-in-a-Builder-class-is-annotated-as-Builder-Default_BuilderDefaultAnnotation.PNG)
 
 ## Class variable
 The class name is not important in this template, so no additional configuration is required.
@@ -50,19 +52,17 @@ The counts of both need to be set to 1-Unlimited, so that all matches get highli
 
 I also marked `$Field$` as the target of the search, so only the field name gets highlighted in case of a match.
 
-![fieldtype](images/Static-field-in-a-Builder-class-is-annotated-as-Builder-Default_FieldType.PNG)
-
-![field](images/Static-field-in-a-Builder-class-is-annotated-as-Builder-Default_Field.PNG)
+![field](images/18-Static-field-in-a-Builder-class-is-annotated-as-Builder-Default_Field.PNG)
 
 ## Init variable
 This variable is optional, since we are not looking for either if it is present, or if it is missing, so to make it optional just set its minimum count to 0 and leave the maximum count at 1.
 
-![init](images/Static-field-in-a-Builder-class-is-annotated-as-Builder-Default_Init.PNG)
+![init](images/18-Static-field-in-a-Builder-class-is-annotated-as-Builder-Default_Init.PNG)
 
 ## Finalization
 This is how the IDE signals the template match:
 
-![highlight](images/Static-field-in-a-Builder-class-is-annotated-as-Builder-Default_Highlight.PNG)
+![highlight](images/18-Static-field-in-a-Builder-class-is-annotated-as-Builder-Default_Highlight.PNG)
 
 Below you can find the XML representation of the template created, so that you can easily copy and paste it into your template collection.
 
