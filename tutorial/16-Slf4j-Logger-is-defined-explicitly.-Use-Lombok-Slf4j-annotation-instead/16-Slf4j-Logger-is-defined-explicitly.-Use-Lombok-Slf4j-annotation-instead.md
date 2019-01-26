@@ -25,7 +25,7 @@ and replaced the important parts with template variables.
 private static final $Logger$ $LOG$ = $LoggerFactory$.getLogger($Class$.class);
 ```
 
-![editor](images/Slf4j-Logger-is-defined-explicitly.-Use-Lombok-Slf4j-annotation-instead_Editor.PNG)
+![editor](images/16-Slf4j-Logger-is-defined-explicitly-Use-Lombok-Slf4j-annotation-instead_Editor.PNG)
 
 ## Logger variable
 The only condition for this variable is the reference to Slf4j's `Logger` type which is
@@ -36,7 +36,7 @@ org\.slf4j\.Logger
 
 Other than that you leave it as it is.
 
-![logger](images/Slf4j-Logger-is-defined-explicitly.-Use-Lombok-Slf4j-annotation-instead_Logger.PNG)
+![logger](images/16-Slf4j-Logger-is-defined-explicitly-Use-Lombok-Slf4j-annotation-instead_Logger.PNG)
 
 ## LoggerFactory variable
 Similarly to the `$Logger$` variable the only condition is to find Slf4j's `LoggerFactory` type
@@ -45,7 +45,7 @@ Similarly to the `$Logger$` variable the only condition is to find Slf4j's `Logg
 org\.slf4j\.LoggerFactory
 ```
 
-![loggerfactory](images/Slf4j-Logger-is-defined-explicitly.-Use-Lombok-Slf4j-annotation-instead_LoggerFactory.PNG)
+![loggerfactory](images/16-Slf4j-Logger-is-defined-explicitly-Use-Lombok-Slf4j-annotation-instead_LoggerFactory.PNG)
 
 ## LOG variable
 I didn't specify any condition for this variable, because it may be named differently by different developers in different classes, like *LOG*, *LOGGER* or something else.
@@ -58,7 +58,7 @@ So the only thing that matters in this inspection is the type of the Logger and 
 
 ## Finalization
 
-![highlight](images/Slf4j-Logger-is-defined-explicitly.-Use-Lombok-Slf4j-annotation-instead_Highlight.PNG)
+![highlight](images/16-Slf4j-Logger-is-defined-explicitly-Use-Lombok-Slf4j-annotation-instead_Highlight.PNG)
 
 Below you can find the XML representation of the template created, so that you can easily copy and paste it into your template collection.
 
