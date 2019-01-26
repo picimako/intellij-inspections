@@ -18,13 +18,15 @@
         <constraint name="SingularAnnotation" regexp="lombok\.Singular" within="" contains="" />
         <constraint name="NonNullAnnotation" regexp="lombok\.NonNull" within="" contains="" />
       </searchConfiguration>
-      <searchConfiguration name="@Builder.Default field is not initialized. Either remove the annotation or initialize the field explicitly." text="@$BuilderAnnotation$( )&#10;class $Class$ {&#10;    @$BuilderDefaultAnnotation$( )&#10;    @Modifier(&quot;Instance&quot;) $FieldType$ $Field$ = $Init$;&#10;}" recursive="false" caseInsensitive="true" type="JAVA">
+      <searchConfiguration name="@Builder.Default field is not initialized. Either remove the annotation or initialize the field explicitly." text="@$BuilderAnnotation$( )&#10;class $Class$ {&#10;    @$BuilderDefaultAnnotation$( )&#10;    @$SingularAnnotation$( )&#10;    @Modifier(&quot;Instance&quot;) $FieldType$ $Field$ = $Init$;&#10;}" recursive="true" caseInsensitive="true" type="JAVA">
         <constraint name="BuilderAnnotation" regexp="lombok\.Builder" within="" contains="" />
         <constraint name="Class" within="" contains="" />
         <constraint name="FieldType" maxCount="2147483647" within="" contains="" />
         <constraint name="Field" maxCount="2147483647" target="true" within="" contains="" />
         <constraint name="Init" minCount="0" maxCount="0" within="" contains="" />
         <constraint name="BuilderDefaultAnnotation" regexp="lombok\.Builder\.Default" within="" contains="" />
+        <constraint name="__context__" within="" contains="" />
+        <constraint name="SingularAnnotation" regexp="lombok\.Singular" minCount="0" maxCount="0" within="" contains="" />
       </searchConfiguration>
       <!--This inspection (for now) only works for methods whose parameters are all annotated as Lombok.@NonNull.-->
       <searchConfiguration name="Lombok @NonNull is used on a method parameter. You may replace it with an explicit check e.g. java.util.Objects.requireNonNull." text="$ReturnType$ $Method$(@$NonNullAnnotation$ () $ParameterType$ $Parameter$);" recursive="false" caseInsensitive="true" type="JAVA">
