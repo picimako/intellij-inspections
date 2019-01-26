@@ -10,7 +10,7 @@ instead of a setter one, there is no way that the collection itself could be set
 ## Template creation
 This template is very similar to previous ones. We are looking for `@Singular` instance fields in `@Builder` classes that also have the `@NonNull` annotation applied.
 
-Therefore I added the `$NonNullAnnotation$` template variable, however I removed the `$BuilderDefaultAnnotation$` because based on the original documentation `@Singular` can be applied without having `@Builder.Default` on a particular field.
+Thus I added the `$NonNullAnnotation$` template variable, but also removed the `$BuilderDefaultAnnotation$` because based on the original documentation `@Singular` can be applied without having `@Builder.Default` on a particular field.
 
 ```java
 @$BuilderAnnotation$( )
@@ -21,22 +21,22 @@ class $Class$ {
 }
 ```
 
-![editor](images/Lombok-NonNull-annotation-is-superfluous-on-a-Singular-field_Editor.PNG)
+![editor](images/21-Lombok-NonNull-annotation-is-superfluous-on-a-Singular-field_Editor.PNG)
 
 ## BuilderAnnotation and Class variables
 These can be left unchanged compared to previous templates. (`$Class$` is at its default state.)
 
-![builderannotation](images/Lombok-NonNull-annotation-is-superfluous-on-a-Singular-field_BuilderAnnotation.PNG)
+![builderannotation](images/21-Lombok-NonNull-annotation-is-superfluous-on-a-Singular-field_BuilderAnnotation.PNG)
 
 ## SingularAnnotation variable
 We are looking for `@NonNull` annotated fields only when the field is `@Singular` so this variable needs to reference the Singular annotation,
-thus its **Text/regexp** fields is going to be:
+thus its Text filter is going to be:
 
 ```
 lombok\.Singular
 ```
 
-![singularannotation](images/Lombok-NonNull-annotation-is-superfluous-on-a-Singular-field_SingularAnnotation.PNG)
+![singularannotation](images/21-Lombok-NonNull-annotation-is-superfluous-on-a-Singular-field_SingularAnnotation.PNG)
 
 ## NonNullAnnotation variable
 We are looking for `@Singular` fields that are also annotated as `@NonNull` so we need to configure this variable to reference Lombok's `@NonNull` annotation:
@@ -45,7 +45,7 @@ We are looking for `@Singular` fields that are also annotated as `@NonNull` so w
 lombok\.NonNull
 ```
 
-![nonnullannotation](images/Lombok-NonNull-annotation-is-superfluous-on-a-Singular-field_NonNullAnnotation.PNG)
+![nonnullannotation](images/21-Lombok-NonNull-annotation-is-superfluous-on-a-Singular-field_NonNullAnnotation.PNG)
 
 ## FieldType, Field and Init variables
 The only condition for `$FieldType$` and `$Field$` is their number of occurrences which is at least one, so the minimum and maximum counts need to be set to 1-Unlimited.
@@ -57,16 +57,14 @@ It occurred to me that although the target of the search influences how and to w
 it might also affect how the Minimum and Maximum counts of certain variables need to be configured. The counts may change depending on what is the target of the search.
 However I need to do some experimenting with this.
 
-![fieldtype](images/Lombok-NonNull-annotation-is-superfluous-on-a-Singular-field_Fieldtype.PNG)
+![field](images/21-Lombok-NonNull-annotation-is-superfluous-on-a-Singular-field_Field.PNG)
 
-![field](images/Lombok-NonNull-annotation-is-superfluous-on-a-Singular-field_Field.PNG)
-
-![init](images/Lombok-NonNull-annotation-is-superfluous-on-a-Singular-field_Init.PNG)
+![init](images/21-Lombok-NonNull-annotation-is-superfluous-on-a-Singular-field_Init.PNG)
 
 ## Finalization
 The highlighting in the IDE will look like this:
 
-![highlight](images/Lombok-NonNull-annotation-is-superfluous-on-a-Singular-field_Highlight.PNG)
+![highlight](images/21-Lombok-NonNull-annotation-is-superfluous-on-a-Singular-field_Highlight.PNG)
 
 Below you can find the XML representation of the template created, so that you can easily copy and paste it into your template collection.
 
