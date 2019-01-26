@@ -20,14 +20,14 @@ class $Class$ {
 }
 ```
 
-![editor](images/A-Singular-field-is-explicitly-initialized-as-an-empty-collection_Editor.PNG)
+![editor](images/20-A-Singular-field-is-explicitly-initialized-as-an-empty-collection_Editor.PNG)
 
 ## BuilderAnnotation, Class and BuilderDefaultAnnotation variables
 These can be left untouched compared to previous examples.
 
-![builderannotation](images/A-Singular-field-is-explicitly-initialized-as-an-empty-collection_BuilderAnnotation.PNG)
+![builderannotation](images/20-A-Singular-field-is-explicitly-initialized-as-an-empty-collection_BuilderAnnotation.PNG)
 
-![builderdefaultannotation](images/A-Singular-field-is-explicitly-initialized-as-an-empty-collection_BuilderDefaultAnnotation.PNG)
+![builderdefaultannotation](images/20-A-Singular-field-is-explicitly-initialized-as-an-empty-collection_BuilderDefaultAnnotation.PNG)
 
 ## SingularAnnotation variable
 In this template our targets are instance fields that have both the `@Singular` and `@Builder.Default` annotations applied.
@@ -36,44 +36,44 @@ There is no predefined template that would give us a hint how to handle multiple
 I thought multiple annotations need to be handled in a single annotation template variable. It turned out that it is not the case.
 You can add multiple annotation specific template variables to fields, classes, etc. and define their conditions separately.
 
-Thus in addition to `$BuilderDefaultAnnotation$` I also added `$SingularAnnotation$` which I configured (in its **Text/regexp**) field to look for
+Thus in addition to `$BuilderDefaultAnnotation$` I also added `$SingularAnnotation$` which I configured (in its Text filter) to look for
 the reference of the corresponding annotation:
 
 ```
 lombok\.Singular
 ```
 
-![singularannotation](images/A-Singular-field-is-explicitly-initialized-as-an-empty-collection_SingularAnnotation.PNG)
+![singularannotation](images/20-A-Singular-field-is-explicitly-initialized-as-an-empty-collection_SingularAnnotation.PNG)
 
 ## FieldType, Field and Init variables
 Our targets in this template, besides `@Singular` and `@Builder.Default` instance fields, are fields that have any of the collection types supported by Lombok's `@Singular` annotation
 and at the same time they are initialized as empty collections (any of the supported ones).
 
-Based on this information `$FieldType$`'s **Text/regexp** fields needs to be configured to match any of the supported Java and Guava collection types:
+Based on this information `$FieldType$`'s Text filter needs to be configured to match the supported Java and Guava collection types:
 
 ```
-(java\.util\.(List|ArrayList|Iterable|Collection|Set|SortedSet|NavigableSet|HashSet|TreeSet|Map|SortedMap|NavigableMap|HashMap|TreeMap|))
-|(com\.google\.common\.collect\.(ImmutableCollection|ImmutableList|ImmutableSet|ImmutableSortedSet|ImmutableMap|ImmutableBiMap|ImmutableSortedMap|ImmutableTable))
+(java\.util\.(List|ArrayList|Iterable|Collection|((Sorted|Navigable|Hash|Tree|)(Set|Map))))
+|(com\.google\.common\.collect\.Immutable(Collection|List|Set|SortedSet|Map|BiMap|SortedMap|Table))
 ```
 
-![fieldtype](images/A-Singular-field-is-explicitly-initialized-as-an-empty-collection_FieldType.PNG)
+![fieldtype](images/20-A-Singular-field-is-explicitly-initialized-as-an-empty-collection_FieldType.PNG)
 
 At the same time `$Init$` needs to be configured similarly to match the initialization of an empty collection of any supported types:
 
 ```
-(new (ArrayList|HashSet|TreeSet|HashMap|TreeMap)<>\(\))|((ImmutableList|ImmutableMap|ImmutableBiMap|ImmutableSortedMap|ImmutableSet|ImmutableSortedSet|ImmutableTable)\.of\(\))
+(new (ArrayList|HashSet|TreeSet|HashMap|TreeMap)<.*>\(\))|(Immutable(List|Map|BiMap|SortedMap|Set|SortedSet|Table)\.of\(\))|((List|Map|Set)\.of\(\))
 ```
 
-![init](images/A-Singular-field-is-explicitly-initialized-as-an-empty-collection_Init.PNG)
+![init](images/20-A-Singular-field-is-explicitly-initialized-as-an-empty-collection_Init.PNG)
 
 To have all matching fields highlighted, not just the first one, set the minimum and maximum counts to 1-Unlimited in case of both `$FieldType$` and `$Field$`.
 
-![field](images/A-Singular-field-is-explicitly-initialized-as-an-empty-collection_Field.PNG)
+![field](images/20-A-Singular-field-is-explicitly-initialized-as-an-empty-collection_Field.PNG)
 
 ## Finalization
 The code highlight in the IDE will look like as the following:
 
-![highlight](images/A-Singular-field-is-explicitly-initialized-as-an-empty-collection_Highlight.PNG)
+![highlight](images/20-A-Singular-field-is-explicitly-initialized-as-an-empty-collection_Highlight.PNG)
 
 Below you can find the XML representation of the template created, so that you can easily copy and paste it into your template collection.
 
@@ -81,10 +81,12 @@ Below you can find the XML representation of the template created, so that you c
 <searchConfiguration name="Explicit @Singular field initialization as empty collection can be removed, @Singular itself initializes it as an empty collection." text="@$BuilderAnnotation$( )&#10;class $Class$ {&#10;    @$SingularAnnotation$( )&#10;    @$BuilderDefaultAnnotation$( )&#10;    @Modifier(&quot;Instance&quot;) $FieldType$ $Field$ = $Init$;&#10;}" recursive="false" caseInsensitive="true" type="JAVA">
     <constraint name="SingularAnnotation" regexp="lombok\.Singular" within="" contains="" />
     <constraint name="BuilderDefaultAnnotation" regexp="lombok\.Builder\.Default" within="" contains="" />
-    <constraint name="FieldType" regexp="(java\.util\.(List|ArrayList|Iterable|Collection|Set|SortedSet|NavigableSet|HashSet|TreeSet|Map|SortedMap|NavigableMap|HashMap|TreeMap|))|(com\.google\.common\.collect\.(ImmutableCollection|ImmutableList|ImmutableSet|ImmutableSortedSet|ImmutableMap|ImmutableBiMap|ImmutableSortedMap|ImmutableTable))" maxCount="2147483647" within="" contains="" />
+    <constraint name="FieldType" regexp="(java\.util\.(List|ArrayList|Iterable|Collection|((Sorted|Navigable|Hash|Tree|)(Set|Map))))|(com\.google\.common\.collect\.Immutable(Collection|List|Set|SortedSet|Map|BiMap|SortedMap|Table))" maxCount="2147483647" within="" contains="" />
     <constraint name="Field" maxCount="2147483647" target="true" within="" contains="" />
     <constraint name="Init" regexp="(new (ArrayList|HashSet|TreeSet|HashMap|TreeMap)&lt;&gt;\(\))|((ImmutableList|ImmutableMap|ImmutableBiMap|ImmutableSortedMap|ImmutableSet|ImmutableSortedSet|ImmutableTable)\.of\(\))" within="" contains="" />
     <constraint name="BuilderAnnotation" regexp="lombok\.Builder" within="" contains="" />
     <constraint name="Class" within="" contains="" />
 </searchConfiguration>
 ```
+
+UPDATE: Added pre-Java7 (no type inference in diamond operator) and Java9-> (List.of(), Map.of(), Set.of()) support to the `$Init$` variable.
