@@ -71,7 +71,7 @@
         <constraint name="BuilderDefaultAnnotation" regexp="lombok\.Builder\.Default" within="" contains="" />
         <constraint name="FieldType" regexp="(java\.util\.(List|ArrayList|Iterable|Collection|((Sorted|Navigable|Hash|Tree|)(Set|Map))))|(com\.google\.common\.collect\.Immutable(Collection|List|Set|SortedSet|Map|BiMap|SortedMap|Table))" maxCount="2147483647" within="" contains="" />
         <constraint name="Field" maxCount="2147483647" target="true" within="" contains="" />
-        <constraint name="Init" regexp="(new (ArrayList|HashSet|TreeSet|HashMap|TreeMap)&lt;&gt;\(\))|((ImmutableList|ImmutableMap|ImmutableBiMap|ImmutableSortedMap|ImmutableSet|ImmutableSortedSet|ImmutableTable)\.of\(\))" within="" contains="" />
+        <constraint name="Init" regexp="(new (ArrayList|HashSet|TreeSet|HashMap|TreeMap)<.*>\(\))|(Immutable(List|Map|BiMap|SortedMap|Set|SortedSet|Table)\.of\(\))|((List|Map|Set)\.of\(\))" within="" contains="" />
         <constraint name="BuilderAnnotation" regexp="lombok\.Builder" within="" contains="" />
         <constraint name="Class" within="" contains="" />
       </searchConfiguration>
