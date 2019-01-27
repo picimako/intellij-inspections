@@ -1,6 +1,6 @@
-## IntelliJ inspections
+# IntelliJ inspections
 
-A collection of IntelliJ structural search and replace templates for various Java libraries.
+This project is a collection of IntelliJ Structural Search and Replace Templates for various Java libraries, and a storage place for the blog post on https://ijnspector.wordpress.com.
 
 These templates are created via IntelliJ's built-in creation dialogs, that are stored in .xml config.
 
