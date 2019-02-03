@@ -63,7 +63,7 @@ So the only thing that matters in this inspection is the type of the Logger and 
 Below you can find the XML representation of the template created, so that you can easily copy and paste it into your template collection.
 
 ```xml
-<searchConfiguration name="Slf4j Logger is defined explicitly. Use Lombok @Slf4j annotation instead." text="private static final $Logger$ $LOG$ = $LoggerFactory$.getLogger($Class$.class);&#10;" recursive="false" caseInsensitive="true" type="JAVA">
+<searchConfiguration name="Slf4j Logger is defined explicitly. Use Lombok @Slf4j annotation instead." text="private static final $Logger$ $LOG$ = $LoggerFactory$.getLogger($Class$.class);" recursive="true" caseInsensitive="true" type="JAVA">
     <constraint name="__context__" within="" contains="" />
     <constraint name="Logger" regexp="org\.slf4j\.Logger" within="" contains="" />
     <constraint name="LoggerFactory" regexp="org\.slf4j\.LoggerFactory" within="" contains="" />
