@@ -2,7 +2,7 @@
     <profile version="1.0">
         <option name="myName" value="Project Default"/>
         <inspection_tool class="SSBasedInspection" enabled="true" level="WARNING" enabled_by_default="true">
-            <searchConfiguration name="FluentConfiguration has remoteUrl but webDriver is not defined as &quot;remote&quot." text="@org.fluentlenium.configuration.FluentConfiguration(webDriver = &quot;$NOT_REMOTE$&quot;, remoteUrl = $REMOTE_URL$)" recursive="true" caseInsensitive="true" type="JAVA">
+            <searchConfiguration name="FluentConfiguration has remoteUrl but webDriver is not defined as &quot;remote&quot;" text="@org.fluentlenium.configuration.FluentConfiguration(webDriver = &quot;$NOT_REMOTE$&quot;, remoteUrl = $REMOTE_URL$)" recursive="true" caseInsensitive="true" type="JAVA">
                 <constraint name="__context__" within="" contains="" />
                 <constraint name="NOT_REMOTE" regexp="remote" target="true" negateName="true" within="" contains="" />
                 <constraint name="REMOTE_URL" within="" contains="" />
