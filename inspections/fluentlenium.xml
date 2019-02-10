@@ -1,0 +1,73 @@
+<component name="InspectionProjectProfileManager">
+    <profile version="1.0">
+        <option name="myName" value="Project Default"/>
+        <inspection_tool class="SSBasedInspection" enabled="true" level="WARNING" enabled_by_default="true">
+            <searchConfiguration name="FluentConfiguration has remoteUrl but webDriver is not defined as &quot;remote&quot." text="@org.fluentlenium.configuration.FluentConfiguration(webDriver = &quot;$NOT_REMOTE$&quot;, remoteUrl = $REMOTE_URL$)" recursive="true" caseInsensitive="true" type="JAVA">
+                <constraint name="__context__" within="" contains="" />
+                <constraint name="NOT_REMOTE" regexp="remote" target="true" negateName="true" within="" contains="" />
+                <constraint name="REMOTE_URL" within="" contains="" />
+            </searchConfiguration>
+            <searchConfiguration name="FluentConfiguration has webDriver defined as &quot;remote&quot; but there is no remoteUrl." text="@org.fluentlenium.configuration.FluentConfiguration(webDriver = &quot;$REMOTE$&quot;, $REMOTE_URL_ATTR$ = $REMOTE_URL$)" recursive="true" caseInsensitive="true" type="JAVA">
+                <constraint name="__context__" within="" contains="" />
+                <constraint name="REMOTE_URL" minCount="0" maxCount="0" within="" contains="" />
+                <constraint name="REMOTE" regexp="remote" target="true" within="" contains="" />
+                <constraint name="REMOTE_URL_ATTR" regexp="remoteUrl" minCount="0" maxCount="0" within="" contains="" />
+            </searchConfiguration>
+            <searchConfiguration name="CapabilitiesFactory and WebDriverFactory implementations must be annotated as @FactoryName to provide a reference to them." text="@$FACTORY_NAME$&#10;public class $FACTORY_IMPLEMENTATION$ implements $FACTORY_INTERFACE$ {}" recursive="true" caseInsensitive="true" type="JAVA">
+                <constraint name="__context__" within="" contains="" />
+                <constraint name="FACTORY_INTERFACE" regexp="org\.fluentlenium\.configuration\.CapabilitiesFactory|org\.fluentlenium\.configuration\.WebDriverFactory" within="" contains="" />
+                <constraint name="FACTORY_NAME" regexp="org\.fluentlenium\.configuration\.FactoryName" minCount="0" maxCount="0" within="" contains="" />
+                <constraint name="FACTORY_IMPLEMENTATION" target="true" within="" contains="" />
+            </searchConfiguration>
+            <searchConfiguration name="PageUrl annotated class should extend FluentPage." text="@$PAGE_URL_ANNOTATION$( )&#10;public class $PAGE_OBJECT$ extends $FLUENT_PAGE$ { }" recursive="true" caseInsensitive="true" type="JAVA">
+                <constraint name="__context__" within="" contains="" />
+                <constraint name="PAGE_OBJECT" target="true" within="" contains="" />
+                <constraint name="PAGE_URL_ANNOTATION" regexp="org\.fluentlenium\.core\.annotation\.PageUrl" within="" contains="" />
+                <constraint name="FLUENT_PAGE" regexp="org\.fluentlenium\.core\.FluentPage" minCount="0" maxCount="0" within="" contains="" />
+            </searchConfiguration>
+            <searchConfiguration name="Class containing FindBy/FindBys/FindAll annotated field(s) should extend FluentPage." text="class $Class$ extends $FluentPage$ {&#10;    @$FindAnnotation$( )&#10;    @Modifier(&quot;Instance&quot;) $FieldType$ &lt;$GenericArgument$&gt; $Field$;&#10;}" recursive="true" caseInsensitive="true" type="JAVA">
+                <constraint name="Class" target="true" within="" contains="" />
+                <constraint name="FindAnnotation" regexp="org\.openqa\.selenium\.support\.(FindBy|FindBys|FindAll)" within="" contains="" />
+                <constraint name="FieldType" regexp="org\.openqa\.selenium\.WebElement|java\.util\.List|(org\.fluentlenium\.core\.domain\.(FluentWebElement|FluentList))" within="" contains="" />
+                <constraint name="Field" within="" contains="" />
+                <constraint name="__context__" within="" contains="" />
+                <constraint name="GenericArgument" regexp="org\.openqa\.selenium\.WebElement|org\.fluentlenium\.core\.domain\.FluentWebElement" minCount="0" within="" contains="" />
+                <constraint name="FluentPage" regexp="org\.fluentlenium\.core\.FluentPage" minCount="0" maxCount="0" within="" contains="" />
+            </searchConfiguration>
+            <replaceConfiguration name="You can call id() on a FluentWebElement instead of attribute(&quot;id&quot;)." text="$FluentWebElement$.attribute(&quot;id&quot;)" recursive="false" caseInsensitive="true" type="JAVA" reformatAccordingToStyle="false" shortenFQN="false" replacement="$FluentWebElement$.id()">
+                <constraint name="__context__" within="" contains="" />
+                <constraint name="FluentWebElement" nameOfExprType="org\.fluentlenium\.core\.domain\.FluentWebElement" expressionTypes="org.fluentlenium.core.domain.FluentWebElement" within="" contains="" />
+            </replaceConfiguration>
+            <replaceConfiguration name="You can call textContent() on a FluentWebElement instead of attribute(&quot;textContent&quot;)." text="$FluentWebElement$.attribute(&quot;textContent&quot;)" recursive="false" caseInsensitive="true" type="JAVA" reformatAccordingToStyle="false" shortenFQN="false" replacement="$FluentWebElement$.textContent()">
+                <constraint name="__context__" within="" contains="" />
+                <constraint name="FluentWebElement" nameOfExprType="org\.fluentlenium\.core\.domain\.FluentWebElement" expressionTypes="org.fluentlenium.core.domain.FluentWebElement" within="" contains="" />
+            </replaceConfiguration>
+            <replaceConfiguration name="You can call value() on a FluentWebElement instead of attribute(&quot;value&quot;)." text="$FluentWebElement$.attribute(&quot;value&quot;)" recursive="false" caseInsensitive="true" type="JAVA" reformatAccordingToStyle="false" shortenFQN="false" replacement="$FluentWebElement$.value()">
+                <constraint name="__context__" within="" contains="" />
+                <constraint name="FluentWebElement" nameOfExprType="org\.fluentlenium\.core\.domain\.FluentWebElement" expressionTypes="org.fluentlenium.core.domain.FluentWebElement" within="" contains="" />
+            </replaceConfiguration>
+            <replaceConfiguration name="You can call name() on a FluentWebElement instead of attribute(&quot;name&quot;)." text="$FluentWebElement$.attribute(&quot;name&quot;)" recursive="false" caseInsensitive="true" type="JAVA" reformatAccordingToStyle="false" shortenFQN="false" replacement="$FluentWebElement$.name()">
+                <constraint name="__context__" within="" contains="" />
+                <constraint name="FluentWebElement" nameOfExprType="org\.fluentlenium\.core\.domain\.FluentWebElement" expressionTypes="org.fluentlenium.core.domain.FluentWebElement" within="" contains="" />
+            </replaceConfiguration>
+            <replaceConfiguration name="You can call first on a FluentList instead of get(0)." text="$FluentList$.get(0)" recursive="false" caseInsensitive="true" type="JAVA" reformatAccordingToStyle="false" shortenFQN="false" replacement="$FluentList$.first()">
+                <constraint name="__context__" within="" contains="" />
+                <constraint name="FluentList" nameOfExprType="org\.fluentlenium\.core\.domain\.FluentList" expressionTypes="org.fluentlenium.core.domain.FluentList" within="" contains="" />
+            </replaceConfiguration>
+            <searchConfiguration name="If a JUnit test class is annotated as @FluentConfiguration and @CucumberOptions, it must be @RunWith FluentCucumber.class." text="@$RunWith$ ($FluentCucumber$.class)&#10;@$FluentConfiguration$ ()&#10;@$CucumberOptions$ ()&#10;class $Class$ { }" recursive="true" caseInsensitive="true" type="JAVA">
+                <constraint name="__context__" within="" contains="" />
+                <constraint name="RunWith" regexp="org\.junit\.runner\.RunWith" within="" contains="" />
+                <constraint name="FluentCucumber" regexp="org\.fluentlenium\.adapter\.cucumber\.FluentCucumber" negateName="true" within="" contains="" />
+                <constraint name="FluentConfiguration" regexp="org\.fluentlenium\.configuration\.FluentConfiguration" within="" contains="" />
+                <constraint name="CucumberOptions" regexp="cucumber\.api\.CucumberOptions" within="" contains="" />
+                <constraint name="Class" target="true" within="" contains="" />
+            </searchConfiguration>
+            <searchConfiguration name="The value of the @PageUrl annotation must start with /, http://, https://." text="@$PageUrl$ ($Value$)&#10;class $Class$ { }" recursive="true" caseInsensitive="true" type="JAVA">
+                <constraint name="__context__" within="" contains="" />
+                <constraint name="PageUrl" regexp="org\.fluentlenium\.core\.annotation\.PageUrl" target="true" within="" contains="" />
+                <constraint name="Value" regexp="(^(&quot;\/|&quot;https?:\/\/).*&quot;$)|(value = (&quot;\/|&quot;https?:\/\/).*&quot;)" negateName="true" within="" contains="" />
+                <constraint name="Class" within="" contains="" />
+            </searchConfiguration>
+        </inspection_tool>
+    </profile>
+</component>
