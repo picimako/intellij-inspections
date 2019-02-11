@@ -50,11 +50,11 @@
                 <constraint name="__context__" within="" contains="" />
                 <constraint name="FluentWebElement" nameOfExprType="org\.fluentlenium\.core\.domain\.FluentWebElement" expressionTypes="org.fluentlenium.core.domain.FluentWebElement" within="" contains="" />
             </replaceConfiguration>
-            <replaceConfiguration name="You can call first on a FluentList instead of get(0)." text="$FluentList$.get(0)" recursive="false" caseInsensitive="true" type="JAVA" reformatAccordingToStyle="false" shortenFQN="false" replacement="$FluentList$.first()">
+            <replaceConfiguration name="You can call first() on a FluentList instead of get(0)." text="$FluentList$.get(0)" recursive="false" caseInsensitive="true" type="JAVA" reformatAccordingToStyle="false" shortenFQN="false" replacement="$FluentList$.first()">
                 <constraint name="__context__" within="" contains="" />
                 <constraint name="FluentList" nameOfExprType="org\.fluentlenium\.core\.domain\.FluentList" expressionTypes="org.fluentlenium.core.domain.FluentList" within="" contains="" />
             </replaceConfiguration>
-            <searchConfiguration name="If a JUnit test class is annotated as @FluentConfiguration and @CucumberOptions, it must be @RunWith FluentCucumber.class." text="@$RunWith$ ($FluentCucumber$.class)&#10;@$FluentConfiguration$ ()&#10;@$CucumberOptions$ ()&#10;class $Class$ { }" recursive="true" caseInsensitive="true" type="JAVA">
+            <searchConfiguration name="If a JUnit test class is annotated as @FluentConfiguration and @CucumberOptions, it must @RunWith FluentCucumber.class." text="@$RunWith$ ($FluentCucumber$.class)&#10;@$FluentConfiguration$ ()&#10;@$CucumberOptions$ ()&#10;class $Class$ { }" recursive="true" caseInsensitive="true" type="JAVA">
                 <constraint name="__context__" within="" contains="" />
                 <constraint name="RunWith" regexp="org\.junit\.runner\.RunWith" within="" contains="" />
                 <constraint name="FluentCucumber" regexp="org\.fluentlenium\.adapter\.cucumber\.FluentCucumber" negateName="true" within="" contains="" />
@@ -67,6 +67,11 @@
                 <constraint name="PageUrl" regexp="org\.fluentlenium\.core\.annotation\.PageUrl" target="true" within="" contains="" />
                 <constraint name="Value" regexp="(^(&quot;\/|&quot;https?:\/\/).*&quot;$)|(value = (&quot;\/|&quot;https?:\/\/).*&quot;)" negateName="true" within="" contains="" />
                 <constraint name="Class" within="" contains="" />
+            </searchConfiguration>
+            <searchConfiguration name="There is no actual assertion called from FluentLeniumAssertions." text="org.fluentlenium.assertj.FluentLeniumAssertions.$ASSERTION_METHOD$($PARAMETER$);" recursive="true" caseInsensitive="true" type="JAVA">
+                <constraint name="ASSERTION_METHOD" regexp="assertThat" within="" contains="" />
+                <constraint name="PARAMETER" within="" contains="" />
+                <constraint name="__context__" within="" contains="" />
             </searchConfiguration>
         </inspection_tool>
     </profile>
