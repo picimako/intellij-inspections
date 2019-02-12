@@ -1,0 +1,22 @@
+<component name="InspectionProjectProfileManager">
+    <profile version="1.0">
+        <option name="myName" value="Project Default"/>
+        <inspection_tool class="SSBasedInspection" enabled="true" level="WARNING" enabled_by_default="true">
+            <!--Marks every class that's name ends with Facade. Only Hungarians will get this joke.-->
+            <searchConfiguration name="Nem röhög!" text="class $Class$ {}" recursive="true" caseInsensitive="true" type="JAVA">
+                <constraint name="__context__" within="" contains="" />
+                <constraint name="Class" script="&quot;!__context__.interface &amp;&amp; !__context__.enum&quot;" regexp=".*Facade$" target="true" within="" contains="" />
+            </searchConfiguration>
+            <!--This marks words that may be a signal that you are lazy.-->
+            <searchConfiguration name="Get your shit together, mate..." text="$Something$" recursive="true" caseInsensitive="true" type="JAVA">
+                <constraint name="__context__" within="" contains="" />
+                <constraint name="Something" regexp="&quot;?(something|whatever|nevermind|idontknow|whocares|anything|anywho|whoever|justbecause)&quot;?" within="" contains="" />
+            </searchConfiguration>
+            <!--When you are pissed and you may have been working on the same boring sh*t, you might swear a bit that can end up on your pull request. You don't want that to happen.-->
+            <searchConfiguration name="Oh, come on! Please don't swear, you son of a bitch!" text="$Something$" recursive="true" caseInsensitive="true" type="JAVA">
+                <constraint name="__context__" within="" contains="" />
+                <constraint name="Something" regexp="&quot;?(lofasz|fuck)&quot;?" within="" contains="" />
+            </searchConfiguration>
+        </inspection_tool>
+    </profile>
+</component>
