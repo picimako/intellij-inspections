@@ -73,6 +73,22 @@
                 <constraint name="PARAMETER" within="" contains="" />
                 <constraint name="__context__" within="" contains="" />
             </searchConfiguration>
+            <searchConfiguration name="@Page annotated field is instantiated explicitly. Instantiaton can be removed as the field is injected by FluentLenium." text="class $Class$ { &#10;    @$PageAnnotation$ ( ) &#10;    @Modifier(&quot;Instance&quot;) $FieldType$ $Field$ = $Init$;&#10;}" recursive="true" caseInsensitive="true" type="JAVA">
+                <constraint name="__context__" within="" contains="" />
+                <constraint name="Class" within="" contains="" />
+                <constraint name="FieldType" within="" contains="" />
+                <constraint name="Field" maxCount="2147483647" target="true" within="" contains="" />
+                <constraint name="Init" within="" contains="" />
+                <constraint name="PageAnnotation" regexp="org\.fluentlenium\.core\.annotation\.Page" within="" contains="" />
+            </searchConfiguration>
+            <searchConfiguration name="@Page annotated field is static. It should be used as an instance field." text="class $Class$ {&#10;    @$PageAnnotation$ ( )&#10;    static $FieldType$ $Field$ = $Init$;&#10;}" recursive="true" caseInsensitive="true" type="JAVA">
+                <constraint name="__context__" within="" contains="" />
+                <constraint name="Class" within="" contains="" />
+                <constraint name="PageAnnotation" regexp="org\.fluentlenium\.core\.annotation\.Page" within="" contains="" />
+                <constraint name="FieldType" within="" contains="" />
+                <constraint name="Field" target="true" within="" contains="" />
+                <constraint name="Init" minCount="0" within="" contains="" />
+            </searchConfiguration>
         </inspection_tool>
     </profile>
 </component>
