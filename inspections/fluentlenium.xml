@@ -102,6 +102,13 @@
                 <constraint name="FACTORY_INTERFACE" regexp="org\.fluentlenium\.configuration\.CapabilitiesFactory|org\.fluentlenium\.configuration\.WebDriverFactory" within="" contains="" />
                 <constraint name="VALUE" regexp="^&quot;(( +)|)&quot;$" target="true" within="" contains="" />
             </searchConfiguration>
+            <!--This is applicable only from the release right after 4.1.1 in which the aforementioned commit is in.-->
+            <searchConfiguration name="Selenium Find... annotated class should extend FluentPage." text="@$FIND_ANNOTATION$( )&#10;public class $PAGE_OBJECT$ extends $FLUENT_PAGE$ { }" recursive="true" caseInsensitive="true" type="JAVA">
+                <constraint name="__context__" within="" contains="" />
+                <constraint name="PAGE_OBJECT" target="true" within="" contains="" />
+                <constraint name="FLUENT_PAGE" regexp="org\.fluentlenium\.core\.FluentPage" minCount="0" maxCount="0" within="" contains="" />
+                <constraint name="FIND_ANNOTATION" regexp="org\.openqa\.selenium\.support\.(FindBy|FindBys|FindAll)" within="" contains="" />
+      </searchConfiguration>
         </inspection_tool>
     </profile>
 </component>
