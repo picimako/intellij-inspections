@@ -89,6 +89,12 @@
                 <constraint name="Field" target="true" within="" contains="" />
                 <constraint name="Init" minCount="0" within="" contains="" />
             </searchConfiguration>
+            <searchConfiguration name="The class is annotated as @FactoryName but doesn't implement WebDriverFactory or CapabilitiesFactory." text="@$FACTORY_NAME$&#10;public class $FACTORY_IMPLEMENTATION$ implements $FACTORY_INTERFACE$ {}" recursive="true" caseInsensitive="true" type="JAVA">
+                <constraint name="__context__" within="" contains="" />
+                <constraint name="FACTORY_NAME" regexp="org\.fluentlenium\.configuration\.FactoryName" within="" contains="" />
+                <constraint name="FACTORY_IMPLEMENTATION" target="true" within="" contains="" />
+                <constraint name="FACTORY_INTERFACE" regexp="org\.fluentlenium\.configuration\.CapabilitiesFactory|org\.fluentlenium\.configuration\.WebDriverFactory" minCount="0" maxCount="0" within="" contains="" />
+            </searchConfiguration>
         </inspection_tool>
     </profile>
 </component>
