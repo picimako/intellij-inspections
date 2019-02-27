@@ -95,6 +95,13 @@
                 <constraint name="FACTORY_IMPLEMENTATION" target="true" within="" contains="" />
                 <constraint name="FACTORY_INTERFACE" regexp="org\.fluentlenium\.configuration\.CapabilitiesFactory|org\.fluentlenium\.configuration\.WebDriverFactory" minCount="0" maxCount="0" within="" contains="" />
             </searchConfiguration>
+            <searchConfiguration name="The value of the @FactoryName annotation is either empty or consists only of whitespaces." text="@$FACTORY_NAME$ ($VALUE$)&#10;public class $FACTORY_IMPLEMENTATION$ implements $FACTORY_INTERFACE$ {}" recursive="true" caseInsensitive="true" type="JAVA">
+                <constraint name="__context__" within="" contains="" />
+                <constraint name="FACTORY_NAME" regexp="org\.fluentlenium\.configuration\.FactoryName" within="" contains="" />
+                <constraint name="FACTORY_IMPLEMENTATION" within="" contains="" />
+                <constraint name="FACTORY_INTERFACE" regexp="org\.fluentlenium\.configuration\.CapabilitiesFactory|org\.fluentlenium\.configuration\.WebDriverFactory" within="" contains="" />
+                <constraint name="VALUE" regexp="^&quot;(( +)|)&quot;$" target="true" within="" contains="" />
+            </searchConfiguration>
         </inspection_tool>
     </profile>
 </component>
