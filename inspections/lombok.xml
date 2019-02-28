@@ -67,14 +67,14 @@
         <constraint name="Init" minCount="0" within="" contains="" />
       </searchConfiguration>
       <searchConfiguration name="Explicit @Singular field initialization as empty collection can be removed, @Singular itself initializes it as an empty collection." text="@$BuilderAnnotation$( )&#10;class $Class$ {&#10;    @$SingularAnnotation$( )&#10;    @$BuilderDefaultAnnotation$( )&#10;    @Modifier(&quot;Instance&quot;) $FieldType$ $Field$ = $Init$;&#10;}" recursive="true" caseInsensitive="true" type="JAVA">
-          <constraint name="__context__" target="true" within="" contains="" />
-          <constraint name="BuilderAnnotation" regexp="lombok\.Builder" within="" contains="" />
-          <constraint name="Class" within="" contains="" />
-          <constraint name="SingularAnnotation" regexp="lombok\.Singular" within="" contains="" />
-          <constraint name="BuilderDefaultAnnotation" regexp="lombok\.Builder\.Default" within="" contains="" />
-          <constraint name="FieldType" regexp="(java\.util\.(List|ArrayList|Iterable|Collection|((Sorted|Navigable|Hash|Tree|)(Set|Map))))|(com\.google\.common\.collect\.Immutable(Collection|List|Set|SortedSet|Map|BiMap|SortedMap|Table))" within="" contains="" />
-          <constraint name="Field" maxCount="2147483647" within="" contains="" />
-          <constraint name="Init" regexp="(new (ArrayList|HashSet|TreeSet|HashMap|TreeMap)&lt;.*&gt;\(\))|(Immutable(List|Map|BiMap|SortedMap|Set|SortedSet|Table)\.of\(\))|((List|Map|Set)\.of\(\))" within="" contains="" />
+        <constraint name="__context__" within="" contains="" />
+        <constraint name="BuilderAnnotation" regexp="lombok\.Builder" within="" contains="" />
+        <constraint name="Class" within="" contains="" />
+        <constraint name="SingularAnnotation" regexp="lombok\.Singular" within="" contains="" />
+        <constraint name="BuilderDefaultAnnotation" regexp="lombok\.Builder\.Default" within="" contains="" />
+        <constraint name="FieldType" regexp="(java\.util\.(List|ArrayList|Iterable|Collection|((Sorted|Navigable|Hash|Tree|)(Set|Map))))|(com\.google\.common\.collect\.Immutable(Collection|List|Set|SortedSet|Map|BiMap|SortedMap|Table))" within="" contains="" />
+        <constraint name="Field" maxCount="2147483647" target="true" within="" contains="" />
+        <constraint name="Init" regexp="(new (ArrayList|HashSet|TreeSet|HashMap|TreeMap)&lt;.*&gt;\(\))|(Immutable(List|Map|BiMap|SortedMap|Set|SortedSet|Table)\.of\(\))|((List|Map|Set)\.of\(\))" within="" contains="" />
       </searchConfiguration>
     </inspection_tool>
   </profile>
