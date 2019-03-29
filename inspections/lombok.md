@@ -1,0 +1,114 @@
+# Lombok
+
+#### Slf4j Logger is defined explicitly. Use Lombok @Slf4j annotation instead
+```xml
+<searchConfiguration name="Slf4j Logger is defined explicitly. Use Lombok @Slf4j annotation instead." text="private static final $Logger$ $LOG$ = $LoggerFactory$.getLogger($Class$.class);&#10;" recursive="false" caseInsensitive="true" type="JAVA">
+    <constraint name="__context__" within="" contains="" />
+    <constraint name="Logger" regexp="org\.slf4j\.Logger" within="" contains="" />
+    <constraint name="LoggerFactory" regexp="org\.slf4j\.LoggerFactory" within="" contains="" />
+    <constraint name="LOG" target="true" within="" contains="" />
+    <constraint name="Class" within="" contains="" />
+</searchConfiguration>
+```
+
+#### @NonNull annotation is applied to a @Singular field. @Singular fields have no way to be set as null
+```xml
+<searchConfiguration name="@NonNull annotation is applied to a @Singular field. @Singular fields have no way to be set as null." text="@$BuilderAnnotation$( )&#10;class $Class$ {&#10;    @$SingularAnnotation$( )&#10;    @$NonNullAnnotation$( )&#10;    @Modifier(&quot;Instance&quot;) $FieldType$ $Field$ = $Init$;&#10;}" recursive="false" caseInsensitive="true" type="JAVA">
+    <constraint name="Class" within="" contains="" />
+    <constraint name="BuilderAnnotation" regexp="lombok\.Builder" within="" contains="" />
+    <constraint name="FieldType" maxCount="2147483647" within="" contains="" />
+    <constraint name="Field" maxCount="2147483647" target="true" within="" contains="" />
+    <constraint name="Init" minCount="0" within="" contains="" />
+    <constraint name="SingularAnnotation" regexp="lombok\.Singular" within="" contains="" />
+    <constraint name="NonNullAnnotation" regexp="lombok\.NonNull" within="" contains="" />
+</searchConfiguration>
+```
+
+#### @Builder.Default field is not initialized. Either remove the annotation or initialize the field explicitly
+```xml
+<searchConfiguration name="@Builder.Default field is not initialized. Either remove the annotation or initialize the field explicitly." text="@$BuilderAnnotation$( )&#10;class $Class$ {&#10;    @$BuilderDefaultAnnotation$( )&#10;    @$SingularAnnotation$( )&#10;    @Modifier(&quot;Instance&quot;) $FieldType$ $Field$ = $Init$;&#10;}" recursive="true" caseInsensitive="true" type="JAVA">
+    <constraint name="BuilderAnnotation" regexp="lombok\.Builder" within="" contains="" />
+    <constraint name="Class" within="" contains="" />
+    <constraint name="FieldType" maxCount="2147483647" within="" contains="" />
+    <constraint name="Field" maxCount="2147483647" target="true" within="" contains="" />
+    <constraint name="Init" minCount="0" maxCount="0" within="" contains="" />
+    <constraint name="BuilderDefaultAnnotation" regexp="lombok\.Builder\.Default" within="" contains="" />
+    <constraint name="__context__" within="" contains="" />
+    <constraint name="SingularAnnotation" regexp="lombok\.Singular" minCount="0" maxCount="0" within="" contains="" />
+</searchConfiguration>
+```
+
+#### Lombok @NonNull is used on a method parameter. You may replace it with an explicit check e.g. java.util.Objects.requireNonNull
+This inspection is based on the fact that including Lombok annotations in your code makes it a little bit more difficult to debug it, at least in IntelliJ.
+Though this inspection might not be considered good practice, it might at least be an example how one can create such inspection with any desired annotation.
+
+NOTE: This inspection (for now) only works for methods whose parameters are all annotated as Lombok.@NonNull.
+```xml
+<searchConfiguration name="Lombok @NonNull is used on a method parameter. You may replace it with an explicit check e.g. java.util.Objects.requireNonNull." text="$ReturnType$ $Method$(@$NonNullAnnotation$ () $ParameterType$ $Parameter$);" recursive="false" caseInsensitive="true" type="JAVA">
+    <constraint name="ReturnType" within="" contains="" />
+    <constraint name="Method" within="" contains="" />
+    <constraint name="ParameterType" maxCount="2147483647" within="" contains="" />
+    <constraint name="Parameter" maxCount="2147483647" target="true" within="" contains="" />
+    <constraint name="NonNullAnnotation" regexp="lombok\.NonNull" maxCount="2147483647" within="" contains="" />
+</searchConfiguration>
+```
+
+#### Primitive type field, method parameter or local variable is annotated as Lombok @NonNull
+```xml
+<searchConfiguration name="Primitive type field, method parameter or local variable is annotated as Lombok @NonNull." text="@$NonNullAnnotation$ ( )&#10;$Type$ $Name$ = $Init$;" recursive="false" caseInsensitive="true" type="JAVA">
+    <constraint name="NonNullAnnotation" regexp="lombok\.NonNull" within="" contains="" />
+    <constraint name="Init" minCount="0" within="" contains="" />
+    <constraint name="Type" regexp="byte|short|int|long|float|double|boolean|char" within="" contains="" />
+    <constraint name="Name" target="true" within="" contains="" />
+</searchConfiguration>
+```
+
+#### Variable is annotated as Lombok @Cleanup. Use native Java try-with-resources statement instead
+```xml
+<searchConfiguration name="Variable is annotated as Lombok @Cleanup. Use native Java try-with-resources statement instead." text="@$CleanupAnnotation$ ()&#10;$Type$ $Inst$ = $Expr$;" recursive="false" caseInsensitive="true" type="JAVA">
+    <constraint name="Type" within="" contains="" />
+    <constraint name="Inst" target="true" within="" contains="" />
+    <constraint name="Expr" minCount="0" maxCount="0" within="" contains="" />
+    <constraint name="CleanupAnnotation" regexp="lombok\.Cleanup" within="" contains="" />
+    <constraint name="__context__" within="" contains="" />
+</searchConfiguration>
+```
+
+#### Static field in a @Builder class is annotated as @Builder.Default, which has no effect. It can be removed
+```xml
+<searchConfiguration name="Static field in a @Builder class is annotated as @Builder.Default, which has no effect. It can be removed." text="@$BuilderAnnotation$( )&#10;class $Class$ {&#10;    @$BuilderDefaultAnnotation$( )&#10;    static $FieldType$ $Field$ = $Init$;&#10;}" recursive="false" caseInsensitive="true" type="JAVA">
+    <constraint name="BuilderAnnotation" regexp="lombok\.Builder" within="" contains="" />
+    <constraint name="Class" within="" contains="" />
+    <constraint name="BuilderDefaultAnnotation" regexp="lombok\.Builder\.Default" within="" contains="" />
+    <constraint name="FieldType" maxCount="2147483647" within="" contains="" />
+    <constraint name="Field" maxCount="2147483647" target="true" within="" contains="" />
+    <constraint name="Init" minCount="0" within="" contains="" />
+    <constraint name="__context__" within="" contains="" />
+</searchConfiguration>
+```
+
+#### Field in a non-@Builder class is annotated as @Builder.Default. It has no effect, thus can be removed
+```xml
+<searchConfiguration name="Field in a non-@Builder class is annotated as @Builder.Default. It has no effect, thus can be removed." text="@$BuilderAnnotation$( )&#10;class $Class$ {&#10;    @$BuilderDefaultAnnotation$( )&#10;    @Modifier(&quot;Instance&quot;) $FieldType$ $Field$ = $Init$;&#10;}" recursive="false" caseInsensitive="true" type="JAVA">
+    <constraint name="BuilderAnnotation" regexp="lombok\.Builder" minCount="0" maxCount="0" within="" contains="" />
+    <constraint name="Class" within="" contains="" />
+    <constraint name="BuilderDefaultAnnotation" regexp="lombok\.Builder\.Default" within="" contains="" />
+    <constraint name="FieldType" maxCount="2147483647" within="" contains="" />
+    <constraint name="Field" maxCount="2147483647" target="true" within="" contains="" />
+    <constraint name="Init" minCount="0" within="" contains="" />
+</searchConfiguration>
+```
+
+#### Explicit @Singular field initialization as empty collection can be removed, @Singular itself initializes it as an empty collection
+```xml
+<searchConfiguration name="Explicit @Singular field initialization as empty collection can be removed, @Singular itself initializes it as an empty collection." text="@$BuilderAnnotation$( )&#10;class $Class$ {&#10;    @$SingularAnnotation$( )&#10;    @$BuilderDefaultAnnotation$( )&#10;    @Modifier(&quot;Instance&quot;) $FieldType$ $Field$ = $Init$;&#10;}" recursive="true" caseInsensitive="true" type="JAVA">
+    <constraint name="__context__" within="" contains="" />
+    <constraint name="BuilderAnnotation" regexp="lombok\.Builder" within="" contains="" />
+    <constraint name="Class" within="" contains="" />
+    <constraint name="SingularAnnotation" regexp="lombok\.Singular" within="" contains="" />
+    <constraint name="BuilderDefaultAnnotation" regexp="lombok\.Builder\.Default" within="" contains="" />
+    <constraint name="FieldType" regexp="(java\.util\.(List|ArrayList|Iterable|Collection|((Sorted|Navigable|Hash|Tree|)(Set|Map))))|(com\.google\.common\.collect\.Immutable(Collection|List|Set|SortedSet|Map|BiMap|SortedMap|Table))" within="" contains="" />
+    <constraint name="Field" maxCount="2147483647" target="true" within="" contains="" />
+    <constraint name="Init" regexp="(new (ArrayList|HashSet|TreeSet|HashMap|TreeMap)&lt;.*&gt;\(\))|(Immutable(List|Map|BiMap|SortedMap|Set|SortedSet|Table)\.of\(\))|((List|Map|Set)\.of\(\))" within="" contains="" />
+</searchConfiguration>
+```

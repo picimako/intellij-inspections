@@ -1,0 +1,12 @@
+# Selenium
+
+#### Use css locator strategy instead of xpath.
+```xml
+<searchConfiguration name="Use css locator strategy instead of xpath." text="@org.openqa.selenium.support.FindBy($LocatorStrategy$ = &quot;$ClassName$&quot;)&#10;@Modifier(&quot;Instance&quot;) $FieldType$ $Element$;" recursive="true" caseInsensitive="true" type="JAVA">
+    <constraint name="__context__" within="" contains="" />
+    <constraint name="ClassName" within="" contains="" />
+    <constraint name="FieldType" within="" contains="" />
+    <constraint name="Element" within="" contains="" />
+    <constraint name="LocatorStrategy" regexp="xpath" target="true" within="" contains="" />
+</searchConfiguration>
+```
