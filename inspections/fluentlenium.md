@@ -1,5 +1,8 @@
 # FluentLenium
 
+### Request for addition to FluentLenium
+There is already a GitHub issue created for FluentLenium to have these inspections reviewed and added in some form: [FluentLenium/711](https://github.com/FluentLenium/FluentLenium/issues/711)
+
 #### FluentConfiguration has remoteUrl but webDriver is not defined as "remote"
 ```xml
 <searchConfiguration name="FluentConfiguration has remoteUrl but webDriver is not defined as &quot;remote&quot;" text="@org.fluentlenium.configuration.FluentConfiguration(webDriver = &quot;$NOT_REMOTE$&quot;, remoteUrl = $REMOTE_URL$)" recursive="true" caseInsensitive="true" type="JAVA">

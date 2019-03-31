@@ -1,5 +1,8 @@
 # Lombok
 
+### Request for addition to Lombok
+There is already a GitHub issue created for Lombok to have these inspections reviewed and added in some form: [Lombok IntelliJ plugin/594](https://github.com/mplushnikov/lombok-intellij-plugin/issues/594)
+
 #### Slf4j Logger is defined explicitly. Use Lombok @Slf4j annotation instead
 ```xml
 <searchConfiguration name="Slf4j Logger is defined explicitly. Use Lombok @Slf4j annotation instead." text="private static final $Logger$ $LOG$ = $LoggerFactory$.getLogger($Class$.class);&#10;" recursive="false" caseInsensitive="true" type="JAVA">
