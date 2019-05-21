@@ -6,6 +6,9 @@ This time I will give you some general details about how Script filters work and
 Before you proceed with this article I highly recommend reading [this JetBrains support ticket](https://intellij-support.jetbrains.com/hc/en-us/community/posts/360000045970-Search-and-Replace-Structurally-Script-Constraints-Documentation-)  about Script filters.
 It is a well-put-together explanation about that filter and how template variables are handled.
 
+## Basics
+The Script filter uses the Groovy language for scripting, so basically any language construct that Groovy supports may probably be used here as well.
+
 ## Defining a predicate
 As the content of the filter one needs to define a predicate which will be evaluated to true or false. The `return` keyword may be used but not required.
 So considering a Script filter as:
@@ -38,7 +41,8 @@ retryCount.toInteger() > 5
 ## import statements
 
 I will write a separate, more detailed article about import statements later, which I will also link here,
-but for now it is enough to know that for scripts that require some specific classes to reference, they may be imported.
+but for now it is enough to know that for scripts that require some specific classes to reference, they may be imported but
+so far I've been able to import only IntelliJ specific packages.
 
 There are a few Existing templates that also contain import statements, like the one *called fields/variables read*:
 
