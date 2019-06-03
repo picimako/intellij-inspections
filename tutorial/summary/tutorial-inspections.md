@@ -3,6 +3,14 @@ The purpose of this document is to collect all inspection that are created durin
 mainly because WordPress keeps resolving unicode entities that shouldn't be resolved in order to users be able to copy and paste these inspections
 into their project files.
 
+## 2019.06.03. - [FluentPage hasExpectedUrl() assertion is not valid without @PageUrl annotation](https://ijnspector.wordpress.com/2019/06/03/fluentpage-hasexpectedurl-assertion-is-not-valid-without-pageurl-annotation/)
+```xml
+<searchConfiguration name="FluentPage.hasExpectedUrl() call is not valid without @PageUrl annotation." text=" org.fluentlenium.assertj.FluentLeniumAssertions.assertThat($FluentPage$).hasExpectedUrl();" recursive="true" caseInsensitive="true" type="JAVA">
+    <constraint name="__context__" within="" contains="" />
+    <constraint name="FluentPage" script="&quot;!FluentPage.getType().resolve().hasAnnotation(&quot;org.fluentlenium.core.annotation.PageUrl&quot;)&quot;" nameOfExprType="org\.fluentlenium\.core\.FluentPage" expressionTypes="org.fluentlenium.core.FluentPage" exprTypeWithinHierarchy="true" within="" contains="" />
+</searchConfiguration>
+```
+
 ## 2019.03.25 - [Mockito cannot mock/spy final classes](https://ijnspector.wordpress.com/2019/03/25/mockito-cannot-mock-spy-final-classes/)
 ```xml
 <searchConfiguration name="Mockito cannot mock/spy final classes." text="class $Class$ { &#10;    @$MockAnnotation$( )&#10;    @Modifier(&quot;Instance&quot;) $FieldType$ $Field$ = $Init$;&#10;}" recursive="true" caseInsensitive="true" type="JAVA">

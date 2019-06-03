@@ -219,3 +219,25 @@ This might not be generally valid, but some projects may want to enforce specify
         <constraint name="element" within="" contains="" />
 </replaceConfiguration>
 ```
+
+#### FluentPage.hasExpectedUrl() call is not valid without @PageUrl annotation
+
+For now this works only when the `hasExpectedUrl()` is called immediately after `FluentLeniumAssertions.assertThat(fluentPage)` but not when there are other assertions between the two.
+
+```xml
+<searchConfiguration name="FluentPage.hasExpectedUrl() call is not valid without @PageUrl annotation." text=" org.fluentlenium.assertj.FluentLeniumAssertions.assertThat($FluentPage$).hasExpectedUrl()" recursive="true" caseInsensitive="true" type="JAVA">
+    <constraint name="__context__" within="" contains="" />
+    <constraint name="FluentPage" script="&quot;!FluentPage.getType().resolve().hasAnnotation(&quot;org.fluentlenium.core.annotation.PageUrl&quot;)&quot;" nameOfExprType="org\.fluentlenium\.core\.FluentPage" expressionTypes="org.fluentlenium.core.FluentPage" exprTypeWithinHierarchy="true" within="" contains="" />
+</searchConfiguration>
+```
+
+#### FluentPage.hasExpectedElements() call is not valid without @FindBy annotation
+
+For now this works only when the `hasExpectedElements()` is called immediately after `FluentLeniumAssertions.assertThat(fluentPage)` but not when there are other assertions between the two.
+
+```xml
+<searchConfiguration name="FluentPage.hasExpectedElements() call is not valid without @FindBy annotation." text=" org.fluentlenium.assertj.FluentLeniumAssertions.assertThat($FluentPage$).hasExpectedElements()" recursive="true" caseInsensitive="true" type="JAVA">
+    <constraint name="__context__" within="" contains="" />
+    <constraint name="FluentPage" script="&quot;!FluentPage.getType().resolve().hasAnnotation(&quot;org.openqa.selenium.support.FindBy&quot;)&quot;" nameOfExprType="org\.fluentlenium\.core\.FluentPage" expressionTypes="org.fluentlenium.core.FluentPage" exprTypeWithinHierarchy="true" within="" contains="" />
+</searchConfiguration>
+```
