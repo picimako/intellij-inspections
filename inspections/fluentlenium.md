@@ -200,6 +200,17 @@ This might not be generally valid, but some projects may want to enforce specify
 </replaceConfiguration>
 ```
 
+#### Element value isEqualTo() assertion may be replaced with hasValue()
+
+```xml
+<replaceConfiguration name="Element value isEqualTo() assertion may be replaced with hasValue()." text="$Assertions$.assertThat($element$.value()).isEqualTo($expectedValue$);" recursive="true" caseInsensitive="true" type="JAVA" reformatAccordingToStyle="false" shortenFQN="true" useStaticImport="true" replacement="org.fluentlenium.assertj.FluentLeniumAssertions.assertThat($element$).hasValue($expectedValue$);">
+        <constraint name="__context__" target="true" within="" contains="" />
+        <constraint name="element" nameOfExprType="org\.fluentlenium\.core\.domain\.FluentWebElement" expressionTypes="org.fluentlenium.core.domain.FluentWebElement" within="" contains="" />
+        <constraint name="expectedValue" within="" contains="" />
+        <constraint name="Assertions" regexp="org\.assertj\.core\.api\.Assertions|org\.fluentlenium\.assertj\.FluentLeniumAssertions" minCount="0" within="" contains="" />
+</replaceConfiguration>
+```
+
 #### Unnecessary double validation of element presence. Apply quick fix to remove the second assertion.
 
 ```xml
