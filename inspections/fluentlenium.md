@@ -187,3 +187,24 @@ This might not be generally valid, but some projects may want to enforce specify
     <constraint name="FindAnnotation" regexp="org\.openqa\.selenium\.support\.(FindBy|FindBys|FindAl)" within="" contains="" />
 </searchConfiguration>
 ```
+
+#### Element attribute isEqualTo() assertion may be replaced with hasAttributeValue()
+
+```xml
+<replaceConfiguration name="Element attribute isEqualTo() assertion may be replaced with hasAttributeValue()" text="$Assertions$.assertThat($element$.attribute(&quot;$attribute$&quot;)).isEqualTo($expectedValue$);" recursive="true" caseInsensitive="true" type="JAVA" reformatAccordingToStyle="false" shortenFQN="true" useStaticImport="true" replacement="org.fluentlenium.assertj.FluentLeniumAssertions.assertThat($element$).hasAttributeValue(&quot;$attribute$&quot;, $expectedValue$);">
+        <constraint name="__context__" target="true" within="" contains="" />
+        <constraint name="attribute" within="" contains="" />
+        <constraint name="element" nameOfExprType="org\.fluentlenium\.core\.domain\.FluentWebElement" expressionTypes="org.fluentlenium.core.domain.FluentWebElement" within="" contains="" />
+        <constraint name="expectedValue" within="" contains="" />
+        <constraint name="Assertions" regexp="org\.assertj\.core\.api\.Assertions|org\.fluentlenium\.assertj\.FluentLeniumAssertions" minCount="0" within="" contains="" />
+</replaceConfiguration>
+```
+
+#### Unnecessary double validation of element presence. Apply quick fix to remove the second assertion.
+
+```xml
+<replaceConfiguration name="Unnecessary double validation of element presence. Apply quick fix to remove the second assertion." text="await().atMost(5, java.util.concurrent.TimeUnit.SECONDS).until($element$).displayed();&#10;assertThat($element$).isDisplayed();" recursive="false" caseInsensitive="true" type="JAVA" reformatAccordingToStyle="false" shortenFQN="true" useStaticImport="true" replacement="await().atMost(5, java.util.concurrent.TimeUnit.SECONDS).until($element$).displayed();">
+        <constraint name="__context__" within="" contains="" />
+        <constraint name="element" within="" contains="" />
+</replaceConfiguration>
+```
