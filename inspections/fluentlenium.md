@@ -177,6 +177,18 @@ Since: 4.2.2
 
 This might not be generally valid, but some projects may want to enforce specifying the generic type.
 
+This would mark constructs such as:
+
+    public class Homepage {
+        @FindBy(css = ".some .css")
+        public FluentList heroImage;
+    }
+
+    public class Homepage extends FluentPage {
+        @FindBy(css = ".some .css")
+        public FluentList heroImage;
+    }
+
 ```xml
 <searchConfiguration name="FluentList field in a page object class doesn't have generic type" text="class $Class$ {&#10;    @$FindAnnotation$( )&#10;    $FluentList$ &lt;$GenericType$&gt; $Field$;&#10;}" recursive="true" caseInsensitive="true" type="JAVA">
     <constraint name="__context__" within="" contains="" />
