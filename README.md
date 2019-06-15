@@ -20,6 +20,5 @@ To configure your git project for these inspections please read through the [How
 
 If you find any issues in the articles, tutorials or in any of the inspections, please create an GitHub issue in this project.
 
-If you find value reading the articles and/or using the already create inspection templates, and it may even makes your life easier, please consider Buying Me a Coffee.
+If you find value reading the articles and/or using the already create inspection templates, and it may even makes your life easier, please consider **[Buying Me a Coffee](https://www.buymeacoffee.com/picimako)**.
 
-<a href="https://www.buymeacoffee.com/picimako" target="_blank"><img src="https://bmc-cdn.nyc3.digitaloceanspaces.com/BMC-button-images/custom_images/purple_img.png" alt="Buy Me A Coffee" style="height: auto !important;width: auto !important;" ></a>
