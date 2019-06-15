@@ -113,9 +113,29 @@ There are a few Existing templates that provide examples for using this variable
 Filters may be written for Complete Match as well, when no template variable is selected in the editor, though "only" Script filter is allowed,
 with which basically anything can be achieved.
 
-However I haven't seen a real life practical example of using this.
+Though I haven't been able to totally wrap my head around Complete Match filters there is a practical example I ran into.
 
-I will experiment with this and see what happens. I will also update this post with my findings.
+Let's say you have a method call and you want to iterate through its arguments in a Script filter:
+
+```java
+$someObject$.$methodCall$($arguments$);
+```
+
+If you add the Script filter for the `$arguments$` template variable it will only handle/see the first actual argument. However if you add the filter to Complete Match
+it will see the whole list (so far I encountered ArrayList) of arguments on which one can easily iterate through.
+
+## "Debugging" Script filters
+
+There are at least two ways one ca find out what is happening inside a Script filter.
+
+You can intentionally make it fail so that IntelliJ gives you an error message. This can be useful e.g. when you want to find out what Psi type a certain template variable is.
+You can call a non-existent method on it, then IntelliJ will tell you that that method doesn't exist on that given Psi type.
+
+The other way is to write expression values into a file to get a type or value of something. It may be a simple Groovy script like this:
+
+```groovy
+new File("D:\\scriptfilter.txt").withWriter { out -> out.println someTemplateVariable.getType() }
+```
 
 ## Final words
 
