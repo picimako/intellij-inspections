@@ -308,7 +308,7 @@ Mockito.doReturn(5).when(mockObject).voidMethod();
 
 NOTE: This template doesn't signal problem in cases when there is at least one other stubbing method (`do...()`) called after `doReturn()`, e.g. `doReturn().doThrow()...`.
 
-**Script filter:**
+**Script filter ($voidMethod$):**
 
     voidMethod                  //this is a PsiMethodCallExpression 
         .resolveMethod()        //converting to PsiMethod/PsiMethodImpl
@@ -460,7 +460,7 @@ when(mockObject.mockMethod(ArgumentMatchers.any(SomeClass.class), someExpression
 
 For the template it doesn't matter where in the argument list the inconsistent arguments are (be it matcher or non-matcher), it will signal it as a problem.
 
-**Script filter:**
+**Script filter (Complete match):**
 
 ```groovy
 boolean hasOnlyMatchers = true
@@ -480,10 +480,10 @@ arguments.each { it ->
         hasOnlyMatchers = false
     }
 }
-```
 
 //If there is not only matchers, or not only non-matchers, then it will signal a problem.
 !((hasMatcher && hasOnlyMatchers) || (!hasMatcher && !hasOnlyMatchers))
+```
 
 **Template:**
 
@@ -508,7 +508,7 @@ when(mockObject.mockMethod(AdditionalMatchers.and(someExpression, any(SomeClass.
 
 For the template it doesn't matter where in the AdditionalMatchers' argument list the inconsistent arguments are (be it matcher or non-matcher), it will signal it as a problem.
 
-**Script filter:**
+**Script filter (Complete match):**
 
 ```groovy
 boolean hasOnlyMatchers = true
@@ -528,10 +528,10 @@ arguments.each { it ->
         hasOnlyMatchers = false
     }
 }
-```
 
 //If there is not only matchers, or not only non-matchers, then it will signal a problem.
-!((hasMatcher && hasOnlyMatchers) || (!hasMatcher && !hasOnlyMatchers))    
+!((hasMatcher && hasOnlyMatchers) || (!hasMatcher && !hasOnlyMatchers))
+```    
 
 **Template:**
 
@@ -555,7 +555,7 @@ doNothing().when(mock).someNotVoidMethod();
 
 NOTE: This template doesn't signal problem in cases when there is at least one other stubbing method `do...()`) called after `doNothing()`, e.g. `doNothing().doThrow()...`.
 
-**Script filter:**
+**Script filter ($mockNotVoidMethod$):**
 
 ```groovy
 mockNotVoidMethod.resolveMethod().getReturnType().getPresentableText() != "void"
@@ -568,5 +568,168 @@ mockNotVoidMethod.resolveMethod().getReturnType().getPresentableText() != "void"
     <constraint name="__context__" within="" contains="" />
     <constraint name="mockObject" within="" contains="" />
     <constraint name="mockNotVoidMethod" script="&quot;mockNotVoidMethod.resolveMethod().getReturnType().getPresentableText() != &quot;void&quot;&quot;" within="" contains="" />
+</searchConfiguration>
+```
+    
+#### Mockito.mock() extraInterfaces() requires at least one interface
+
+This is based on the exception handling happening in [`org.mockito.internal.exceptions.Reporter#extraInterfacesRequiresAtLeastOneInterface()`](https://github.com/mockito/mockito/blob/53e8a93141e1f8c41d6b6d4fd72c20488826269a/src/main/java/org/mockito/internal/exceptions/Reporter.java)
+
+This inspection would signal code snippets like the following, as incorrect:
+
+```java
+withSettings().defaultAnswer(null).extraInterfaces().name("").lenient()
+```
+
+Regardless of the position of the problematic `extraInterfaces()` call the template will signal it.
+
+**Template:**
+
+```xml
+<searchConfiguration name="Mockito.mock() extraInterfaces() requires at least one interface" text="$mockSettingsMethod$.$extraInterfaces$($interfaces$)" recursive="true" caseInsensitive="true" type="JAVA">
+    <constraint name="__context__" within="" contains="" />
+    <constraint name="interfaces" minCount="0" maxCount="0" within="" contains="" />
+    <constraint name="mockSettingsMethod" nameOfExprType="org\.mockito\.MockSettings" expressionTypes="org.mockito.MockSettings" within="" contains="" />
+    <constraint name="extraInterfaces" regexp="extraInterfaces" target="true" within="" contains="" />
+</searchConfiguration>
+```
+
+#### Cannot call abstract real method on java object! Calling real methods is only possible when mocking non-abstract method.
+
+This is based on the exception handling happening in [`org.mockito.internal.exceptions.Reporter#cannotCallAbstractRealMethod()`](https://github.com/mockito/mockito/blob/53e8a93141e1f8c41d6b6d4fd72c20488826269a/src/main/java/org/mockito/internal/exceptions/Reporter.java)
+
+This inspection would signal code snippets like the following, as incorrect:
+
+```java
+when(mockObject.abstractMethod()).thenCallRealMethod();
+```
+
+NOTE: This template doesn't signal problem in cases when there is at least one other stubbing method called before `thenCallRealMethod()`
+but doesn't have a problem if there are method calls after that.
+
+**Script filter ($abstractMethod$):**
+
+```groovy
+abstractMethod.resolveMethod().getModifierList().hasExplicitModifier("abstract")
+```
+
+**Template:**
+
+```xml
+<searchConfiguration name="Cannot call abstract real method on java object! Calling real methods is only possible when mocking non-abstract method." text="org.mockito.Mockito.when($mockObject$.$abstractMethod$()).thenCallRealMethod()" recursive="true" caseInsensitive="true" type="JAVA">
+    <constraint name="__context__" within="" contains="" />
+    <constraint name="mockObject" within="" contains="" />
+    <constraint name="abstractMethod" script="&quot;abstractMethod.resolveMethod().getModifierList().hasExplicitModifier(&quot;abstract&quot;)&quot;" within="" contains="" />
+</searchConfiguration>
+```
+
+#### You cannot have more than one Mockito annotation on a field!
+
+This is based on the exception handling happening in [`org.mockito.internal.exceptions.Reporter#moreThanOneAnnotationNotAllowed(String)`](https://github.com/mockito/mockito/blob/53e8a93141e1f8c41d6b6d4fd72c20488826269a/src/main/java/org/mockito/internal/exceptions/Reporter.java)
+
+This inspection seems to only the following signal code snippets, as incorrect, combining the `@Mock` and `@Captor` annotations:
+
+```java
+@Mock
+@Captor
+ArgumentCaptor<MockObject> mockObjectCaptor;
+```
+
+Regardless of the order in which the two annotations are present, they are both highlighted as incorrect.
+
+**Template:**
+
+```xml
+<searchConfiguration name="You cannot have more than one Mockito annotation on a field: @Mock + @Captor" text="@$MockAnnotation$&#10;@org.mockito.Captor&#10;@Modifier(&quot;Instance&quot;) $FieldType$ $field$;" recursive="true" caseInsensitive="true" type="JAVA">
+    <constraint name="__context__" within="" contains="" />
+    <constraint name="FieldType" within="" contains="" />
+    <constraint name="field" within="" contains="" />
+    <constraint name="MockAnnotation" regexp="org\.mockito\.Mock" target="true" within="" contains="" />
+</searchConfiguration>
+```
+
+#### This combination of annotations is not permitted on a single field
+
+This is based on the exception handling happening in [`org.mockito.internal.exceptions.Reporter#unsupportedCombinationOfAnnotations(String, String)`](https://github.com/mockito/mockito/blob/53e8a93141e1f8c41d6b6d4fd72c20488826269a/src/main/java/org/mockito/internal/exceptions/Reporter.java)
+
+This inspection would signal code snippets like the following, as incorrect:
+
+```java
+@Mock
+@InjectMocks
+ArgumentCaptor<MockObject> mockObjectCaptor;
+``` 
+
+which seem to apply to the following combinations of Mockito annotations:
+- @Mock + @InjectMocks
+- @Spy + @Mock
+- @Spy + @Captor
+- @Captor + @InjectMocks
+
+The order in which the annotations are present is almost irrelevant for the template. In (edge?) cases when there are more than 2 annotations are applied on the field,
+their order can interfere with whether the inspection founds a match or not.
+
+**Script filter (Complete Match):**
+
+```groovy
+annotationMapping = ['org.mockito.Mock':['org.mockito.InjectMocks'], 'org.mockito.Spy':['org.mockito.Mock', 'org.mockito.Captor'], 'org.mockito.Captor':['org.mockito.InjectMocks']]
+
+boolean matches = false
+
+annotationMapping.keySet().each { key -> 
+    annotationMapping.get(key).each { annotation -> 
+        matches = matches || (
+            (MockitoAnnotation.getQualifiedName() == key && OtherMockitoAnnotation.getQualifiedName() == annotation)
+                || (OtherMockitoAnnotation.getQualifiedName() == key && MockitoAnnotation.getQualifiedName() == annotation)
+        )
+    }
+}
+
+matches
+```
+
+**Template:**
+
+```xml
+<searchConfiguration name="This combination of annotations is not permitted on a single field" text="@$MockitoAnnotation$&#10;@$OtherMockitoAnnotation$&#10;@Modifier(&quot;Instance&quot;) $FieldType$ $field$;" recursive="true" caseInsensitive="true" type="JAVA">
+    <constraint name="__context__" script="&quot;annotationMapping = ['org.mockito.Mock':['org.mockito.InjectMocks'], 'org.mockito.Spy':['org.mockito.Mock', 'org.mockito.Captor'], 'org.mockito.Captor':['org.mockito.InjectMocks']]&#10;&#10;boolean matches = false&#10;&#10;annotationMapping.keySet().each { key -&gt; &#10;    annotationMapping.get(key).each { annotation -&gt; &#10;        matches = matches || (&#10;            (MockitoAnnotation.getQualifiedName() == key &amp;&amp; OtherMockitoAnnotation.getQualifiedName() == annotation)&#10;                || (OtherMockitoAnnotation.getQualifiedName() == key &amp;&amp; MockitoAnnotation.getQualifiedName() == annotation)&#10;        )&#10;    }&#10;}&#10;&#10;matches&quot;" within="" contains="" />
+    <constraint name="FieldType" within="" contains="" />
+    <constraint name="field" within="" contains="" />
+    <constraint name="MockitoAnnotation" target="true" within="" contains="" />
+    <constraint name="OtherMockitoAnnotation" within="" contains="" />
+</searchConfiguration>
+```
+
+#### Negative value of duration is not allowed as argument of timer methods (after(), timeout())
+
+This is based on the exception handling happening in [`org.mockito.internal.exceptions.Reporter#cannotCreateTimerWithNegativeDurationTime(long)`](https://github.com/mockito/mockito/blob/53e8a93141e1f8c41d6b6d4fd72c20488826269a/src/main/java/org/mockito/internal/exceptions/Reporter.java)
+
+This inspection would signal code snippets like the following, as incorrect:
+
+```java
+Runnable runnable = Mockito.mock(Runnable.class);
+Mockito.verify(runnable, Mockito.after(-1000).never()).run();
+```
+
+The example is from the [originally reported Mockito issue](https://github.com/mockito/mockito/issues/197).
+
+**Script filter ($duration$):**
+
+```groovy
+try { 
+    duration.text.toInteger() < 0
+//Necessary to handle due to other Mockito method argument types like Mockito.mock(Runnable.class)
+} catch (java.lang.NumberFormatException nfe) {
+    false
+}
+```
+
+**Template:**
+
+```xml
+<searchConfiguration name="Negative value of duration is not allowed as argument of timer methods (after(), timeout())" text="org.mockito.Mockito.$afterOrTimeout$($duration$)" recursive="true" caseInsensitive="true" type="JAVA">
+    <constraint name="__context__" within="" contains="" />
+    <constraint name="afterOrTimeout" regexp="after|timeout" within="" contains="" />
+    <constraint name="duration" script="&quot;try { &#10;    duration.text.toInteger() &lt; 0&#10;//Necessary to handle due to other Mockito method argument types like Mockito.mock(Runnable.class)&#10;} catch (java.lang.NumberFormatException nfe) {&#10;    false&#10;}&quot;" target="true" within="" contains="" />
 </searchConfiguration>
 ```
