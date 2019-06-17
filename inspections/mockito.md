@@ -745,3 +745,82 @@ try {
     <constraint name="duration" script="&quot;try { &#10;    duration.text.toInteger() &lt; 0&#10;//Necessary to handle due to other Mockito method argument types like Mockito.mock(Runnable.class)&#10;} catch (java.lang.NumberFormatException nfe) {&#10;    false&#10;}&quot;" target="true" within="" contains="" />
 </searchConfiguration>
 ```
+
+## X is not implemented to work with InOrder wrapped inside an Y
+
+This is based on the exception handling happening in [`org.mockito.internal.verification.VerificationWrapperInOrderWrapper`](https://github.com/mockito/mockito/blob/d77b2fc8b544b7b0ca772e816fcc2ad560edaa03/src/main/java/org/mockito/internal/verification/VerificationWrapperInOrderWrapper.java)
+
+This inspection would signal code snippets like the following, as incorrect:
+
+```java
+inOrder.verify(mockObject, Mockito.after(1000).atLeastOnce()).someMethodCall();
+```
+
+So far the only example I found is `Mockito.after()` that is not designed to work with `InOrder`.
+
+Due to the limitation of the Structural Search and Replace tool, there are two separate templates.
+
+The first one signals calls where only the `after()` method is called like this:
+
+```java
+inOrder.verify(mockObject, Mockito.after(1000)).someMethodCall();
+```
+    
+```xml
+<searchConfiguration name="X is not implemented to work with InOrder wrapped inside this VerificationMode" text="$InOrder$.verify($mockObject$, $Mockito$.$after$($value$)).$verifiedMethod$()" recursive="true" caseInsensitive="true" type="JAVA">
+    <constraint name="__context__" within="" contains="" />
+    <constraint name="InOrder" nameOfExprType="org\.mockito\.InOrder" expressionTypes="org.mockito.InOrder" within="" contains="" />
+    <constraint name="mockObject" within="" contains="" />
+    <constraint name="Mockito" regexp="org\.mockito\.Mockito" minCount="0" within="" contains="" />
+    <constraint name="value" within="" contains="" />
+    <constraint name="verifiedMethod" within="" contains="" />
+    <constraint name="after" regexp="after" target="true" within="" contains="" />
+</searchConfiguration>
+```
+
+The second one signals code snippets where there is an additional verification mode call after `after()`:
+
+```java
+inOrder.verify(mockObject, Mockito.after(1000).atLeastOnce()).someMethodCall();
+```
+
+```xml
+<searchConfiguration name="X is not implemented to work with InOrder wrapped inside this VerificationMode" text="$InOrder$.verify($mockObject$, $Mockito$.$after$($value$).$verificationMode$()).$verifiedMethod$()" recursive="true" caseInsensitive="true" type="JAVA">
+    <constraint name="__context__" within="" contains="" />
+    <constraint name="InOrder" nameOfExprType="org\.mockito\.InOrder" expressionTypes="org.mockito.InOrder" within="" contains="" />
+    <constraint name="mockObject" within="" contains="" />
+    <constraint name="Mockito" regexp="org\.mockito\.Mockito" minCount="0" within="" contains="" />
+    <constraint name="value" within="" contains="" />
+    <constraint name="verifiedMethod" within="" contains="" />
+    <constraint name="after" regexp="after" target="true" within="" contains="" />
+    <constraint name="verificationMode" within="" contains="" />
+</searchConfiguration>
+```
+
+## This verification method is not implemented to work with InOrder
+
+This is based on the exception handling happening in [`org.mockito.internal.InOrderImpl`](https://github.com/mockito/mockito/blob/4f72147c464c1a8a642d01fc3334e98e92b464cd/src/main/java/org/mockito/internal/InOrderImpl.java)
+
+This inspection would signal code snippets like the following, as incorrect:
+
+```java
+inOrder.verify(mockObject, Mockito.only()).someMethodCall();
+inOrder.verify(mockObject, Mockito.atMost(5)).someMethodCall();
+```
+
+So far the only examples I have found are `Mockito.only()` and `Mockito.atMost()` that are not designed to work with `InOrder`.
+
+**Template:**
+
+```xml
+<searchConfiguration name="This verification method is not implemented to work with InOrder" text="$InOrder$.verify($mockObject$, $Mockito$.$verificationMode$($value$)).$verifiedMethod$()" recursive="true" caseInsensitive="true" type="JAVA">
+    <constraint name="__context__" within="" contains="" />
+    <constraint name="InOrder" nameOfExprType="org\.mockito\.InOrder" expressionTypes="org.mockito.InOrder" within="" contains="" />
+    <constraint name="mockObject" within="" contains="" />
+    <constraint name="Mockito" regexp="org\.mockito\.Mockito" minCount="0" within="" contains="" />
+    <constraint name="value" minCount="0" maxCount="2147483647" within="" contains="" />
+    <constraint name="verifiedMethod" within="" contains="" />
+    <constraint name="verificationMode" regexp="only|atMost" target="true" within="" contains="" />
+</searchConfiguration>
+```
+
