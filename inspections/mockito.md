@@ -87,6 +87,17 @@ inOrder.verify(mockObject, calls(-1)).doSomething()
 This inspection is not prepared for signaling calling `Mockito.calls()` in `Mockito.verify()` because it is designed to work only with `InOrder.verify()`.
 But there is a specific inspection for that. See [TODO]().
 
+**Script filter ($value$)**
+
+```groovy
+try { 
+    value.text.toInteger() < 0
+//Necessary to handle due to other Mockito method argument types like Mockito.mock(Runnable.class)
+} catch (java.lang.NumberFormatException nfe) {
+    false
+}
+```
+
 **Template:**
 
 ```xml
@@ -95,7 +106,7 @@ But there is a specific inspection for that. See [TODO]().
     <constraint name="mockObject" within="" contains="" />
     <constraint name="Mockito" regexp="org\.mockito\.Mockito" minCount="0" within="" contains="" />
     <constraint name="verifiedMethod" within="" contains="" />
-    <constraint name="value" script="&quot;value.text.toInteger() &lt; 0&quot;" within="" contains="" />
+    <constraint name="value" script="&quot;try { &#10;    value.text.toInteger() &lt; 0&#10;//Necessary to handle due to other Mockito method argument types like Mockito.mock(Runnable.class)&#10;} catch (java.lang.NumberFormatException nfe) {&#10;    false&#10;}&quot;" within="" contains="" />
     <constraint name="calls" regexp="calls" target="true" within="" contains="" />
     <constraint name="InOrder" nameOfExprType="org\.mockito\.InOrder" expressionTypes="org.mockito.InOrder" within="" contains="" />
 </searchConfiguration>
