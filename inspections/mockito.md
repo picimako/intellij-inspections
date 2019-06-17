@@ -1,10 +1,10 @@
 # Mockito
 
-### Licensing
+## Licensing
 Please let me know if using the same exact exception messages as the descriptions of the inspections is not permitted due to licensing issues.
 I am happy to change them, it just made sense and I think it is clearer to use the same messages here too.
 
-#### Mockito matcher is not used with static import
+## Mockito matcher is not used with static import
 
 This inspection would signal code snippets like the following, as incorrect:
 
@@ -23,7 +23,7 @@ Matchers.any()
 </searchConfiguration>
 ```
 
-#### Mockito cannot mock/spy final classes
+## Mockito cannot mock/spy final classes
 It is mostly valid for versions before 2.1.0 but can be used from 2.1.0 upwards, if that feature is enabled. See related articles:
 - https://github.com/mockito/mockito/wiki/What's-new-in-Mockito-2#mock-the-unmockable-opt-in-mocking-of-final-classesmethods
 - https://www.baeldung.com/mockito-final-->
@@ -43,7 +43,7 @@ This inspection supports only the annotation based mocking and spying, not the m
 </searchConfiguration>
 ```
 
-#### Mockito.times/atLeast/atMost: Negative value is not allowed here.
+## Mockito.times/atLeast/atMost: Negative value is not allowed here.
 
 This is based on the exception handling happening in:
 - [`org.mockito.internal.verification.AtLeast`](https://github.com/mockito/mockito/blob/4f72147c464c1a8a642d01fc3334e98e92b464cd/src/main/java/org/mockito/internal/verification/AtLeast.java)
@@ -73,7 +73,7 @@ It supports the `times`, `atLeast` and `atMost` verification modes.
 </searchConfiguration>
 ```
 
-#### InOrder calls: Negative and zero values are not allowed here.
+## InOrder calls: Negative and zero values are not allowed here.
 
 This is based on one of the exception handlings happening in [`org.mockito.internal.verification.Calls`](https://github.com/mockito/mockito/blob/4f72147c464c1a8a642d01fc3334e98e92b464cd/src/main/java/org/mockito/internal/verification/Calls.java)
 
@@ -112,7 +112,7 @@ try {
 </searchConfiguration>
 ```
 
-#### Mockito.calls() is only intended to work with InOrder
+## Mockito.calls() is only intended to work with InOrder
 
 This is based on one of the exception handlings happening in [`org.mockito.internal.verification.Calls`](https://github.com/mockito/mockito/blob/4f72147c464c1a8a642d01fc3334e98e92b464cd/src/main/java/org/mockito/internal/verification/Calls.java)
 
@@ -135,7 +135,7 @@ Mockito.verify(mockObject, calls(-1)).doSomething()
 </searchConfiguration>
 ```
 
-#### @Captor field must be of the type ArgumentCaptor
+## @Captor field must be of the type ArgumentCaptor
 
 This is a collection of Replace templates that are most useful when all of them used, but it is up to everyone which ones are actually used.
 
@@ -287,7 +287,7 @@ NOTE: primitive type arrays are not handled by these inspections.
 </replaceConfiguration>
 ```
 
-#### MockitoAnnotations.initMocks() argument cannot be null
+## MockitoAnnotations.initMocks() argument cannot be null
 
 This is based on the exception handling happening in [`org.mockito.MockitoAnnotations`](https://github.com/mockito/mockito/blob/28012a49cb1b1aab1b957ac5e7507dd8b807a47e/src/main/java/org/mockito/MockitoAnnotations.java)
 
@@ -307,7 +307,7 @@ This template can handle only the explicit `null` value since object null value 
 </searchConfiguration>
 ```
 
-#### '<method_name>' is a *void method* and it *cannot* be stubbed with a *return value*!
+## '<method_name>' is a *void method* and it *cannot* be stubbed with a *return value*!
 
 This is based on the exception handling happening in [`org.mockito.internal.exceptions.Reporter#cannotStubVoidMethodWithAReturnValue(String)`](https://github.com/mockito/mockito/blob/53e8a93141e1f8c41d6b6d4fd72c20488826269a/src/main/java/org/mockito/internal/exceptions/Reporter.java)
 
@@ -338,7 +338,7 @@ NOTE: This template doesn't signal problem in cases when there is at least one o
 </searchConfiguration>
 ```
 
-#### Incorrect use of API detected
+## Incorrect use of API detected
 
 This is based on the exception handling happening in [`org.mockito.internal.exceptions.Reporter#incorrectUseOfApi()`](https://github.com/mockito/mockito/blob/53e8a93141e1f8c41d6b6d4fd72c20488826269a/src/main/java/org/mockito/internal/exceptions/Reporter.java)
 
@@ -380,7 +380,7 @@ The template always highlights the second `then...` method call, which in the ca
 </searchConfiguration>
 ```
 
-#### Missing method call for verify(mock)
+## Missing method call for verify(mock)
 
 These are based on the exception handling happening in [`org.mockito.internal.exceptions.Reporter#unfinishedVerificationException(Location)`](https://github.com/mockito/mockito/blob/53e8a93141e1f8c41d6b6d4fd72c20488826269a/src/main/java/org/mockito/internal/exceptions/Reporter.java)
 
@@ -413,7 +413,7 @@ verify(mockObject).hashCode();
 </searchConfiguration>
 ```
 
-#### verifyNoMoreInteractions() and verifyZeroInteractions() requires at least one argument
+## verifyNoMoreInteractions() and verifyZeroInteractions() requires at least one argument
 
 This is based on the exception handling happening in [`org.mockito.internal.exceptions.Reporter#mocksHaveToBePassedToVerifyNoMoreInteractions()`](https://github.com/mockito/mockito/blob/53e8a93141e1f8c41d6b6d4fd72c20488826269a/src/main/java/org/mockito/internal/exceptions/Reporter.java)
 
@@ -436,7 +436,7 @@ The template doesn't signal the case when the passed argument(s) is/are not a mo
 </searchConfiguration>
 ```
 
-#### Mockito.inOrder() requires at least one argument
+## Mockito.inOrder() requires at least one argument
 
 This is based on the exception handling happening in [`org.mockito.internal.exceptions.Reporter#mocksHaveToBePassedWhenCreatingInOrder()`](https://github.com/mockito/mockito/blob/53e8a93141e1f8c41d6b6d4fd72c20488826269a/src/main/java/org/mockito/internal/exceptions/Reporter.java)
 
@@ -459,7 +459,7 @@ The template doesn't signal the case when the passed argument(s) is/are not a mo
 </searchConfiguration>
 ```
 
-#### Some arguments don't use argument matchers. Either none or all of them should use matchers.
+## Some arguments don't use argument matchers. Either none or all of them should use matchers.
 
 This is based on the exception handling happening in [`org.mockito.internal.exceptions.Reporter#invalidUseOfMatchers(int, List)`](https://github.com/mockito/mockito/blob/53e8a93141e1f8c41d6b6d4fd72c20488826269a/src/main/java/org/mockito/internal/exceptions/Reporter.java)
 
@@ -507,7 +507,7 @@ arguments.each { it ->
 </searchConfiguration>
 ```
 
-#### Some AdditionalMatchers arguments don't use argument matchers. Either none or all of them should use a matcher.
+## Some AdditionalMatchers arguments don't use argument matchers. Either none or all of them should use a matcher.
 
 This is based on the exception handling happening in [`org.mockito.internal.exceptions.Reporter#incorrectUseOfAdditionalMatchers(String, int, Collection)`](https://github.com/mockito/mockito/blob/53e8a93141e1f8c41d6b6d4fd72c20488826269a/src/main/java/org/mockito/internal/exceptions/Reporter.java)
 
@@ -554,7 +554,7 @@ arguments.each { it ->
 </seairchConfiguration>
 ```
 
-#### Only void methods can doNothing().
+## Only void methods can doNothing().
 
 This is based on the exception handling happening in [`org.mockito.internal.exceptions.Reporter#onlyVoidMethodsCanBeSetToDoNothing()`](https://github.com/mockito/mockito/blob/53e8a93141e1f8c41d6b6d4fd72c20488826269a/src/main/java/org/mockito/internal/exceptions/Reporter.java)
 
@@ -582,7 +582,8 @@ mockNotVoidMethod.resolveMethod().getReturnType().getPresentableText() != "void"
 </searchConfiguration>
 ```
     
-#### Mockito.mock() extraInterfaces() requires at least one interface
+    
+## Mockito.mock() extraInterfaces() requires at least one interface
 
 This is based on the exception handling happening in [`org.mockito.internal.exceptions.Reporter#extraInterfacesRequiresAtLeastOneInterface()`](https://github.com/mockito/mockito/blob/53e8a93141e1f8c41d6b6d4fd72c20488826269a/src/main/java/org/mockito/internal/exceptions/Reporter.java)
 
@@ -605,7 +606,7 @@ Regardless of the position of the problematic `extraInterfaces()` call the templ
 </searchConfiguration>
 ```
 
-#### Cannot call abstract real method on java object! Calling real methods is only possible when mocking non-abstract method.
+## Cannot call abstract real method on java object! Calling real methods is only possible when mocking non-abstract method.
 
 This is based on the exception handling happening in [`org.mockito.internal.exceptions.Reporter#cannotCallAbstractRealMethod()`](https://github.com/mockito/mockito/blob/53e8a93141e1f8c41d6b6d4fd72c20488826269a/src/main/java/org/mockito/internal/exceptions/Reporter.java)
 
@@ -634,7 +635,7 @@ abstractMethod.resolveMethod().getModifierList().hasExplicitModifier("abstract")
 </searchConfiguration>
 ```
 
-#### You cannot have more than one Mockito annotation on a field!
+## You cannot have more than one Mockito annotation on a field!
 
 This is based on the exception handling happening in [`org.mockito.internal.exceptions.Reporter#moreThanOneAnnotationNotAllowed(String)`](https://github.com/mockito/mockito/blob/53e8a93141e1f8c41d6b6d4fd72c20488826269a/src/main/java/org/mockito/internal/exceptions/Reporter.java)
 
@@ -659,7 +660,7 @@ Regardless of the order in which the two annotations are present, they are both 
 </searchConfiguration>
 ```
 
-#### This combination of annotations is not permitted on a single field
+## This combination of annotations is not permitted on a single field
 
 This is based on the exception handling happening in [`org.mockito.internal.exceptions.Reporter#unsupportedCombinationOfAnnotations(String, String)`](https://github.com/mockito/mockito/blob/53e8a93141e1f8c41d6b6d4fd72c20488826269a/src/main/java/org/mockito/internal/exceptions/Reporter.java)
 
@@ -711,7 +712,7 @@ matches
 </searchConfiguration>
 ```
 
-#### Negative value of duration is not allowed as argument of timer methods (after(), timeout())
+## Negative value of duration is not allowed as argument of timer methods (after(), timeout())
 
 This is based on the exception handling happening in [`org.mockito.internal.exceptions.Reporter#cannotCreateTimerWithNegativeDurationTime(long)`](https://github.com/mockito/mockito/blob/53e8a93141e1f8c41d6b6d4fd72c20488826269a/src/main/java/org/mockito/internal/exceptions/Reporter.java)
 
