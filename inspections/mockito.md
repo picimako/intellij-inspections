@@ -824,3 +824,36 @@ So far the only examples I have found are `Mockito.only()` and `Mockito.atMost()
 </searchConfiguration>
 ```
 
+## times(1) call may be removed. Mockito.verify(mockObject) behaves the same.  
+
+This inspection is based on the fact the not calling `Mockito.verify(mockObject)` without calling `times()` works the same as `Mockito.verify(mockObject, times(1))`,
+this calling `times(1)` may be removed.
+
+This inspection would signal code snippets like the following, as incorrect:
+
+```java
+Mockito.verify(mockObject, times(1))
+```
+
+**Script filter ($value$):**
+
+```groovy
+try { 
+    value.text.toInteger() == 1
+//Necessary to handle due to other Mockito method argument types like Mockito.mock(Runnable.class)
+} catch (java.lang.NumberFormatException nfe) {
+    false
+}
+```
+
+**Template:**
+
+```xml
+<searchConfiguration name="times(1) call may be removed. Mockito.verify(mockObject) behaves the same." text="org.mockito.Mockito.verify($mockObject$, org.mockito.Mockito.$times$($value$)).$validatedMethod$();" recursive="true" caseInsensitive="true" type="JAVA">
+    <constraint name="__context__" within="" contains="" />
+    <constraint name="mockObject" within="" contains="" />
+    <constraint name="value" script="&quot;try { &#10;    value.text.toInteger() == 1&#10;//Necessary to handle due to other Mockito method argument types like Mockito.mock(Runnable.class)&#10;} catch (java.lang.NumberFormatException nfe) {&#10;    false&#10;}&quot;" within="" contains="" />
+    <constraint name="validatedMethod" within="" contains="" />
+    <constraint name="times" regexp="times" target="true" within="" contains="" />
+</searchConfiguration>
+```
