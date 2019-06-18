@@ -85,7 +85,7 @@ inOrder.verify(mockObject, calls(-1)).doSomething()
 ```
 
 This inspection is not prepared for signaling calling `Mockito.calls()` in `Mockito.verify()` because it is designed to work only with `InOrder.verify()`.
-But there is a specific inspection for that. See [TODO]().
+But there is a specific inspection for that. See **Mockito.calls() is only intended to work with InOrder** below.
 
 **Script filter ($value$)**
 
@@ -119,7 +119,7 @@ This is based on one of the exception handlings happening in [`org.mockito.inter
 This inspection would signal a code snippet like the following, as incorrect:
 
 ```java
-Mockito.verify(mockObject, calls(-1)).doSomething()
+Mockito.verify(mockObject, calls(5)).doSomething()
 ```
 
 **Template:**
