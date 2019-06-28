@@ -60,6 +60,12 @@ verify(mockObject, atMost(-1)).doSomething()
 
 It supports the `times`, `atLeast` and `atMost` verification modes.
 
+**Script filter ($value$):**
+
+```groovy
+value.text.toInteger() < 0
+```
+
 **Template:**
 
 ```xml
@@ -477,18 +483,23 @@ For the template it doesn't matter where in the argument list the inconsistent a
 boolean hasOnlyMatchers = true
 boolean hasMatcher = false
 arguments.each { it ->
-    //If the argument is a method call
+	//If the argument is a method call
     if (it instanceof com.intellij.psi.PsiMethodCallExpression) {
-        //A method call from ArgumentMatchers
-        if (it.resolveMethod().getContainingClass().getQualifiedName() == "org.mockito.ArgumentMatchers") {
-            hasMatcher = true
-        //A method call from a non-ArgumentMatchers class
-        } else {
-            hasOnlyMatchers = false
-        }
+    	//A method call from ArgumentMatchers
+    	try {
+            if (it.resolveMethod().getContainingClass().getQualifiedName() == "org.mockito.ArgumentMatchers") {
+                hasMatcher = true
+            //A method call from a non-ArgumentMatchers class
+            } else {
+                hasOnlyMatchers = false
+            }
+        //NullPointerException may happen on 'it' when an argument implementation is not complete
+    	} catch (NullPointerException npe) {
+    	    false
+    	}
     //Not a method call, but an other type of expression
     } else {
-        hasOnlyMatchers = false
+    	hasOnlyMatchers = false
     }
 }
 
@@ -499,8 +510,8 @@ arguments.each { it ->
 **Template:**
 
 ```xml
-<searchConfiguration name="Some arguments don't use argument matchers. Either none or all of them should use matchers." text="org.mockito.Mockito.when($mockObject$.$mockMethod$($arguments$))" recursive="true" caseInsensitive="true" type="JAVA">
-    <constraint name="__context__" script="&quot;boolean hasOnlyMatchers = true&#10;boolean hasMatcher = false&#10;arguments.each { it -&gt;&#10;&#9;//If the argument is a method call&#10;    if (it instanceof com.intellij.psi.PsiMethodCallExpression) {&#10;    &#9;//A method call from ArgumentMatchers&#10;        if (it.resolveMethod().getContainingClass().getQualifiedName() == &quot;org.mockito.ArgumentMatchers&quot;) {&#10;            hasMatcher = true&#10;        //A method call from a non-ArgumentMatchers class&#10;        } else {&#10;            hasOnlyMatchers = false&#10;&#9;        }&#10;    //Not a method call, but an other type of expression&#10;    } else {&#10;    &#9;hasOnlyMatchers = false&#10;    }&#10;}&#10;&#10;//If there is not only matchers, or not only non-matchers, then it will signal a problem.&#10;!((hasMatcher &amp;&amp; hasOnlyMatchers) || (!hasMatcher &amp;&amp; !hasOnlyMatchers))&quot;" within="" contains="" />
+<searchConfiguration name="Some arguments don't use argument matchers. Either none or all of them should use them." text="org.mockito.Mockito.when($mockObject$.$mockMethod$($arguments$))" recursive="true" caseInsensitive="true" type="JAVA">
+    <constraint name="__context__" script="&quot;boolean hasOnlyMatchers = true&#10;boolean hasMatcher = false&#10;arguments.each { it -&gt;&#10;&#9;//If the argument is a method call&#10;    if (it instanceof com.intellij.psi.PsiMethodCallExpression) {&#10;    &#9;//A method call from ArgumentMatchers&#10;    &#9;try {&#10;            if (it.resolveMethod().getContainingClass().getQualifiedName() == &quot;org.mockito.ArgumentMatchers&quot;) {&#10;                hasMatcher = true&#10;            //A method call from a non-ArgumentMatchers class&#10;            } else {&#10;                hasOnlyMatchers = false&#10;            }&#10;        //NullPointerException may happen on 'it' when an argument implementation is not complete&#10;    &#9;} catch (NullPointerException npe) {&#10;    &#9;    false&#10;    &#9;}&#10;    //Not a method call, but an other type of expression&#10;    } else {&#10;    &#9;hasOnlyMatchers = false&#10;    }&#10;}&#10;&#10;//If there is not only matchers, or not only non-matchers, then it will signal a problem.&#10;!((hasMatcher &amp;&amp; hasOnlyMatchers) || (!hasMatcher &amp;&amp; !hasOnlyMatchers))&quot;" within="" contains="" />
     <constraint name="arguments" minCount="2" maxCount="2147483647" target="true" within="" contains="" />
     <constraint name="mockObject" within="" contains="" />
     <constraint name="mockMethod" within="" contains="" />
