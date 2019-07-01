@@ -40,7 +40,7 @@ retryCount.toInteger() > 5
 
 ## import statements
 
-I will write a separate, more detailed article about import statements later, which I will also link here,
+[Here](https://ijnspector.wordpress.com/2019/07/01/using-imports-in-script-filters/) you can find a bit more detailed article about the topic,
 but for now it is enough to know that for scripts that require some specific classes to reference, they may be imported but
 so far I've been able to import only IntelliJ specific packages.
 
