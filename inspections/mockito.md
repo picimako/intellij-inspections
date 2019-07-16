@@ -592,7 +592,101 @@ mockNotVoidMethod.resolveMethod().getReturnType().getPresentableText() != "void"
     <constraint name="mockNotVoidMethod" script="&quot;mockNotVoidMethod.resolveMethod().getReturnType().getPresentableText() != &quot;void&quot;&quot;" within="" contains="" />
 </searchConfiguration>
 ```
-    
+
+## @Mock extraInterfaces attribute is provided with at least one non-interface type
+
+This is based on the exception handling happening in [`org.mockito.internal.exceptions.Reporter#extraInterfacesAcceptsOnlyInterfaces(Class)`](https://github.com/mockito/mockito/blob/53e8a93141e1f8c41d6b6d4fd72c20488826269a/src/main/java/org/mockito/internal/exceptions/Reporter.java)
+
+For more information about the creation of these template head over to this [IntelliJ support ticket](https://intellij-support.jetbrains.com/hc/en-us/community/posts/360004135280-SSR-Check-whether-an-attribute-value-immediate-class-type-is-an-interface).
+
+Currently there is support only for the `@Mock` annotation based `extraInterfaces` configuration, for the method based one templates will be added later.
+
+### Annotation
+
+To make the implementation easier and simpler of this inspection, there are two separate templates.
+
+#### Single
+
+This template matches occurrences where the `extraInterfaces` attribute is provided a single value, without the array initializers, e.g.:
+
+```java
+@Mock(extraInterfaces = NotAnInterface.class)
+public MockedClass mocked;
+```
+
+**Template:**
+
+```xml
+<searchConfiguration name="@Mock annotation: extraInterfaces() accepts only interfaces." text="@org.mockito.Mock($extraInterfaces$ = $attributes$)&#10;@Modifier(&quot;Instance&quot;) $FieldType$ $field$;" recursive="true" caseInsensitive="true" type="JAVA">
+    <constraint name="__context__" script="&quot;import com.intellij.psi.*;&#10;boolean hasOnlyInterfaces = true&#10;if (attributes instanceof PsiClassObjectAccessExpression) {&#10;  PsiJavaCodeReferenceElement classReference = (PsiJavaCodeReferenceElement)attributes.firstChild?.firstChild;&#10;  if (!classReference?.resolve()?.isInterface()) {&#10;    hasOnlyInterfaces = false&#10;  }&#10;}&#10;&#10;!hasOnlyInterfaces&quot;" within="" contains="" />
+    <constraint name="FieldType" within="" contains="" />
+    <constraint name="field" within="" contains="" />
+    <constraint name="extraInterfaces" regexp="extraInterfaces" within="" contains="" />
+    <constraint name="attributes" target="true" within="" contains="" />
+</searchConfiguration>
+```
+
+**Script filter (Complete match):**
+
+```groovy
+import com.intellij.psi.*
+boolean hasOnlyInterfaces = true
+if (attributes instanceof PsiClassObjectAccessExpression) {
+  PsiJavaCodeReferenceElement classReference = (PsiJavaCodeReferenceElement)attributes.firstChild?.firstChild;
+  if (!classReference?.resolve()?.isInterface()) {
+    hasOnlyInterfaces = false
+  }
+}
+
+!hasOnlyInterfaces
+```
+
+#### Array
+
+This template matches occurrences where the `extraInterfaces` attribute is provided multiple values within an array initializer, e.g.:
+
+```java
+@Mock(extraInterfaces = {NotAnInterface.class, AnInterface.class})
+public MockedClass mocked;
+```
+
+In order for this template to match, it is enough that at least one of the provided values is not an interface.
+
+The target of this inspection is set to Complete Match to be consistent with the single value variant but regardless of which values are not
+interfaces, all provided values are highlighted.
+
+**Template:**
+
+```xml
+<searchConfiguration name="@Mock annotation: extraInterfaces() accepts only interfaces." text="@org.mockito.Mock($extraInterfaces$ = {$attributes$})&#10;@Modifier(&quot;Instance&quot;) $FieldType$ $field$;" recursive="true" caseInsensitive="true" type="JAVA">
+    <constraint name="__context__" script="&quot;import com.intellij.psi.*;&#10;boolean hasOnlyInterfaces = true&#10;attributes.each { attribute -&gt;&#10;    if (attribute instanceof PsiClassObjectAccessExpression) {&#10;      PsiJavaCodeReferenceElement ref = (PsiJavaCodeReferenceElement)attribute.firstChild?.firstChild;&#10;      if (!ref?.resolve()?.isInterface()) {&#10;        hasOnlyInterfaces = false&#10;      }&#10;    }&#10;  }&#10;!hasOnlyInterfaces&quot;" within="" contains="" />
+    <constraint name="FieldType" within="" contains="" />
+    <constraint name="field" within="" contains="" />
+    <constraint name="extraInterfaces" regexp="extraInterfaces" within="" contains="" />
+    <constraint name="attributes" maxCount="2147483647" target="true" within="" contains="" />
+</searchConfiguration>
+```
+
+**Script filter (Complete match):**
+
+```groovy
+import com.intellij.psi.*
+boolean hasOnlyInterfaces = true
+attributes.each { attribute ->
+    if (attribute instanceof PsiClassObjectAccessExpression) {
+      PsiJavaCodeReferenceElement ref = (PsiJavaCodeReferenceElement)attribute.firstChild?.firstChild;
+      if (!ref?.resolve()?.isInterface()) {
+        hasOnlyInterfaces = false
+      }
+    }
+  }
+!hasOnlyInterfaces
+```
+
+### Method
+
+TODO: this in the queue to be added
+ 
     
 ## Mockito.mock() extraInterfaces() requires at least one interface
 
