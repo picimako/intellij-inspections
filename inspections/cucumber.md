@@ -186,3 +186,37 @@ public class JUnitTest {
     <constraint name="param" minCount="0" maxCount="2147483647" within="" contains="" />
 </searchConfiguration>
 ```
+
+## Single Cucumber tag expression should start with an @ character.
+
+Based on the official documentation of the [Cucumber Tag Expressions](https://cucumber.io/docs/cucumber/api/#tag-expressions) when only a single tag is defined
+in the tag attribute of the `@CucumberOptions` annotation
+
+
+This inspection would signal a code snippet like the following, as incorrect:
+
+```java
+@CucumberOptions(tags = "sometag")
+```
+
+This inspection supports this annotation from the following packages:
+- `cucumber.api.CucumberOptions` (deprecated in Cucumber-JVM 4.5.0)
+- `io.cucumber.junit.CucumberOptions`
+- `io.cucumber.testng.CucumberOptions`
+
+**Script filter ($TAG_EXPRESSION$)**
+
+```groovy
+!TAG_EXPRESSION?.value?.contains(" ") && !TAG_EXPRESSION?.value?.startsWith("@") 
+```
+
+**Template:**
+
+```xml
+<searchConfiguration name="Single Cucumber tag expression should start with an @ character." text="@$CucumberOptions$(tags = &quot;$TAG_EXPRESSION$&quot;)&#10;class $Class$ {&#10;}" recursive="true" caseInsensitive="true" type="JAVA" pattern_context="default">
+        <constraint name="__context__" within="" contains="" />
+        <constraint name="TAG_EXPRESSION" script="&quot;!TAG_EXPRESSION?.value?.contains(&quot; &quot;) &amp;&amp; !TAG_EXPRESSION?.value?.startsWith(&quot;@&quot;) &quot;" target="true" within="" contains="" />
+        <constraint name="Class" within="" contains="" />
+        <constraint name="CucumberOptions" regexp="(cucumber\.api|io\.cucumber\.junit|io\.cucumber\.testng)\.CucumberOptions" within="" contains="" />
+      </searchConfiguration>
+```
