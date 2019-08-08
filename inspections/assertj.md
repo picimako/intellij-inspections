@@ -1,5 +1,9 @@
 # AssertJ
 
+For people who are looking for a more comprehensive set of AssertJ inspections I recommend checking out the following plugin:
+- [Concise AssertJ Optimizing Nitpicker ​(Cajon) - JetBrains plugin page](https://plugins.jetbrains.com/plugin/12195-concise-assertj-optimizing-nitpicker-cajon-)
+- [Cajon plugin GitHub project](https://github.com/chrisly42/cajon-plugin)
+
 ## AssertJ assertion or assumption is not used with static import
 
 In many cases static importing a static method makes the code less cluttered and more readable which some people might find true in case of AssertJ assertions as well.
