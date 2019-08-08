@@ -189,9 +189,9 @@ public class JUnitTest {
 
 ## Single Cucumber tag expression should start with an @ character.
 
-Based on the official documentation of the [Cucumber Tag Expressions](https://cucumber.io/docs/cucumber/api/#tag-expressions) when only a single tag is defined
-in the tag attribute of the `@CucumberOptions` annotation
-
+Based on the official documentation of the [Cucumber Tag Expressions](https://cucumber.io/docs/cucumber/api/#tag-expressions), tags in a tag expression
+must be defined with the `@` character, so when only a single tag is defined in the `tag` attribute of the `@CucumberOptions` annotation
+the value of that attribute must start with `@` otherwise Cucumber won't be able to filter by that expression.
 
 This inspection would signal a code snippet like the following, as incorrect:
 
@@ -200,9 +200,9 @@ This inspection would signal a code snippet like the following, as incorrect:
 ```
 
 This inspection supports this annotation from the following packages:
-- `cucumber.api.CucumberOptions` (deprecated in Cucumber-JVM 4.5.0)
-- `io.cucumber.junit.CucumberOptions`
-- `io.cucumber.testng.CucumberOptions`
+- `cucumber.api` (deprecated in Cucumber-JVM 4.5.0)
+- `io.cucumber.junit`
+- `io.cucumber.testng`
 
 **Script filter ($TAG_EXPRESSION$)**
 
@@ -214,9 +214,9 @@ This inspection supports this annotation from the following packages:
 
 ```xml
 <searchConfiguration name="Single Cucumber tag expression should start with an @ character." text="@$CucumberOptions$(tags = &quot;$TAG_EXPRESSION$&quot;)&#10;class $Class$ {&#10;}" recursive="true" caseInsensitive="true" type="JAVA" pattern_context="default">
-        <constraint name="__context__" within="" contains="" />
-        <constraint name="TAG_EXPRESSION" script="&quot;!TAG_EXPRESSION?.value?.contains(&quot; &quot;) &amp;&amp; !TAG_EXPRESSION?.value?.startsWith(&quot;@&quot;) &quot;" target="true" within="" contains="" />
-        <constraint name="Class" within="" contains="" />
-        <constraint name="CucumberOptions" regexp="(cucumber\.api|io\.cucumber\.junit|io\.cucumber\.testng)\.CucumberOptions" within="" contains="" />
-      </searchConfiguration>
+    <constraint name="__context__" within="" contains="" />
+    <constraint name="TAG_EXPRESSION" script="&quot;!TAG_EXPRESSION?.value?.contains(&quot; &quot;) &amp;&amp; !TAG_EXPRESSION?.value?.startsWith(&quot;@&quot;) &quot;" target="true" within="" contains="" />
+    <constraint name="Class" within="" contains="" />
+    <constraint name="CucumberOptions" regexp="(cucumber\.api|io\.cucumber\.junit|io\.cucumber\.testng)\.CucumberOptions" within="" contains="" />
+</searchConfiguration>
 ```
