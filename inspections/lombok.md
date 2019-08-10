@@ -1,5 +1,8 @@
 # Lombok
 
+If you would like to use more Lombok specific inspection, it is already built in in the Lombok IntelliJ plugin [JetBrains page](https://plugins.jetbrains.com/plugin/6317-lombok)/[GitHub project](https://github.com/mplushnikov/lombok-intellij-plugin)
+which is already an essential part of working with Lombok in IntelliJ.
+
 ## Request for addition to Lombok
 There is already a GitHub issue created for Lombok to have these inspections reviewed and added in some form: [Lombok IntelliJ plugin/594](https://github.com/mplushnikov/lombok-intellij-plugin/issues/594)
 
