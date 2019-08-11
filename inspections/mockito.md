@@ -24,11 +24,11 @@ Matchers.any()
 ```
 
 ## Mockito cannot mock/spy final classes
-It is mostly valid for versions before 2.1.0 but can be used from 2.1.0 upwards, if that feature is enabled. See related articles:
+It is mostly valid for versions before 2.1.0 but can be used from 2.1.0 upwards, if inline mocking is disabled. See related articles:
 - https://github.com/mockito/mockito/wiki/What's-new-in-Mockito-2#mock-the-unmockable-opt-in-mocking-of-final-classesmethods
 - https://www.baeldung.com/mockito-final-->
 
-This inspection supports only the annotation based mocking and spying, not the mock and spy methods called from Mockito.class.
+This inspection supports only the annotation based mocking and spying, not the mock and spy methods called from `org.mockito.Mockito`.
 
 **Template:**
 
@@ -63,25 +63,30 @@ It supports the `times`, `atLeast` and `atMost` verification modes.
 **Script filter ($value$):**
 
 ```groovy
-value.text.toInteger() < 0
+try {
+    value?.text?.toInteger() < 0
+} catch (NumberFormatException e) {
+    false
+}
 ```
 
 **Template:**
 
 ```xml
-<searchConfiguration name="Mockito.times/atLeast/atMost: Negative value is not allowed here." text="$Mockito$.verify($mockObject$, $Mockito$.$times$($value$)).$verifiedMethod$()" recursive="true" caseInsensitive="true" type="JAVA">
+<searchConfiguration name="Mockito.times/atLeast/atMost: Negative value is not allowed here." text="$Mockito$.verify($mockObject$, $Mockito$.$times$($value$)).$verifiedMethod$($arguments$)" recursive="true" caseInsensitive="true" type="JAVA" pattern_context="default">
     <constraint name="__context__" within="" contains="" />
     <constraint name="mockObject" within="" contains="" />
     <constraint name="Mockito" regexp="org\.mockito\.Mockito" minCount="0" within="" contains="" />
     <constraint name="verifiedMethod" within="" contains="" />
-    <constraint name="times" regexp="times|atLeast|atMost" target="true" within="" contains="" />
-    <constraint name="value" script="&quot;value.text.toInteger() &lt; 0&quot;" within="" contains="" />
+    <constraint name="times" regexp="times|atLeast|atMost" within="" contains="" />
+    <constraint name="value" script="&quot;try {&#10;    value?.text?.toInteger() &lt; 0&#10;} catch (NumberFormatException e) {&#10;    false&#10;}&quot;" target="true" within="" contains="" />
+    <constraint name="arguments" minCount="0" maxCount="2147483647" within="" contains="" />
 </searchConfiguration>
 ```
 
 ## InOrder calls: Negative and zero values are not allowed here.
 
-This is based on one of the exception handlings happening in [`org.mockito.internal.verification.Calls`](https://github.com/mockito/mockito/blob/4f72147c464c1a8a642d01fc3334e98e92b464cd/src/main/java/org/mockito/internal/verification/Calls.java)
+This is based on one of the exception handling happening in [`org.mockito.internal.verification.Calls`](https://github.com/mockito/mockito/blob/4f72147c464c1a8a642d01fc3334e98e92b464cd/src/main/java/org/mockito/internal/verification/Calls.java)
 
 This inspection would signal a code snippet like the following, as incorrect:
 
@@ -97,9 +102,8 @@ But there is a specific inspection for that. See **Mockito.calls() is only inten
 
 ```groovy
 try { 
-    value.text.toInteger() < 0
-//Necessary to handle due to other Mockito method argument types like Mockito.mock(Runnable.class)
-} catch (java.lang.NumberFormatException nfe) {
+    value?.text?.toInteger() < 0
+} catch (NumberFormatException e) {
     false
 }
 ```
@@ -107,20 +111,21 @@ try {
 **Template:**
 
 ```xml
-<searchConfiguration name="InOrder calls: Negative and zero values are not allowed here." text="$InOrder$.verify($mockObject$, $Mockito$.$calls$($value$)).$verifiedMethod$()" recursive="true" caseInsensitive="true" type="JAVA">
+<searchConfiguration name="InOrder calls: Negative and zero values are not allowed here." text="$InOrder$.verify($mockObject$, $Mockito$.$calls$($value$)).$verifiedMethod$($arguments$)" recursive="true" caseInsensitive="true" type="JAVA" pattern_context="default">
     <constraint name="__context__" within="" contains="" />
     <constraint name="mockObject" within="" contains="" />
     <constraint name="Mockito" regexp="org\.mockito\.Mockito" minCount="0" within="" contains="" />
     <constraint name="verifiedMethod" within="" contains="" />
-    <constraint name="value" script="&quot;try { &#10;    value.text.toInteger() &lt; 0&#10;//Necessary to handle due to other Mockito method argument types like Mockito.mock(Runnable.class)&#10;} catch (java.lang.NumberFormatException nfe) {&#10;    false&#10;}&quot;" within="" contains="" />
-    <constraint name="calls" regexp="calls" target="true" within="" contains="" />
+    <constraint name="value" script="&quot;try { &#10;    value?.text?.toInteger() &lt; 0&#10;} catch (NumberFormatException e) {&#10;    false&#10;}&quot;" target="true" within="" contains="" />
+    <constraint name="calls" regexp="calls" within="" contains="" />
     <constraint name="InOrder" nameOfExprType="org\.mockito\.InOrder" expressionTypes="org.mockito.InOrder" within="" contains="" />
+    <constraint name="arguments" minCount="0" maxCount="2147483647" within="" contains="" />
 </searchConfiguration>
 ```
 
 ## Mockito.calls() is only intended to work with InOrder
 
-This is based on one of the exception handlings happening in [`org.mockito.internal.verification.Calls`](https://github.com/mockito/mockito/blob/4f72147c464c1a8a642d01fc3334e98e92b464cd/src/main/java/org/mockito/internal/verification/Calls.java)
+This is based on one of the exception handling happening in [`org.mockito.internal.verification.Calls`](https://github.com/mockito/mockito/blob/4f72147c464c1a8a642d01fc3334e98e92b464cd/src/main/java/org/mockito/internal/verification/Calls.java)
 
 This inspection would signal a code snippet like the following, as incorrect:
 
@@ -131,13 +136,14 @@ Mockito.verify(mockObject, calls(5)).doSomething()
 **Template:**
 
 ```xml
-<searchConfiguration name="Mockito.calls is only intended to work with InOrder" text="$Mockito$.verify($mockObject$, $Mockito$.$calls$($value$)).$verifiedMethod$()" recursive="true" caseInsensitive="true" type="JAVA">
+<searchConfiguration name="Mockito.calls is only intended to work with InOrder" text="$Mockito$.verify($mockObject$, $Mockito$.$calls$($value$)).$verifiedMethod$($arguments$)" recursive="true" caseInsensitive="true" type="JAVA" pattern_context="default">
     <constraint name="__context__" within="" contains="" />
     <constraint name="mockObject" within="" contains="" />
     <constraint name="Mockito" regexp="org\.mockito\.Mockito" minCount="0" within="" contains="" />
     <constraint name="verifiedMethod" within="" contains="" />
     <constraint name="value" within="" contains="" />
     <constraint name="calls" regexp="calls" target="true" within="" contains="" />
+    <constraint name="arguments" minCount="0" maxCount="2147483647" within="" contains="" />
 </searchConfiguration>
 ```
 
@@ -147,7 +153,7 @@ This is a collection of Replace templates that are most useful when all of them 
 
 These are based on the exception handling happening in [`org.mockito.internal.configuration.CaptorAnnotationProcessor`](https://github.com/mockito/mockito/blob/4f72147c464c1a8a642d01fc3334e98e92b464cd/src/main/java/org/mockito/internal/configuration/CaptorAnnotationProcessor.java)
 
-##### Matching types other than primitive types and ArgumentCaptor
+### Matching types other than primitive types and ArgumentCaptor
 
 This inspection would signal a code snippet like the following, as incorrect:
 
@@ -167,6 +173,9 @@ When the quick fix is applied the field would look like:
 private ArgumentCaptor<String> captor;
 ```
 
+This inspection doesn't support ArgumentCaptor without a generic type, and the Java primitives because at least the latter ones need a bit more complex logic to map them to their
+boxed type. For the latter one please check out the inspections in the next section.
+
 **Template:**
 
 ```xml
@@ -180,7 +189,7 @@ private ArgumentCaptor<String> captor;
 </replaceConfiguration>
 ```
 
-##### Individual templates for each primitive types
+### Individual templates for each primitive types
 
 To be able to replace the primitive types with their non-primitive variants, each needs its own separate replace template to
 be able to apply a proper quick fix.
@@ -366,7 +375,7 @@ ongoingStubbing.thenReturn("some text").thenThrow(new RuntimeException());
 The template is prepared to handle additional expressions between the two `then...` calls on the OngoingStubbing object, so they won't interfere with inspecting the code,
 and (hopefully) won't result in a false-negative.
 
-The generic type `OngoingStubbing` is not restricted so it is flexible.
+The generic type of `OngoingStubbing` has no restrictions.
 
 The template always highlights the second `then...` method call, which in the case of the example above is the `thenThrow` method name.
 
@@ -390,7 +399,7 @@ The template always highlights the second `then...` method call, which in the ca
 
 These are based on the exception handling happening in [`org.mockito.internal.exceptions.Reporter#unfinishedVerificationException(Location)`](https://github.com/mockito/mockito/blob/53e8a93141e1f8c41d6b6d4fd72c20488826269a/src/main/java/org/mockito/internal/exceptions/Reporter.java)
 
-The first inspection would signal code snippets like the following, as incorrect, when there is a missing method call for verify(mock):
+The first inspection would signal code snippets like the following, as incorrect, when there is a missing method call for `verify(mock)`:
 
 ```java
 verify(mockObject);
@@ -486,17 +495,12 @@ arguments.each { it ->
 	//If the argument is a method call
     if (it instanceof com.intellij.psi.PsiMethodCallExpression) {
     	//A method call from ArgumentMatchers
-    	try {
-            if (it.resolveMethod().getContainingClass().getQualifiedName() == "org.mockito.ArgumentMatchers") {
-                hasMatcher = true
-            //A method call from a non-ArgumentMatchers class
-            } else {
-                hasOnlyMatchers = false
-            }
-        //NullPointerException may happen on 'it' when an argument implementation is not complete
-    	} catch (NullPointerException npe) {
-    	    false
-    	}
+        if (it?.resolveMethod()?.getContainingClass()?.getQualifiedName() == "org.mockito.ArgumentMatchers") {
+            hasMatcher = true
+        //A method call from a non-ArgumentMatchers class
+        } else {
+            hasOnlyMatchers = false
+        }
     //Not a method call, but an other type of expression
     } else {
     	hasOnlyMatchers = false
@@ -510,8 +514,8 @@ arguments.each { it ->
 **Template:**
 
 ```xml
-<searchConfiguration name="Some arguments don't use argument matchers. Either none or all of them should use them." text="org.mockito.Mockito.when($mockObject$.$mockMethod$($arguments$))" recursive="true" caseInsensitive="true" type="JAVA">
-    <constraint name="__context__" script="&quot;boolean hasOnlyMatchers = true&#10;boolean hasMatcher = false&#10;arguments.each { it -&gt;&#10;&#9;//If the argument is a method call&#10;    if (it instanceof com.intellij.psi.PsiMethodCallExpression) {&#10;    &#9;//A method call from ArgumentMatchers&#10;    &#9;try {&#10;            if (it.resolveMethod().getContainingClass().getQualifiedName() == &quot;org.mockito.ArgumentMatchers&quot;) {&#10;                hasMatcher = true&#10;            //A method call from a non-ArgumentMatchers class&#10;            } else {&#10;                hasOnlyMatchers = false&#10;            }&#10;        //NullPointerException may happen on 'it' when an argument implementation is not complete&#10;    &#9;} catch (NullPointerException npe) {&#10;    &#9;    false&#10;    &#9;}&#10;    //Not a method call, but an other type of expression&#10;    } else {&#10;    &#9;hasOnlyMatchers = false&#10;    }&#10;}&#10;&#10;//If there is not only matchers, or not only non-matchers, then it will signal a problem.&#10;!((hasMatcher &amp;&amp; hasOnlyMatchers) || (!hasMatcher &amp;&amp; !hasOnlyMatchers))&quot;" within="" contains="" />
+<searchConfiguration name="Some arguments don't use argument matchers. Either none or all of them should use them." text="org.mockito.Mockito.when($mockObject$.$mockMethod$($arguments$))" recursive="true" caseInsensitive="true" type="JAVA" pattern_context="default">
+    <constraint name="__context__" script="&quot;boolean hasOnlyMatchers = true&#10;boolean hasMatcher = false&#10;arguments.each { it -&gt;&#10;&#9;//If the argument is a method call&#10;    if (it instanceof com.intellij.psi.PsiMethodCallExpression) {&#10;    &#9;//A method call from ArgumentMatchers&#10;        if (it?.resolveMethod()?.getContainingClass()?.getQualifiedName() == &quot;org.mockito.ArgumentMatchers&quot;) {&#10;            hasMatcher = true&#10;        //A method call from a non-ArgumentMatchers class&#10;        } else {&#10;            hasOnlyMatchers = false&#10;        }&#10;    //Not a method call, but an other type of expression&#10;    } else {&#10;    &#9;hasOnlyMatchers = false&#10;    }&#10;}&#10;&#10;//If there is not only matchers, or not only non-matchers, then it will signal a problem.&#10;!((hasMatcher &amp;&amp; hasOnlyMatchers) || (!hasMatcher &amp;&amp; !hasOnlyMatchers))&quot;" within="" contains="" />
     <constraint name="arguments" minCount="2" maxCount="2147483647" target="true" within="" contains="" />
     <constraint name="mockObject" within="" contains="" />
     <constraint name="mockMethod" within="" contains="" />
@@ -539,7 +543,7 @@ arguments.each { it ->
     //If the argument is a method call
     if (it instanceof com.intellij.psi.PsiMethodCallExpression) {
         //A method call from ArgumentMatchers
-        if (it.resolveMethod().getContainingClass().getQualifiedName() == "org.mockito.ArgumentMatchers") {
+        if (it?.resolveMethod()?.getContainingClass()?.getQualifiedName() == "org.mockito.ArgumentMatchers") {
             hasMatcher = true
         //A method call from a non-ArgumentMatchers class
         } else {
@@ -558,11 +562,11 @@ arguments.each { it ->
 **Template:**
 
 ```xml
-<searchConfiguration name="Some AdditionalMatchers arguments don't use argument matchers. Either none or all of them should use a matcher." text="org.mockito.AdditionalMatchers.$additionalMatcher$($arguments$)" recursive="true" caseInsensitive="true" type="JAVA">
-    <constraint name="__context__" script="&quot;boolean hasOnlyMatchers = true&#10;boolean hasMatcher = false&#10;arguments.each { it -&gt;&#10;    //If the argument is a method call&#10;    if (it instanceof com.intellij.psi.PsiMethodCallExpression) {&#10;        //A method call from ArgumentMatchers&#10;        if (it.resolveMethod().getContainingClass().getQualifiedName() == &quot;org.mockito.ArgumentMatchers&quot;) {&#10;            hasMatcher = true&#10;        //A method call from a non-ArgumentMatchers class&#10;        } else {&#10;            hasOnlyMatchers = false&#10;        }&#10;    //Not a method call, but an other type of expression&#10;    } else {&#10;        hasOnlyMatchers = false&#10;    }&#10;}&#10;&#10;//If there is not only matchers, or not only non-matchers, then it will signal a problem.&#10;!((hasMatcher &amp;&amp; hasOnlyMatchers) || (!hasMatcher &amp;&amp; !hasOnlyMatchers))&quot;" within="" contains="" />
+<searchConfiguration name="Some AdditionalMatchers arguments don't use argument matchers. Either none or all of them should use a matcher." text="org.mockito.AdditionalMatchers.$additionalMatcher$($arguments$)" recursive="true" caseInsensitive="true" type="JAVA" pattern_context="default">
+    <constraint name="__context__" script="&quot;boolean hasOnlyMatchers = true&#10;boolean hasMatcher = false&#10;arguments.each { it -&gt;&#10;    //If the argument is a method call&#10;    if (it instanceof com.intellij.psi.PsiMethodCallExpression) {&#10;        //A method call from ArgumentMatchers&#10;        if (it?.resolveMethod()?.getContainingClass()?.getQualifiedName() == &quot;org.mockito.ArgumentMatchers&quot;) {&#10;            hasMatcher = true&#10;        //A method call from a non-ArgumentMatchers class&#10;        } else {&#10;            hasOnlyMatchers = false&#10;        }&#10;    //Not a method call, but an other type of expression&#10;    } else {&#10;        hasOnlyMatchers = false&#10;    }&#10;}&#10;&#10;//If there is not only matchers, or not only non-matchers, then it will signal a problem.&#10;!((hasMatcher &amp;&amp; hasOnlyMatchers) || (!hasMatcher &amp;&amp; !hasOnlyMatchers))&quot;" within="" contains="" />
     <constraint name="additionalMatcher" within="" contains="" />
     <constraint name="arguments" minCount="2" maxCount="2147483647" target="true" within="" contains="" />
-</seairchConfiguration>
+</searchConfiguration>
 ```
 
 ## Only void methods can doNothing().
@@ -744,7 +748,7 @@ abstractMethod.resolveMethod().getModifierList().hasExplicitModifier("abstract")
 
 This is based on the exception handling happening in [`org.mockito.internal.exceptions.Reporter#moreThanOneAnnotationNotAllowed(String)`](https://github.com/mockito/mockito/blob/53e8a93141e1f8c41d6b6d4fd72c20488826269a/src/main/java/org/mockito/internal/exceptions/Reporter.java)
 
-This inspection seems to only the following signal code snippets, as incorrect, combining the `@Mock` and `@Captor` annotations:
+This inspection signals only the following code snippet, as incorrect, combining the `@Mock` and `@Captor` annotations:
 
 ```java
 @Mock
@@ -834,9 +838,9 @@ The example is from the [originally reported Mockito issue](https://github.com/m
 
 ```groovy
 try { 
-    duration.text.toInteger() < 0
+    duration?.text?.toInteger() < 0
 //Necessary to handle due to other Mockito method argument types like Mockito.mock(Runnable.class)
-} catch (java.lang.NumberFormatException nfe) {
+} catch (NumberFormatException nfe) {
     false
 }
 ```
@@ -844,10 +848,10 @@ try {
 **Template:**
 
 ```xml
-<searchConfiguration name="Negative value of duration is not allowed as argument of timer methods (after(), timeout())" text="org.mockito.Mockito.$afterOrTimeout$($duration$)" recursive="true" caseInsensitive="true" type="JAVA">
+<searchConfiguration name="Negative value of duration is not allowed as argument of timer methods (after(), timeout())" text="org.mockito.Mockito.$afterOrTimeout$($duration$)" recursive="true" caseInsensitive="true" type="JAVA" pattern_context="default">
     <constraint name="__context__" within="" contains="" />
     <constraint name="afterOrTimeout" regexp="after|timeout" within="" contains="" />
-    <constraint name="duration" script="&quot;try { &#10;    duration.text.toInteger() &lt; 0&#10;//Necessary to handle due to other Mockito method argument types like Mockito.mock(Runnable.class)&#10;} catch (java.lang.NumberFormatException nfe) {&#10;    false&#10;}&quot;" target="true" within="" contains="" />
+    <constraint name="duration" script="&quot;try { &#10;    duration?.text?.toInteger() &lt; 0&#10;//Necessary to handle due to other Mockito method argument types like Mockito.mock(Runnable.class)&#10;} catch (NumberFormatException nfe) {&#10;    false&#10;}&quot;" target="true" within="" contains="" />
 </searchConfiguration>
 ```
 
@@ -931,8 +935,8 @@ So far the only examples I have found are `Mockito.only()` and `Mockito.atMost()
 
 ## times(1) call may be removed. Mockito.verify(mockObject) behaves the same.  
 
-This inspection is based on the fact the not calling `Mockito.verify(mockObject)` without calling `times()` works the same as `Mockito.verify(mockObject, times(1))`,
-this calling `times(1)` may be removed.
+This inspection is based on the fact that calling `Mockito.verify(mockObject)` without calling `times()` works the same as `Mockito.verify(mockObject, times(1))`,
+thus calling `times(1)` may be removed.
 
 This inspection would signal code snippets like the following, as incorrect:
 
@@ -944,9 +948,9 @@ Mockito.verify(mockObject, times(1))
 
 ```groovy
 try { 
-    value.text.toInteger() == 1
+    value?.text?.toInteger() == 1
 //Necessary to handle due to other Mockito method argument types like Mockito.mock(Runnable.class)
-} catch (java.lang.NumberFormatException nfe) {
+} catch (NumberFormatException nfe) {
     false
 }
 ```
@@ -954,11 +958,11 @@ try {
 **Template:**
 
 ```xml
-<searchConfiguration name="times(1) call may be removed. Mockito.verify(mockObject) behaves the same." text="org.mockito.Mockito.verify($mockObject$, org.mockito.Mockito.$times$($value$)).$validatedMethod$();" recursive="true" caseInsensitive="true" type="JAVA">
+<searchConfiguration name="times(1) call may be removed. Mockito.verify(mockObject) behaves the same." text="org.mockito.Mockito.verify($mockObject$, org.mockito.Mockito.$times$($value$)).$validatedMethod$();" recursive="true" caseInsensitive="true" type="JAVA" pattern_context="default">
     <constraint name="__context__" within="" contains="" />
     <constraint name="mockObject" within="" contains="" />
-    <constraint name="value" script="&quot;try { &#10;    value.text.toInteger() == 1&#10;//Necessary to handle due to other Mockito method argument types like Mockito.mock(Runnable.class)&#10;} catch (java.lang.NumberFormatException nfe) {&#10;    false&#10;}&quot;" within="" contains="" />
+    <constraint name="value" script="&quot;try { &#10;    value?.text?.toInteger() == 1&#10;//Necessary to handle due to other Mockito method argument types like Mockito.mock(Runnable.class)&#10;} catch (NumberFormatException nfe) {&#10;    false&#10;}&quot;" target="true" within="" contains="" />
     <constraint name="validatedMethod" within="" contains="" />
-    <constraint name="times" regexp="times" target="true" within="" contains="" />
+    <constraint name="times" regexp="times" within="" contains="" />
 </searchConfiguration>
 ```
