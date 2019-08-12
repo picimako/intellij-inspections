@@ -24,11 +24,18 @@ Matchers.any()
 ```
 
 ## Mockito cannot mock/spy final classes
+
 It is mostly valid for versions before 2.1.0 but can be used from 2.1.0 upwards, if inline mocking is disabled. See related articles:
 - https://github.com/mockito/mockito/wiki/What's-new-in-Mockito-2#mock-the-unmockable-opt-in-mocking-of-final-classesmethods
 - https://www.baeldung.com/mockito-final-->
 
 This inspection supports only the annotation based mocking and spying, not the mock and spy methods called from `org.mockito.Mockito`.
+
+**Script filter ($Field$)**
+
+```groovy
+Field.getType().resolve().hasModifierProperty("final")
+```
 
 **Template:**
 
@@ -300,6 +307,34 @@ NOTE: primitive type arrays are not handled by these inspections.
     <constraint name="Init" minCount="0" within="" contains="" />
     <constraint name="CaptorAnnotation" regexp="org\.mockito\.Captor" within="" contains="" />
 </replaceConfiguration>
+```
+
+## ArgumentCaptor field should define a generic type
+
+Though it is not incorrect if a `@Captor` annotated `ArgumentCaptor` type field doesn't have an explicitly defined generic type, some projects might want to enforce
+defining it in every use case.
+
+This inspection would signal a code snippet like the following, as incorrect:
+
+```java
+@Captor
+ArgumentCaptor captor;
+```
+
+It won't signal the problem in any case when the generic type is defined, be it a specific type (e.g. String), wildcard (?) or a class level generic type (e.g. T).
+
+**Template:**
+
+```xml
+<searchConfiguration name="@Captor field should have a generic type." text="class $Class$ {&#10;    @$CaptorAnnotation$()&#10;    @Modifier(&quot;Instance&quot;) $FieldType$&lt;$CapturedType$&gt; $Field$ = $Init$;&#10;}" recursive="true" caseInsensitive="true" type="JAVA" pattern_context="default">
+    <constraint name="__context__" within="" contains="" />
+    <constraint name="Class" within="" contains="" />
+    <constraint name="FieldType" regexp="org\.mockito\.ArgumentCaptor" target="true" within="" contains="" />
+    <constraint name="Field" withinHierarchy="true" maxCount="2147483647" within="" contains="" />
+    <constraint name="Init" minCount="0" within="" contains="" />
+    <constraint name="CaptorAnnotation" regexp="org\.mockito\.Captor" within="" contains="" />
+    <constraint name="CapturedType" minCount="0" maxCount="0" within="" contains="" />
+</searchConfiguration>
 ```
 
 ## MockitoAnnotations.initMocks() argument cannot be null
