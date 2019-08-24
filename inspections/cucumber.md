@@ -220,3 +220,55 @@ This inspection supports this annotation from the following packages:
     <constraint name="CucumberOptions" regexp="(cucumber\.api|io\.cucumber\.junit|io\.cucumber\.testng)\.CucumberOptions" within="" contains="" />
 </searchConfiguration>
 ```
+
+## Step pattern contains incomplete parameter placeholder
+
+Cucumber has its own expression language and elements for step patterns which includes parameter type placeholders like `{string}`. There are built-in ones but custom ones may be
+implemented as well. See official documentation here: https://cucumber.io/docs/cucumber/cucumber-expressions/
+
+However if one makes a mistake and misses the starting or closing curly brace of these placeholders then Cucumber will fail to parse that step properly.
+
+This inspection would signal code snippets like the following, as incorrect:
+
+```java
+@When("I have {int apples")
+public void i_have_X_apples(int numberOfApples) {
+}
+```
+
+```java
+@When("I have int} apples")
+public void i_have_X_apples(int numberOfApples) {
+}
+```
+
+Regardless of the position and number of placeholders the inspection will mark the pattern incorrect if it finds at least one incorrect placeholder.
+
+This inspection supports all the built-in placeholders, except `{}`, and the `@Given`, `@When`, `@Then`, `@And` and `@But` annotations from the `cucumber.api.java.en` package.
+
+To alter/extend the support for other step annotations one has to change the regexp of the `StepAnnotation` template variable.
+
+To have your own custom placeholders supported add them to the `parameterTypes` variable in the script filter of the `stepPattern` template variable.
+
+**Script filter ($stepPattern$)**
+
+```groovy
+def parameterTypes = "(int|float|word|string|biginteger|bigdecimal|byte|short|long|double)"
+def incompleteStepPattern = "\\{" + parameterTypes + "(?!\\})|(?<!\\{)" + parameterTypes + "\\}"
+def matcher = stepPattern?.value =~ incompleteStepPattern
+matcher ? true : false
+```
+
+**Template:**
+
+```xml
+<searchConfiguration name="Step pattern contains incomplete parameter placeholder." text="@$StepAnnotation$(&quot;$stepPattern$&quot;)&#10;$MethodType$ $stepDefinitionMethod$($ParameterType$ $parameter$) {&#10;}" recursive="true" caseInsensitive="true" type="JAVA" pattern_context="member">
+    <constraint name="__context__" within="" contains="" />
+    <constraint name="stepPattern" script="&quot;def parameterTypes = &quot;(int|float|word|string|biginteger|bigdecimal|byte|short|long|double)&quot;&#10;def incompleteStepPattern = &quot;\\{&quot; + parameterTypes + &quot;(?!\\})|(?&lt;!\\{)&quot; + parameterTypes + &quot;\\}&quot;&#10;def matcher = stepPattern?.value =~ incompleteStepPattern&#10;matcher ? true : false&quot;" target="true" within="" contains="" />
+    <constraint name="MethodType" regexp="void" within="" contains="" />
+    <constraint name="stepDefinitionMethod" within="" contains="" />
+    <constraint name="ParameterType" within="" contains="" />
+    <constraint name="parameter" minCount="0" maxCount="2147483647" within="" contains="" />
+    <constraint name="StepAnnotation" regexp="cucumber\.api\.java\.en\.(Given|When|Then|And|But)" maxCount="2147483647" within="" contains="" />
+</searchConfiguration>
+```
