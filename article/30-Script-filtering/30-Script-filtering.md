@@ -75,6 +75,9 @@ Also, since these variables are handled as PSI nodes, certain values may be retr
     > Say you have a SSR variable that matches a method, for example a toString() method. Then the variable is in fact a PsiMethod node. ... So naturally variable.text will give you the entire text of the method.
     - For a PsiMethod, it returns the whole text of the method, and for an annotation attribute value, it returns that value as a String.
     - Since the text is returned as a String, type conversion might be necessary for further validation as e.g. an Integer.
+    
+- `Symbol.value`: It returns the value of a node.
+    - It is not applicable for all node types. It can be used e.g. when retrieving the value of a literal.
 
 - `Symbol.name`: returns the name of the node, if it has one.
     - It is not applicable (for all node types, at least) for nodes whose text is a literal value:
@@ -124,6 +127,8 @@ $someObject$.$methodCall$($arguments$);
 If you add the Script filter for the `$arguments$` template variable it will only handle/see the first actual argument. However if you add the filter to Complete Match
 it will see the whole list (so far I encountered ArrayList) of arguments on which one can easily iterate through.
 
+At least in this case it is basically stepping back a little and seeing/inspecting the template in its entirety.
+
 ## "Debugging" Script filters
 
 There are at least two ways one ca find out what is happening inside a Script filter.
@@ -136,6 +141,38 @@ The other way is to write expression values into a file to get a type or value o
 ```groovy
 new File("D:\\scriptfilter.txt").withWriter { out -> out.println someTemplateVariable.getType() }
 ```
+
+## Take into account problematic cases, i.e. exception handling
+
+So far I ran into two cases when exception handling is crucial, thus preventing IntelliJ from throwing exceptions and showing that to the users.
+
+The first one is `NullPointerException` for which Groovy provides the [Safe navigation operator](http://groovy-lang.org/operators.html#_safe_navigation_operator)
+so you can easily handle that.
+
+The other one is `NumberFormatException` that can occur e.g. when converting the value of a template variable into an Integer, Double, etc. If that value is not a valid string representation
+of a number, or even an entirely different kind of code snippet, this exception will be thrown.
+
+The easiest way to deal with it and prevent showing it to the users is to return false from the script after catching the exception, like this, for a variable called `value`:
+
+```groovy
+try {
+    value?.text?.toInteger() < 0
+} catch (NumberFormatException e) {
+    false
+}
+```
+
+## PSI Viewer
+
+There is a really handy tool in IntelliJ (turned off by default) with which one can inspect the PSI tree of files in a visual way.
+
+Here's the official documentation about the tool: https://www.jetbrains.com/help/idea/psi-viewer.html but to make it a bit easier I explain how to enabled it.
+
+Go to **Help > Edit Custom Properties...**, tell IntelliJ to create the file if it hasn't been, then add this line to the file: `idea.is.internal=true`, then restart the IDEA.
+
+From this moment on two additional items should be available in the **Tools menu**:
+- View PSI Structure...
+- View PSI Structure of Current File...
 
 ## Final words
 
