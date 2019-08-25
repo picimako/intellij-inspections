@@ -264,7 +264,55 @@ matcher ? true : false
 ```xml
 <searchConfiguration name="Step pattern contains incomplete parameter placeholder." text="@$StepAnnotation$(&quot;$stepPattern$&quot;)&#10;$MethodType$ $stepDefinitionMethod$($ParameterType$ $parameter$) {&#10;}" recursive="true" caseInsensitive="true" type="JAVA" pattern_context="member">
     <constraint name="__context__" within="" contains="" />
-    <constraint name="stepPattern" script="&quot;def parameterTypes = &quot;(int|float|word|string|biginteger|bigdecimal|byte|short|long|double)&quot;&#10;def incompleteStepPattern = &quot;\\{&quot; + parameterTypes + &quot;(?!\\})|(?&lt;!\\{)&quot; + parameterTypes + &quot;\\}&quot;&#10;def matcher = stepPattern?.value =~ incompleteStepPattern&#10;matcher ? true : false&quot;" target="true" within="" contains="" />
+    <constraint name="stepPattern" script="&quot;def parameterTypes = &quot;(int|float|word|string|biginteger|bigdecimal|byte|short|long|double)&quot;&#10;def incompleteStepPattern = &quot;\\{&quot; + parameterTypes + &quot;(?!\\}) | (?&lt;!\\{)&quot; + parameterTypes + &quot;\\}&quot;&#10;def matcher = stepPattern?.value =~ incompleteStepPattern&#10;matcher ? true : false&quot;" target="true" within="" contains="" />
+    <constraint name="MethodType" regexp="void" within="" contains="" />
+    <constraint name="stepDefinitionMethod" within="" contains="" />
+    <constraint name="ParameterType" within="" contains="" />
+    <constraint name="parameter" minCount="0" maxCount="2147483647" within="" contains="" />
+    <constraint name="StepAnnotation" regexp="cucumber\.api\.java\.en\.(Given|When|Then|And|But)" maxCount="2147483647" within="" contains="" />
+</searchConfiguration>
+```
+
+## Step pattern contains unregistered parameter type
+
+During writing step patterns one may make a mistake and have a typo in the name of the parameter type placeholders which Cucumber won't recognize, which one will only find out when the related test is executed.
+
+This inspection would signal a code snippet like the following, as incorrect, considering that there is no custom parameter type converter registered for `{quality}`:
+
+```java
+@When("I have {quality} apples")
+public void i_have_X_apples(Quality quality) {
+}
+```
+
+Regardless of the position and number of placeholders the inspection will mark the pattern incorrect if it finds at least one unregistered placeholder.
+
+This inspection supports all the built-in placeholders, including `{}`, and the `@Given`, `@When`, `@Then`, `@And` and `@But` annotations from the `cucumber.api.java.en` package.
+
+To alter/extend the support for other step annotations one has to change the regexp of the `StepAnnotation` template variable.
+
+To have your own custom placeholders supported add them to the `parameterTypes` list in the script filter of the `stepPattern` template variable.
+
+**Script filter ($stepPattern$)**
+
+```groovy
+def placeholderPattern = /\{(.*)\}/
+def parameterTypes = ['', 'int', 'float', 'word', 'string', 'biginteger', 'bigdecimal', 'byte', 'short', 'long', 'double']
+def matcher = stepPattern?.value =~ placeholderPattern
+if (matcher) {
+    def type = matcher.group(1)
+    !parameterTypes.contains(type)
+} else {
+   false
+}
+```
+
+**Template:**
+
+```xml
+<searchConfiguration name="Step pattern contains unregistered parameter type." text="@$StepAnnotation$(&quot;$stepPattern$&quot;)&#10;$MethodType$ $stepDefinitionMethod$($ParameterType$ $parameter$) {&#10;}" recursive="true" caseInsensitive="true" type="JAVA" pattern_context="member">
+    <constraint name="__context__" within="" contains="" />
+    <constraint name="stepPattern" script="&quot;def placeholderPattern = /\{(.*)\}/&#10;def parameterTypes = ['', 'int', 'float', 'word', 'string', 'biginteger', 'bigdecimal', 'byte', 'short', 'long', 'double']&#10;def matcher = stepPattern?.value =~ placeholderPattern&#10;if (matcher) {&#10;    def type = matcher.group(1)&#10;    !parameterTypes.contains(type)&#10;} else {&#10;   false&#10;}&quot;" target="true" within="" contains="" />
     <constraint name="MethodType" regexp="void" within="" contains="" />
     <constraint name="stepDefinitionMethod" within="" contains="" />
     <constraint name="ParameterType" within="" contains="" />
