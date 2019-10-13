@@ -193,3 +193,78 @@ This inspection has support for all standard HTML tags listed on the [W3C School
     <constraint name="locatorStrategy" regexp="cssSelector" target="true" within="" contains="" />
 </replaceConfiguration>
 ```
+
+## By element is used in String concatenation
+
+It can happen that you want to concatenate multiple CSS selector snippets because of parameterization or such.
+However one may make the mistake of concatenating a `By` object to a String which won't result in a valid CSS selector.
+This inspection is meant to mark this kind of issues.
+
+This inspection would signal a code snippet like the following, as incorrect:
+
+```java
+By gallery = By.cssSelector(".gallery");
+
+String selectorRight = "div.some-other-selector " + gallery;
+String selectorLeft = gallery + " div.some-other-selector";
+```
+
+**Template:**
+
+For when the `By` object is at the right-hand side of the concatenation:
+
+```xml
+<searchConfiguration name="By element is used in String concatenation. You probably wanted to concatenate the CSS selector string." text="$astring$ + $byElement$" recursive="true" caseInsensitive="true" type="JAVA" pattern_context="default">
+  <constraint name="__context__" within="" contains="" />
+  <constraint name="byElement" nameOfExprType="org\.openqa\.selenium\.By" expressionTypes="org.openqa.selenium.By" exprTypeWithinHierarchy="true" within="" contains="" />
+  <constraint name="astring" nameOfExprType="java\.lang\.String" expressionTypes="java.lang.String" within="" contains="" />
+</searchConfiguration>
+```
+
+For when the `By` object is at the left-hand side of the concatenation:
+
+```xml
+<searchConfiguration name="By element is used in String concatenation. You probably wanted to concatenate the CSS selector string." text="$byElement$ + $astring$" recursive="true" caseInsensitive="true" type="JAVA" pattern_context="default">
+  <constraint name="__context__" within="" contains="" />
+  <constraint name="byElement" nameOfExprType="org\.openqa\.selenium\.By" expressionTypes="org.openqa.selenium.By" exprTypeWithinHierarchy="true" within="" contains="" />
+  <constraint name="astring" nameOfExprType="java\.lang\.String" expressionTypes="java.lang.String" within="" contains="" />
+</searchConfiguration>
+```
+
+## WebElement is used in String concatenation
+
+It can happen that you want to concatenate multiple CSS selector snippets because of parameterization or such.
+However one may make the mistake of concatenating a `WebElement` object to a String which won't result in a valid CSS
+selector. This inspection is meant to mark this kind of issues.
+
+This inspection would signal a code snippet like the following, as incorrect:
+
+```java
+@FindBy(className = "gallery")
+WebElement gallery;
+
+String selectorRight = "div.some-other-selector " + gallery;
+String selectorLeft = gallery + " div.some-other-selector";
+```
+
+**Template:**
+
+For when the `WebElement` object is at the right-hand side of the concatenation:
+
+```xml
+<searchConfiguration name="WebElement is used in String concatenation. You probably wanted to concatenate the CSS selector string." text="$astring$ + $webElement$" recursive="true" caseInsensitive="true" type="JAVA" pattern_context="default">
+  <constraint name="__context__" within="" contains="" />
+  <constraint name="webElement" nameOfExprType="org\.openqa\.selenium\.WebElement" expressionTypes="org.openqa.selenium.WebElement" exprTypeWithinHierarchy="true" within="" contains="" />
+  <constraint name="astring" nameOfExprType="java\.lang\.String" expressionTypes="java.lang.String" within="" contains="" />
+</searchConfiguration>
+```
+
+For when the `WebElement` object is at the left-hand side of the concatenation:
+
+```xml
+<searchConfiguration name="WebElement is used in String concatenation. You probably wanted to concatenate the CSS selector string." text="$webElement$ + $astring$" recursive="true" caseInsensitive="true" type="JAVA" pattern_context="default">
+  <constraint name="__context__" within="" contains="" />
+  <constraint name="webElement" nameOfExprType="org\.openqa\.selenium\.WebElement" expressionTypes="org.openqa.selenium.WebElement" exprTypeWithinHierarchy="true" within="" contains="" />
+  <constraint name="astring" nameOfExprType="java\.lang\.String" expressionTypes="java.lang.String" within="" contains="" />
+</searchConfiguration>
+```
