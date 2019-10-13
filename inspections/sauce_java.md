@@ -65,3 +65,54 @@ isIncorrect
     <constraint name="Name" script="&quot;def placeholderPattern = /\{(.*)\}/&#10;def matcher = Name?.value =~ placeholderPattern&#10;def isIncorrect&#10;if (matcher) {&#10;    def name = matcher.group(1)&#10;    if (!name.equals(&quot;index&quot;)) {&#10;    &#9;try {&#10;    &#9;&#9;def nameAsInt = name.toInteger()&#10;    &#9;&#9;if (name.length() &gt; 1 &amp;&amp; name.startsWith(&quot;0&quot;)) {&#10;    &#9;&#9;&#9;isIncorrect = true&#10;    &#9;&#9;} else {&#10;    &#9;&#9;&#9;isIncorrect = name.toInteger() &lt; 0&#10;    &#9;&#9;}&#10;    &#9;} catch (NumberFormatException e) {&#10;    &#9;&#9;isIncorrect = true&#10;    &#9;}&#10;    } else {&#10;    &#9;isIncorrect = false&#10;    }&#10;} else {&#10;&#9;isIncorrect = true&#10;}&#10;isIncorrect&quot;" target="true" within="" contains="" />
 </searchConfiguration>
 ```
+
+## SauceREST: getFullJobs(20) call can be replaced with getFullJobs() call. The default value is 20.
+
+This inspection would signal a code snippet like the following, as incorrect:
+
+```java
+SauceREST rest = new SauceREST("someUserName", "somePassword");
+rest.getFullJobs(20);
+```
+
+And also provides a replacement option, so that the code snippet above can be replaced with the following:
+
+```java
+rest.getFullJobs();
+```
+
+**Template:**
+
+```xml
+<replaceConfiguration name="getFullJobs(20) call can be replaced with getFullJobs() call. The default value is 20." text="$rest$.getFullJobs(20)" recursive="false" caseInsensitive="true" type="JAVA" pattern_context="default" reformatAccordingToStyle="true" shortenFQN="true" replacement="$rest$.getFullJobs()">
+    <constraint name="__context__" within="" contains="" />
+    <constraint name="rest" nameOfExprType="com\.saucelabs\.saucerest\.SauceREST" expressionTypes="com.saucelabs.saucerest.SauceREST" exprTypeWithinHierarchy="true" within="" contains="" />
+</replaceConfiguration>
+```
+
+## SauceREST#uploadFile(): Last, overwrite parameter may be removed. The default value is true.
+
+This inspection would signal a code snippet like the following, as incorrect:
+
+```java
+SauceREST rest = new SauceREST("someUserName", "somePassword");
+File file;
+rest.uploadFile(file, "aString", true);
+```
+
+And also provides a replacement option, so that the code snippet above can be replaced with the following:
+
+```java
+rest.uploadFile(file, "aString");
+```
+
+**Template:**
+
+```xml
+<replaceConfiguration name="Last, overwrite parameter may be removed. The default value is true." text="$rest$.uploadFile($file$, $string$, true);" recursive="false" caseInsensitive="true" type="JAVA" pattern_context="default" reformatAccordingToStyle="true" shortenFQN="true" replacement="$rest$.uploadFile($file$, $string$);">
+    <constraint name="__context__" within="" contains="" />
+    <constraint name="rest" nameOfExprType="com\.saucelabs\.saucerest\.SauceREST" expressionTypes="com.saucelabs.saucerest.SauceREST" within="" contains="" />
+    <constraint name="file" nameOfExprType="java\.io\.File" expressionTypes="java.io.File" within="" contains="" />
+    <constraint name="string" within="" contains="" />
+</replaceConfiguration>
+```
