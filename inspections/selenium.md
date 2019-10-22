@@ -209,25 +209,29 @@ String selectorRight = "div.some-other-selector " + gallery;
 String selectorLeft = gallery + " div.some-other-selector";
 ```
 
+The template allows to have additional concatenations on either side.
+
 **Template:**
 
 For when the `By` object is at the right-hand side of the concatenation:
 
 ```xml
-<searchConfiguration name="By element is used in String concatenation. You probably wanted to concatenate the CSS selector string." text="$astring$ + $byElement$" recursive="true" caseInsensitive="true" type="JAVA" pattern_context="default">
+<searchConfiguration name="By element is used in String concatenation. You probably wanted to concatenate the CSS selector string." text="$other$ + $astring$ + $byElement$" recursive="true" caseInsensitive="true" type="JAVA" pattern_context="default">
   <constraint name="__context__" within="" contains="" />
   <constraint name="byElement" nameOfExprType="org\.openqa\.selenium\.By" expressionTypes="org.openqa.selenium.By" exprTypeWithinHierarchy="true" within="" contains="" />
   <constraint name="astring" nameOfExprType="java\.lang\.String" expressionTypes="java.lang.String" within="" contains="" />
+  <constraint name="other" minCount="0" maxCount="2147483647" within="" contains="" />
 </searchConfiguration>
 ```
 
 For when the `By` object is at the left-hand side of the concatenation:
 
 ```xml
-<searchConfiguration name="By element is used in String concatenation. You probably wanted to concatenate the CSS selector string." text="$byElement$ + $astring$" recursive="true" caseInsensitive="true" type="JAVA" pattern_context="default">
+<searchConfiguration name="By element is used in String concatenation. You probably wanted to concatenate the CSS selector string." text="$byElement$ + $astring$+ $other$" recursive="true" caseInsensitive="true" type="JAVA" pattern_context="default">
   <constraint name="__context__" within="" contains="" />
   <constraint name="byElement" nameOfExprType="org\.openqa\.selenium\.By" expressionTypes="org.openqa.selenium.By" exprTypeWithinHierarchy="true" within="" contains="" />
   <constraint name="astring" nameOfExprType="java\.lang\.String" expressionTypes="java.lang.String" within="" contains="" />
+  <constraint name="other" minCount="0" maxCount="2147483647" within="" contains="" />
 </searchConfiguration>
 ```
 
@@ -247,24 +251,28 @@ String selectorRight = "div.some-other-selector " + gallery;
 String selectorLeft = gallery + " div.some-other-selector";
 ```
 
+The template allows to have additional concatenations on either side.
+
 **Template:**
 
 For when the `WebElement` object is at the right-hand side of the concatenation:
 
 ```xml
-<searchConfiguration name="WebElement is used in String concatenation. You probably wanted to concatenate the CSS selector string." text="$astring$ + $webElement$" recursive="true" caseInsensitive="true" type="JAVA" pattern_context="default">
+<searchConfiguration name="WebElement is used in String concatenation. You probably wanted to concatenate the CSS selector string." text="$other$ + $astring$ + $webElement$" recursive="true" caseInsensitive="true" type="JAVA" pattern_context="default">
   <constraint name="__context__" within="" contains="" />
-  <constraint name="webElement" nameOfExprType="org\.openqa\.selenium\.WebElement" expressionTypes="org.openqa.selenium.WebElement" exprTypeWithinHierarchy="true" within="" contains="" />
   <constraint name="astring" nameOfExprType="java\.lang\.String" expressionTypes="java.lang.String" within="" contains="" />
+  <constraint name="webElement" nameOfExprType="org\.openqa\.selenium\.WebElement" expressionTypes="org.openqa.selenium.WebElement" exprTypeWithinHierarchy="true" within="" contains="" />
+  <constraint name="other" minCount="0" maxCount="2147483647" within="" contains="" />
 </searchConfiguration>
 ```
 
 For when the `WebElement` object is at the left-hand side of the concatenation:
 
 ```xml
-<searchConfiguration name="WebElement is used in String concatenation. You probably wanted to concatenate the CSS selector string." text="$webElement$ + $astring$" recursive="true" caseInsensitive="true" type="JAVA" pattern_context="default">
+<searchConfiguration name="WebElement is used in String concatenation. You probably wanted to concatenate the CSS selector string." text="$webElement$ + $astring$ + $other$" recursive="true" caseInsensitive="true" type="JAVA" pattern_context="default">
   <constraint name="__context__" within="" contains="" />
-  <constraint name="webElement" nameOfExprType="org\.openqa\.selenium\.WebElement" expressionTypes="org.openqa.selenium.WebElement" exprTypeWithinHierarchy="true" within="" contains="" />
   <constraint name="astring" nameOfExprType="java\.lang\.String" expressionTypes="java.lang.String" within="" contains="" />
+  <constraint name="webElement" nameOfExprType="org\.openqa\.selenium\.WebElement" expressionTypes="org.openqa.selenium.WebElement" exprTypeWithinHierarchy="true" within="" contains="" />
+  <constraint name="other" minCount="0" maxCount="2147483647" within="" contains="" />
 </searchConfiguration>
 ```
