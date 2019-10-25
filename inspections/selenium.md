@@ -276,3 +276,33 @@ For when the `WebElement` object is at the left-hand side of the concatenation:
   <constraint name="other" minCount="0" maxCount="2147483647" within="" contains="" />
 </searchConfiguration>
 ```
+
+## The Actions#keyDown and Actions#keyUp methods accept only modifier keys
+
+Based on their javadoc they both accept only modifier keys such as `Keys.SHIFT`, `Keys.ALT` and `Keys.CONTROL`, thus
+this inspection will signal a code snippet like the following, as incorrect:
+
+```java
+Actions actions = new Actions(driver).keyDown(Keys.CANCEL);
+```
+
+This template has support for both signatures of `keyDown` and `keyUp` as well.
+
+**Script filter ($modifierKey$)**
+
+```groovy
+"org.openqa.selenium.Keys".equals(modifierKey?.getType()?.getCanonicalText())
+    && !modifierKey?.getQualifiedName().matches("(Keys.)?(SHIFT|ALT|CONTROL)")
+```
+
+**Template:**
+
+```xml
+<searchConfiguration name="Invalid key provided. The keyDown and keyUp methods accept only modifier keys: SHIFT, ALT, CONTROL" text="$actions$.$keyDownUp$($WebElement$, $modifierKey$)" recursive="true" caseInsensitive="true" type="JAVA" pattern_context="default">
+    <constraint name="__context__" within="" contains="" />
+    <constraint name="actions" nameOfExprType="org\.openqa\.selenium\.interactions\.Actions" expressionTypes="org.openqa.selenium.interactions.Actions" within="" contains="" />
+    <constraint name="modifierKey" script="&quot;&quot;org.openqa.selenium.Keys&quot;.equals(modifierKey?.getType()?.getCanonicalText()) &amp;&amp; !modifierKey?.getQualifiedName().matches(&quot;(Keys.)?(SHIFT|ALT|CONTROL)&quot;)&quot;" target="true" within="" contains="" />
+    <constraint name="keyDownUp" regexp="keyDown|keyUp" within="" contains="" />
+    <constraint name="WebElement" minCount="0" within="" contains="" />
+</searchConfiguration>
+```
