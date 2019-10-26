@@ -306,3 +306,177 @@ This template has support for both signatures of `keyDown` and `keyUp` as well.
     <constraint name="WebElement" minCount="0" within="" contains="" />
 </searchConfiguration>
 ```
+
+## Consecutive Actions#moveToElement(WebElement) and Actions#click() calls can be simplified to Actions#click(WebElement).
+
+According to the javadoc of `Actions#click(WebElement)` it is
+> Equivalent to: Actions.moveToElement(onElement).click()
+
+thus this inspection will signal a code snippet like the following, as incorrect:
+
+```java
+WebDriver driver = new FirefoxDriver();
+WebElement element;
+
+Actions actions = new Actions(driver).moveToElement(element).click();
+```
+
+and also provides quick fix to replace the mentioned calls to `click(element)`.
+
+If the chained methods have other methods than `moveToElement` and `click` they might be highlighted as well by IntelliJ due to
+the type match with `Actions`, but the quick fix works properly regardless of that. 
+
+**Template:**
+
+```xml
+<replaceConfiguration name="Consecutive moveToElement(element) and click() calls can be simplified to click(element)." text="$actions$.moveToElement($element$).click()" recursive="false" caseInsensitive="true" type="JAVA" pattern_context="default" reformatAccordingToStyle="true" shortenFQN="true" replacement="$actions$.click($element$)">
+    <constraint name="__context__" within="" contains="" />
+    <constraint name="element" nameOfExprType="org\.openqa\.selenium\.WebElement" expressionTypes="org.openqa.selenium.WebElement" within="" contains="" />
+    <constraint name="actions" nameOfExprType="org\.openqa\.selenium\.interactions\.Actions" expressionTypes="org.openqa.selenium.interactions.Actions" within="" contains="" />
+</replaceConfiguration>
+```
+
+## Consecutive Actions#moveToElement(WebElement) and Actions#clickAndHold() calls can be simplified to Actions#clickAndHold(WebElement).
+
+According to the javadoc of `Actions#clickAndHold(WebElement)`
+> This is equivalent to: Actions.moveToElement(onElement).clickAndHold()
+
+thus this inspection will signal a code snippet like the following, as incorrect:
+
+```java
+WebDriver driver = new FirefoxDriver();
+WebElement element;
+
+Actions actions = new Actions(driver).moveToElement(element).clickAndHold();
+```
+
+and also provides quick fix to replace the mentioned calls to `clickAndHold(element)`.
+
+If the chained methods have other methods than `moveToElement` and `clickAndHold` they might be highlighted as well by IntelliJ due to
+the type match with `Actions`, but the quick fix works properly regardless of that. 
+
+**Template:**
+
+```xml
+<replaceConfiguration name="Consecutive moveToElement(element) and clickAndHold() calls can be simplified to clickAndHold(element)." text="$actions$.moveToElement($element$).clickAndHold()" recursive="false" caseInsensitive="true" type="JAVA" pattern_context="default" reformatAccordingToStyle="true" shortenFQN="true" replacement="$actions$.clickAndHold($element$)">
+    <constraint name="__context__" within="" contains="" />
+    <constraint name="element" nameOfExprType="org\.openqa\.selenium\.WebElement" expressionTypes="org.openqa.selenium.WebElement" within="" contains="" />
+    <constraint name="actions" nameOfExprType="org\.openqa\.selenium\.interactions\.Actions" expressionTypes="org.openqa.selenium.interactions.Actions" within="" contains="" />
+</replaceConfiguration>
+```
+
+## Consecutive Actions#moveToElement(WebElement) and Actions#doubleClick() calls can be simplified to Actions#doubleClick(WebElement).
+
+According to the javadoc of `Actions#doubleClick(WebElement)` it is
+> Equivalent to: Actions.moveToElement(onElement).doubleClick()
+
+thus this inspection will signal a code snippet like the following, as incorrect:
+
+```java
+WebDriver driver = new FirefoxDriver();
+WebElement element;
+
+Actions actions = new Actions(driver).moveToElement(element).doubleClick();
+```
+
+and also provides quick fix to replace the mentioned calls to `doubleClick(element)`.
+
+If the chained methods have other methods than `moveToElement` and `doubleClick` they might be highlighted as well by IntelliJ due to
+the type match with `Actions`, but the quick fix works properly regardless of that. 
+
+**Template:**
+
+```xml
+<replaceConfiguration name="Consecutive moveToElement(element) and doubleClick() calls can be simplified to doubleClick(element)." text="$actions$.moveToElement($element$).doubleClick()" recursive="false" caseInsensitive="true" type="JAVA" pattern_context="default" reformatAccordingToStyle="true" shortenFQN="true" replacement="$actions$.doubleClick($element$)">
+    <constraint name="__context__" within="" contains="" />
+    <constraint name="element" nameOfExprType="org\.openqa\.selenium\.WebElement" expressionTypes="org.openqa.selenium.WebElement" within="" contains="" />
+    <constraint name="actions" nameOfExprType="org\.openqa\.selenium\.interactions\.Actions" expressionTypes="org.openqa.selenium.interactions.Actions" within="" contains="" />
+</replaceConfiguration>
+```
+
+## Consecutive Actions#moveToElement(WebElement) and Actions#release() calls can be simplified to Actions#release(WebElement).
+
+According to the javadoc of `Actions#release(WebElement)`
+> This is equivalent to: Actions.moveToElement(onElement).release()
+
+thus this inspection will signal a code snippet like the following, as incorrect:
+
+```java
+WebDriver driver = new FirefoxDriver();
+WebElement element;
+
+Actions actions = new Actions(driver).moveToElement(element).release();
+```
+
+and also provides quick fix to replace the mentioned calls to `release(element)`.
+
+If the chained methods have other methods than `moveToElement` and `release` they might be highlighted as well by IntelliJ due to
+the type match with `Actions`, but the quick fix works properly regardless of that. 
+
+**Template:**
+
+```xml
+<replaceConfiguration name="Consecutive moveToElement(element) and release() calls can be simplified to release(element)." text="$actions$.moveToElement($element$).release()" recursive="false" caseInsensitive="true" type="JAVA" pattern_context="default" reformatAccordingToStyle="true" shortenFQN="true" replacement="$actions$.release($element$)">
+    <constraint name="__context__" within="" contains="" />
+    <constraint name="element" nameOfExprType="org\.openqa\.selenium\.WebElement" expressionTypes="org.openqa.selenium.WebElement" within="" contains="" />
+    <constraint name="actions" nameOfExprType="org\.openqa\.selenium\.interactions\.Actions" expressionTypes="org.openqa.selenium.interactions.Actions" within="" contains="" />
+</replaceConfiguration>
+```
+
+## Consecutive Actions#click(WebElement) and Actions#sendKeys(CharSequence...) calls can be simplified to Actions#sendKeys(WebElement, CharSequence...).
+
+According to the javadoc of `Actions#sendKeys(WebElement, CharSequence...)` it is
+> Equivalent to calling: Actions.click(onElement).sendKeys(keys)
+
+thus this inspection will signal a code snippet like the following, as incorrect:
+
+```java
+WebDriver driver = new FirefoxDriver();
+WebElement element;
+
+Actions actions = new Actions(driver).click(element).sendKeys("some keys");
+```
+
+and also provides quick fix to replace the mentioned calls to `sendKeys(element, keys)`.
+
+If the chained methods have other methods than `click` and `sendKeys` they might be highlighted as well by IntelliJ due to
+the type match with `Actions`, but the quick fix works properly regardless of that. 
+
+**Template:**
+
+```xml
+<replaceConfiguration name="Consecutive click(element) and sendKeys(keys) calls can be simplified to sendKeys(element, keys)." text="$actions$.click($element$).sendKeys($keys$)" recursive="false" caseInsensitive="true" type="JAVA" pattern_context="default" reformatAccordingToStyle="true" shortenFQN="true" replacement="$actions$.sendKeys($element$, $keys$)">
+    <constraint name="__context__" within="" contains="" />
+    <constraint name="element" nameOfExprType="org\.openqa\.selenium\.WebElement" expressionTypes="org.openqa.selenium.WebElement" within="" contains="" />
+    <constraint name="actions" nameOfExprType="org\.openqa\.selenium\.interactions\.Actions" expressionTypes="org.openqa.selenium.interactions.Actions" within="" contains="" />
+    <constraint name="keys" within="" contains="" />
+</replaceConfiguration>
+```
+
+## Consecutive Actions#build() and Actions#perform() calls can be simplified to Actions#perform().
+
+According to the javadoc of `Actions#perform()` it is
+> A convenience method for performing the actions without calling build() first.
+
+thus this inspection will signal a code snippet like the following, as incorrect:
+
+```java
+WebDriver driver = new FirefoxDriver();
+WebElement element;
+
+Actions actions = new Actions(driver).click(element).build().perform();
+```
+
+and also provides quick fix to replace the mentioned calls to `perform()`.
+
+If the chained methods have other methods than `build` and `perform` they might be highlighted as well by IntelliJ due to
+the type match with `Actions`, but the quick fix works properly regardless of that. 
+
+**Template:**
+
+```xml
+<replaceConfiguration name="Consecutive build() and perform() calls can be simplified to perform()." text="$actions$.build().perform()" recursive="false" caseInsensitive="true" type="JAVA" pattern_context="default" reformatAccordingToStyle="true" shortenFQN="true" replacement="$actions$.perform()">
+    <constraint name="__context__" within="" contains="" />
+    <constraint name="actions" nameOfExprType="org\.openqa\.selenium\.interactions\.Actions" expressionTypes="org.openqa.selenium.interactions.Actions" within="" contains="" />
+</replaceConfiguration>
+```
