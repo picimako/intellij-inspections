@@ -713,12 +713,12 @@ import com.intellij.psi.*
 boolean hasOnlyInterfaces = true
 attributes.each { attribute ->
     if (attribute instanceof PsiClassObjectAccessExpression) {
-      PsiJavaCodeReferenceElement ref = (PsiJavaCodeReferenceElement)attribute.firstChild?.firstChild;
-      if (!ref?.resolve()?.isInterface()) {
-        hasOnlyInterfaces = false
-      }
+        PsiJavaCodeReferenceElement ref = (PsiJavaCodeReferenceElement)attribute.firstChild?.firstChild;
+        if (!ref?.resolve()?.isInterface()) {
+            hasOnlyInterfaces = false
+        }
     }
-  }
+}
 !hasOnlyInterfaces
 ```
 
