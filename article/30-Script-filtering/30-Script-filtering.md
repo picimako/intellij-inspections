@@ -164,7 +164,7 @@ try {
 
 ## PSI Viewer
 
-There is a really handy tool in IntelliJ (turned off by default) with which one can inspect the PSI tree of files in a visual way.
+For a detailed overview of the PSI Viewer built-in tool and IntelliJ plugin, head over to [this article](https://ijnspector.wordpress.com/2019/10/27/psi-viewer/).
 
 Here's the official documentation about the tool: https://www.jetbrains.com/help/idea/psi-viewer.html but to make it a bit easier I explain how to enabled it.
 
