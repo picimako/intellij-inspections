@@ -320,3 +320,72 @@ if (matcher) {
     <constraint name="StepAnnotation" regexp="cucumber\.api\.java\.en\.(Given|When|Then|And|But)" maxCount="2147483647" within="" contains="" />
 </searchConfiguration>
 ```
+
+## You're not allowed to extend classes that define Step Definitions or hooks.
+
+This is based on the specific exception type: [`InvalidMethodException`](https://github.com/cucumber/cucumber-jvm/blob/1f9085426716acb26414acdb010d3fbb06b9f364/java/src/main/java/io/cucumber/java/InvalidMethodException.java)
+
+This inspection would signal a code snippet like the following, as incorrect:
+
+```java
+public class HomepageSteps extends CommonSteps {
+}
+```
+
+highlighting the class that is being extended, in this case `CommonSteps`.
+
+I found two different ways that this can be validated. Below you can find them.
+
+### Validating that the name of the superclass ends with a certain keyword
+
+This is a very simple check and it doesn't validate the existence of actual Step Definitions and hooks, but may be useful
+when the step definitions classes are always named in a certain way, for instance they always end with `Steps`.  
+
+**Template:**
+
+```xml
+<searchConfiguration name="Step definition classes are not allowed to be extended." text="class $Class$ extends $Parent$ {}" recursive="true" caseInsensitive="true" type="JAVA" pattern_context="default">
+    <constraint name="__context__" within="" contains="" />
+    <constraint name="Class" target="true" within="" contains="" />
+    <constraint name="Parent" regexp=".*Steps$" within="" contains="" />
+</searchConfiguration>
+```
+
+### Validating whether there is a step or hook annotated class among the declared methods of this class
+
+This is the more strict one because it checks for the existence of actual step and hook annotations, and stops at the
+first one if it comes across one.
+
+It may also happen that a class named as a step definition might not contain step definition methods or hooks at all
+but in that case the class might need to be renamed to something else more proper.
+
+**Script filter (Complete match)**
+
+```groovy
+import com.intellij.psi.*
+
+def stepAnnotations = ["cucumber.api.java.en.Given", "cucumber.api.java.en.When", "cucumber.api.java.en.Then"]
+PsiElement superclass = Parent.resolve();
+if (superclass instanceof PsiClass) {
+	for (PsiMethod method : superclass.getMethods()) {
+		for (PsiAnnotation methodAnnotation : method.getAnnotations()) {
+			if (stepAnnotations.contains(methodAnnotation.getQualifiedName())) {
+				return true
+			}
+		}
+	}
+}
+false
+```
+
+The list of validated annotations may be extended or changed entirely in the list called `stepAnnotations` to suit project needs.
+
+**Template:**
+
+```xml
+<searchConfiguration name="Classes defining Step Definitions or hooks are not allowed to be extended." text="class $Class$ extends $Parent$ {}" recursive="true" caseInsensitive="true" type="JAVA" pattern_context="default">
+    <constraint name="__context__" script="&quot;import com.intellij.psi.*&#10;&#10;def stepAnnotations = [&quot;cucumber.api.java.en.Given&quot;, &quot;cucumber.api.java.en.When&quot;, &quot;cucumber.api.java.en.Then&quot;]&#10;PsiElement superclass = Parent.resolve();&#10;if (superclass instanceof PsiClass) {&#10;&#9;for (PsiMethod method : superclass.getMethods()) {&#10;&#9;&#9;for (PsiAnnotation methodAnnotation : method.getAnnotations()) {&#10;&#9;&#9;&#9;if (stepAnnotations.contains(methodAnnotation.getQualifiedName())) {&#10;&#9;&#9;&#9;&#9;return true&#10;&#9;&#9;&#9;}&#10;&#9;&#9;}&#10;&#9;}&#10;}&#10;false&quot;" within="" contains="" />
+    <constraint name="Class" within="" contains="" />
+    <constraint name="Parent" regexp=".*Steps$" target="true" within="" contains="" />
+</searchConfiguration>
+```
