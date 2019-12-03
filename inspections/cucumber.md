@@ -386,6 +386,6 @@ The list of validated annotations may be extended or changed entirely in the lis
 <searchConfiguration name="Classes defining Step Definitions or hooks are not allowed to be extended." text="class $Class$ extends $Parent$ {}" recursive="true" caseInsensitive="true" type="JAVA" pattern_context="default">
     <constraint name="__context__" script="&quot;import com.intellij.psi.*&#10;&#10;def stepAnnotations = [&quot;cucumber.api.java.en.Given&quot;, &quot;cucumber.api.java.en.When&quot;, &quot;cucumber.api.java.en.Then&quot;]&#10;PsiElement superclass = Parent.resolve();&#10;if (superclass instanceof PsiClass) {&#10;&#9;for (PsiMethod method : superclass.getMethods()) {&#10;&#9;&#9;for (PsiAnnotation methodAnnotation : method.getAnnotations()) {&#10;&#9;&#9;&#9;if (stepAnnotations.contains(methodAnnotation.getQualifiedName())) {&#10;&#9;&#9;&#9;&#9;return true&#10;&#9;&#9;&#9;}&#10;&#9;&#9;}&#10;&#9;}&#10;}&#10;false&quot;" within="" contains="" />
     <constraint name="Class" within="" contains="" />
-    <constraint name="Parent" regexp=".*Steps$" target="true" within="" contains="" />
+    <constraint name="Parent" target="true" within="" contains="" />
 </searchConfiguration>
 ```
