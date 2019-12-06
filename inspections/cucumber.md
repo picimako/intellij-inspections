@@ -389,3 +389,94 @@ The list of validated annotations may be extended or changed entirely in the lis
     <constraint name="Parent" target="true" within="" contains="" />
 </searchConfiguration>
 ```
+
+## Explicit parameter type converter definition is not necessary for an enum type.
+
+In case of Cucumber expressions there is a special, anonymous parameter (`{}`) with which, among other types, enum
+parameter types can be targeted. Therefore it sounds reasonable to validate `TypeRegistryConfigurer` implementations whether
+they explicitly define parameter type converters for Enum types.
+
+The related, official documentation can be found at [Cucumber Expressions - Parameter types](https://cucumber.io/docs/cucumber/cucumber-expressions/#parameter-types).
+
+### Earlier than cucumber-jvm 4.5.0
+
+This inspection would signal a code snippet like the following, as incorrect:
+
+```java
+typeRegistry.defineParameterType(new ParameterType<>("type", ".*", Type.class, (String value) -> Type.valueOf(value)));
+```
+
+where `Type` is an enum.
+
+**Template:**
+
+```xml
+<searchConfiguration name="Explicit parameter type converter is not necessary for an enum type. You can use empty {} placeholder instead." text="$typeRegistry$.defineParameterType(new io.cucumber.cucumberexpressions.ParameterType&lt;&gt;($keyword$, $pattern$, $Type$.class, (java.lang.String $value$) -&gt; {$Type$.valueOf($value$);}));" recursive="true" caseInsensitive="true" type="JAVA" pattern_context="default">
+    <constraint name="__context__" within="" contains="" />
+    <constraint name="typeRegistry" nameOfExprType="io\.cucumber\.stepexpression\.TypeRegistry" expressionTypes="io.cucumber.stepexpression.TypeRegistry" within="" contains="" />
+    <constraint name="keyword" within="" contains="" />
+    <constraint name="value" within="" contains="" />
+    <constraint name="pattern" within="" contains="" />
+    <constraint name="Type" within="" contains="" />
+</searchConfiguration>
+```
+
+Since the above mentioned code snippet may be expressed differently, with a method reference like:
+
+```java
+typeRegistry.defineParameterType(new ParameterType<>("type", ".*", Type.class, (Transformer<Type>) Type::valueOf));
+```
+
+the following template has support to identify enum converters in that form as well:
+
+```xml
+<searchConfiguration name="Explicit parameter type converter is not necessary for an enum type. You can use empty {} placeholder instead." text="$typeRegistry$.defineParameterType(new io.cucumber.cucumberexpressions.ParameterType&lt;&gt;($keyword$, $pattern$, $Type$.class, (io.cucumber.cucumberexpressions.Transformer&lt;$Type$&gt;) $Type$::valueOf));" recursive="true" caseInsensitive="true" type="JAVA" pattern_context="default">
+    <constraint name="__context__" within="" contains="" />
+    <constraint name="keyword" within="" contains="" />
+    <constraint name="pattern" within="" contains="" />
+    <constraint name="Type" within="" contains="" />
+    <constraint name="typeRegistry" nameOfExprType="io\.cucumber\.stepexpression\.TypeRegistry" expressionTypes="io.cucumber.stepexpression.TypeRegistry" within="" contains="" />
+</searchConfiguration>
+```
+
+### Later than cucumber-jvm 4.5.0
+
+There were [package changes in 4.5.0](https://github.com/cucumber/cucumber-jvm/blob/master/CHANGELOG.md#450-2019-06-30)
+for many classes, thus the templates above are created for versions below 4.5.0, the ones below are created to work with 4.5.0 and later versions.
+
+```xml
+<searchConfiguration name="Explicit parameter type converter is not necessary for an enum type. You can use empty {} placeholder instead." text="$typeRegistry$.defineParameterType(new io.cucumber.cucumberexpressions.ParameterType&lt;&gt;($keyword$, $pattern$, $Type$.class, (java.lang.String $value$) -&gt; {$Type$.valueOf($value$);}));" recursive="true" caseInsensitive="true" type="JAVA" pattern_context="default">
+    <constraint name="__context__" within="" contains="" />
+    <constraint name="typeRegistry" nameOfExprType="io\.cucumber\.core\.api\.TypeRegistry" expressionTypes="io.cucumber.core.api.TypeRegistry" exprTypeWithinHierarchy="true" within="" contains="" />
+    <constraint name="keyword" within="" contains="" />
+    <constraint name="value" within="" contains="" />
+    <constraint name="pattern" within="" contains="" />
+    <constraint name="Type" within="" contains="" />
+</searchConfiguration>
+```
+
+```xml
+<searchConfiguration name="Explicit parameter type converter is not necessary for an enum type. You can use empty {} placeholder instead." text="$typeRegistry$.defineParameterType(new io.cucumber.cucumberexpressions.ParameterType&lt;&gt;($keyword$, $pattern$, $Type$.class, (io.cucumber.cucumberexpressions.Transformer&lt;$Type$&gt;) $Type$::valueOf));" recursive="true" caseInsensitive="true" type="JAVA" pattern_context="default">
+    <constraint name="__context__" within="" contains="" />
+    <constraint name="keyword" within="" contains="" />
+    <constraint name="pattern" within="" contains="" />
+    <constraint name="Type" within="" contains="" />
+    <constraint name="typeRegistry" nameOfExprType="io\.cucumber\.core\.api\.TypeRegistry" expressionTypes="io.cucumber.core.api.TypeRegistry" exprTypeWithinHierarchy="true" within="" contains="" />
+</searchConfiguration>
+```
+
+**Notes, caveats:**
+- There might be other cases or forms of parameter type conversion that this inspection doesn't handle at the moment.
+- These inspections cannot identify code snippets where the target parameter type is a parent interface type of the one that is being created,
+e.g.
+    ```java
+    new ParameterType<>("nodetype", ".*", NodeType.class, (String value) -> ComponentType.valueOf(value)));
+    ```
+    where `NodeType` is an interface implemented by `ComponentType`.
+- These inspections also cannot identify cases where the `TypeRegistry.defineParameterType()` method is not directly parameterized
+with the actual values but it gets them for example from method parameters e.g.:
+    ```java
+    private <T> void addConverter(TypeRegistry typeRegistry, String keyword, Class<T> type, Transformer<T> transformer) {
+        typeRegistry.defineParameterType(new ParameterType<>(keyword, ".*", type, transformer));
+    }
+    ```
