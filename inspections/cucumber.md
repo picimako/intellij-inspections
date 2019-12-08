@@ -480,3 +480,29 @@ with the actual values but it gets them for example from method parameters e.g.:
         typeRegistry.defineParameterType(new ParameterType<>(keyword, ".*", type, transformer));
     }
     ```
+
+## Step definition method has no body.
+
+Step definition methods with empty body are considered unimplemented, which Cucumber also informs you about when you run a test suite.
+
+This inspection would signal a code snippet like the following, as incorrect:
+
+```java
+@When("I open the homepage")
+public void i_open_the_homepage() {
+}
+```
+
+**Template:**
+
+```xml
+<searchConfiguration name="Unimplemented step definition method." text="class $Class$ {&#10;  @$Step$ ()&#10;  void $Method$ ($ParameterType$ $Parameter$) {&#10;      $body$;&#10;  }&#10;}" recursive="true" caseInsensitive="true" type="JAVA" pattern_context="default">
+    <constraint name="__context__" within="" contains="" />
+    <constraint name="Method" withinHierarchy="true" target="true" within="" contains="" />
+    <constraint name="ParameterType" within="" contains="" />
+    <constraint name="Parameter" minCount="0" maxCount="2147483647" within="" contains="" />
+    <constraint name="Step" regexp="cucumber\.api\.java\.en\.(Given|When|Then)" within="" contains="" />
+    <constraint name="body" minCount="0" maxCount="0" within="" contains="" />
+    <constraint name="Class" within="" contains="" />
+</searchConfiguration>
+```
