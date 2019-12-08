@@ -264,12 +264,32 @@ matcher ? true : false
 ```xml
 <searchConfiguration name="Step pattern contains incomplete parameter placeholder." text="@$StepAnnotation$(&quot;$stepPattern$&quot;)&#10;$MethodType$ $stepDefinitionMethod$($ParameterType$ $parameter$) {&#10;}" recursive="true" caseInsensitive="true" type="JAVA" pattern_context="member">
     <constraint name="__context__" within="" contains="" />
-    <constraint name="stepPattern" script="&quot;def parameterTypes = &quot;(int|float|word|string|biginteger|bigdecimal|byte|short|long|double)&quot;&#10;def incompleteStepPattern = &quot;\\{&quot; + parameterTypes + &quot;(?!\\}) | (?&lt;!\\{)&quot; + parameterTypes + &quot;\\}&quot;&#10;def matcher = stepPattern?.value =~ incompleteStepPattern&#10;matcher ? true : false&quot;" target="true" within="" contains="" />
+    <constraint name="stepPattern" script="&quot;def parameterTypes = &quot;(int|float|word|string|biginteger|bigdecimal|byte|short|long|double)&quot;&#10;def incompleteStepPattern = &quot;\\{&quot; + parameterTypes + &quot;(?!\\})|(?&lt;!\\{)&quot; + parameterTypes + &quot;\\}&quot;&#10;def matcher = stepPattern?.value =~ incompleteStepPattern&#10;matcher ? true : false&quot;" target="true" within="" contains="" />
     <constraint name="MethodType" regexp="void" within="" contains="" />
     <constraint name="stepDefinitionMethod" within="" contains="" />
     <constraint name="ParameterType" within="" contains="" />
     <constraint name="parameter" minCount="0" maxCount="2147483647" within="" contains="" />
     <constraint name="StepAnnotation" regexp="cucumber\.api\.java\.en\.(Given|When|Then|And|But)" maxCount="2147483647" within="" contains="" />
+</searchConfiguration>
+```
+
+### Java8 format support
+
+If you are using Java8 type step definitions the following inspection can detect problems in that form:
+
+**Script filter ($Step$) - $stepPattern$ is unchanged**
+
+```groovy
+Step.resolveMethod().getContainingClass().getQualifiedName().matches("(cucumber\\.api\\.java8\\.|io\\.cucumber\\.java8\\.).*")
+```
+
+```xml
+<searchConfiguration name="Step pattern contains incomplete parameter placeholder." text="$Java8BaseStepDefInterface$.$Step$(&quot;$stepPattern$&quot;, ($Parameters$) -&gt; {});" recursive="true" caseInsensitive="true" type="JAVA" pattern_context="default">
+    <constraint name="__context__" within="" contains="" />
+    <constraint name="stepPattern" script="&quot;def parameterTypes = &quot;(int|float|word|string|biginteger|bigdecimal|byte|short|long|double)&quot;&#10;def incompleteStepPattern = &quot;\\{&quot; + parameterTypes + &quot;(?!\\})|(?&lt;!\\{)&quot; + parameterTypes + &quot;\\}&quot;&#10;def matcher = stepPattern?.value =~ incompleteStepPattern&#10;matcher ? true : false&quot;" target="true" within="" contains="" />
+    <constraint name="Step" script="&quot;Step.resolveMethod().getContainingClass().getQualifiedName().matches(&quot;(cucumber\\.api\\.java8\\.|io\\.cucumber\\.java8\\.).*&quot;)&quot;" regexp="Given|When|Then|And|But" within="" contains="" />
+    <constraint name="Parameters" minCount="0" maxCount="2147483647" within="" contains="" />
+    <constraint name="Java8BaseStepDefInterface" minCount="0" within="" contains="" />
 </searchConfiguration>
 ```
 
@@ -318,6 +338,26 @@ if (matcher) {
     <constraint name="ParameterType" within="" contains="" />
     <constraint name="parameter" minCount="0" maxCount="2147483647" within="" contains="" />
     <constraint name="StepAnnotation" regexp="cucumber\.api\.java\.en\.(Given|When|Then|And|But)" maxCount="2147483647" within="" contains="" />
+</searchConfiguration>
+```
+
+### Java8 format support
+
+If you are using Java8 type step definitions the following inspection can detect problems in that form:
+
+**Script filter ($Step$) - $stepPattern$ is unchanged**
+
+```groovy
+Step.resolveMethod().getContainingClass().getQualifiedName().matches("(cucumber\\.api\\.java8\\.|io\\.cucumber\\.java8\\.).*")
+```
+
+```xml
+<searchConfiguration name="Step pattern contains unregistered parameter type." text="$Java8BaseStepDefInterface$.$Step$(&quot;$stepPattern$&quot;, ($Parameters$) -&gt; {});" recursive="true" caseInsensitive="true" type="JAVA" pattern_context="default">
+    <constraint name="__context__" within="" contains="" />
+    <constraint name="stepPattern" script="&quot;def placeholderPattern = /\{(.*)\}/&#10;def parameterTypes = ['', 'int', 'float', 'word', 'string', 'biginteger', 'bigdecimal', 'byte', 'short', 'long', 'double']&#10;def matcher = stepPattern?.value =~ placeholderPattern&#10;if (matcher) {&#10;    def type = matcher.group(1)&#10;    !parameterTypes.contains(type)&#10;} else {&#10;   false&#10;}&quot;" target="true" within="" contains="" />
+    <constraint name="Step" script="&quot;Step.resolveMethod().getContainingClass().getQualifiedName().matches(&quot;(cucumber\\.api\\.java8\\.|io\\.cucumber\\.java8\\.).*&quot;)&quot;" regexp="Given|When|Then|And|But" within="" contains="" />
+    <constraint name="Parameters" minCount="0" maxCount="2147483647" within="" contains="" />
+    <constraint name="Java8BaseStepDefInterface" minCount="0" within="" contains="" />
 </searchConfiguration>
 ```
 
@@ -398,8 +438,6 @@ they explicitly define parameter type converters for Enum types.
 
 The related, official documentation can be found at [Cucumber Expressions - Parameter types](https://cucumber.io/docs/cucumber/cucumber-expressions/#parameter-types).
 
-### Earlier than cucumber-jvm 4.5.0
-
 This inspection would signal a code snippet like the following, as incorrect:
 
 ```java
@@ -408,12 +446,18 @@ typeRegistry.defineParameterType(new ParameterType<>("type", ".*", Type.class, (
 
 where `Type` is an enum.
 
+**Script filter (Complete match)**
+
+```groovy
+typeRegistry.resolve().getType().getCanonicalText().matches("(io\\.cucumber\\.core\\.api|io\\.cucumber\\.stepexpression)\\.TypeRegistry")
+```
+
 **Template:**
 
 ```xml
 <searchConfiguration name="Explicit parameter type converter is not necessary for an enum type. You can use empty {} placeholder instead." text="$typeRegistry$.defineParameterType(new io.cucumber.cucumberexpressions.ParameterType&lt;&gt;($keyword$, $pattern$, $Type$.class, (java.lang.String $value$) -&gt; {$Type$.valueOf($value$);}));" recursive="true" caseInsensitive="true" type="JAVA" pattern_context="default">
     <constraint name="__context__" within="" contains="" />
-    <constraint name="typeRegistry" nameOfExprType="io\.cucumber\.stepexpression\.TypeRegistry" expressionTypes="io.cucumber.stepexpression.TypeRegistry" within="" contains="" />
+    <constraint name="typeRegistry" script="&quot;typeRegistry.resolve().getType().getCanonicalText().matches(&quot;(io\\.cucumber\\.core\\.api|io\\.cucumber\\.stepexpression)\\.TypeRegistry&quot;)&quot;" nameOfExprType="io\.cucumber\.stepexpression\.TypeRegistry" expressionTypes="io.cucumber.stepexpression.TypeRegistry" within="" contains="" />
     <constraint name="keyword" within="" contains="" />
     <constraint name="value" within="" contains="" />
     <constraint name="pattern" within="" contains="" />
@@ -435,35 +479,12 @@ the following template has support to identify enum converters in that form as w
     <constraint name="keyword" within="" contains="" />
     <constraint name="pattern" within="" contains="" />
     <constraint name="Type" within="" contains="" />
-    <constraint name="typeRegistry" nameOfExprType="io\.cucumber\.stepexpression\.TypeRegistry" expressionTypes="io.cucumber.stepexpression.TypeRegistry" within="" contains="" />
+    <constraint name="typeRegistry" script="&quot;typeRegistry.resolve().getType().getCanonicalText().matches(&quot;(io\\.cucumber\\.core\\.api|io\\.cucumber\\.stepexpression)\\.TypeRegistry&quot;)&quot;" nameOfExprType="io\.cucumber\.stepexpression\.TypeRegistry" expressionTypes="io.cucumber.stepexpression.TypeRegistry" within="" contains="" />
 </searchConfiguration>
 ```
 
-### Later than cucumber-jvm 4.5.0
-
-There were [package changes in 4.5.0](https://github.com/cucumber/cucumber-jvm/blob/master/CHANGELOG.md#450-2019-06-30)
-for many classes, thus the templates above are created for versions below 4.5.0, the ones below are created to work with 4.5.0 and later versions.
-
-```xml
-<searchConfiguration name="Explicit parameter type converter is not necessary for an enum type. You can use empty {} placeholder instead." text="$typeRegistry$.defineParameterType(new io.cucumber.cucumberexpressions.ParameterType&lt;&gt;($keyword$, $pattern$, $Type$.class, (java.lang.String $value$) -&gt; {$Type$.valueOf($value$);}));" recursive="true" caseInsensitive="true" type="JAVA" pattern_context="default">
-    <constraint name="__context__" within="" contains="" />
-    <constraint name="typeRegistry" nameOfExprType="io\.cucumber\.core\.api\.TypeRegistry" expressionTypes="io.cucumber.core.api.TypeRegistry" exprTypeWithinHierarchy="true" within="" contains="" />
-    <constraint name="keyword" within="" contains="" />
-    <constraint name="value" within="" contains="" />
-    <constraint name="pattern" within="" contains="" />
-    <constraint name="Type" within="" contains="" />
-</searchConfiguration>
-```
-
-```xml
-<searchConfiguration name="Explicit parameter type converter is not necessary for an enum type. You can use empty {} placeholder instead." text="$typeRegistry$.defineParameterType(new io.cucumber.cucumberexpressions.ParameterType&lt;&gt;($keyword$, $pattern$, $Type$.class, (io.cucumber.cucumberexpressions.Transformer&lt;$Type$&gt;) $Type$::valueOf));" recursive="true" caseInsensitive="true" type="JAVA" pattern_context="default">
-    <constraint name="__context__" within="" contains="" />
-    <constraint name="keyword" within="" contains="" />
-    <constraint name="pattern" within="" contains="" />
-    <constraint name="Type" within="" contains="" />
-    <constraint name="typeRegistry" nameOfExprType="io\.cucumber\.core\.api\.TypeRegistry" expressionTypes="io.cucumber.core.api.TypeRegistry" exprTypeWithinHierarchy="true" within="" contains="" />
-</searchConfiguration>
-```
+Since there were [package changes in 4.5.0](https://github.com/cucumber/cucumber-jvm/blob/master/CHANGELOG.md#450-2019-06-30)
+for many classes both of the templates above have support for both packaging.
 
 **Notes, caveats:**
 - There might be other cases or forms of parameter type conversion that this inspection doesn't handle at the moment.
@@ -501,7 +522,7 @@ public void i_open_the_homepage() {
     <constraint name="Method" withinHierarchy="true" target="true" within="" contains="" />
     <constraint name="ParameterType" within="" contains="" />
     <constraint name="Parameter" minCount="0" maxCount="2147483647" within="" contains="" />
-    <constraint name="Step" regexp="cucumber\.api\.java\.en\.(Given|When|Then)" within="" contains="" />
+    <constraint name="Step" regexp="cucumber\.api\.java\.en\.(Given|When|Then|And|But)" within="" contains="" />
     <constraint name="body" minCount="0" maxCount="0" within="" contains="" />
     <constraint name="Class" within="" contains="" />
 </searchConfiguration>
