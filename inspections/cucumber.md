@@ -502,7 +502,7 @@ with the actual values but it gets them for example from method parameters e.g.:
     }
     ```
 
-## Step definition method has no body.
+## Step definition method is not implemented, has no body.
 
 Step definition methods with empty body are considered unimplemented, which Cucumber also informs you about when you run a test suite.
 
@@ -525,5 +525,18 @@ public void i_open_the_homepage() {
     <constraint name="Step" regexp="cucumber\.api\.java\.en\.(Given|When|Then|And|But)" within="" contains="" />
     <constraint name="body" minCount="0" maxCount="0" within="" contains="" />
     <constraint name="Class" within="" contains="" />
+</searchConfiguration>
+```
+
+**Java8 step definition format:**
+
+```xml
+<searchConfiguration name="Unimplemented step definition method." text="$Java8BaseStepDefInterface$.$Step$(&quot;$stepPattern$&quot;, ($Parameters$) -&gt; {$methodBody$;});" recursive="true" caseInsensitive="true" type="JAVA" pattern_context="default">
+    <constraint name="__context__" within="" contains="" />
+    <constraint name="stepPattern" within="" contains="" />
+    <constraint name="Step" script="&quot;Step.resolveMethod().getContainingClass().getQualifiedName().matches(&quot;(cucumber\\.api\\.java8\\.|io\\.cucumber\\.java8\\.).*&quot;)&quot;" regexp="Given|When|Then|And|But" within="" contains="" />
+    <constraint name="Parameters" minCount="0" maxCount="2147483647" within="" contains="" />
+    <constraint name="Java8BaseStepDefInterface" minCount="0" within="" contains="" />
+    <constraint name="methodBody" minCount="0" maxCount="0" target="true" within="" contains="" />
 </searchConfiguration>
 ```
