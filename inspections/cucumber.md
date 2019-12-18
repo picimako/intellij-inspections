@@ -31,10 +31,10 @@ It supports tagged hooks and all of the hook annotations: `@Before`, `@BeforeSte
 ```xml
 <searchConfiguration name="When a hook declares an argument it must be of type cucumber.api.Scenario." text="@$HookAnnotation$&#10;$ReturnType$ $hookMethod$($HookType$ $parameter$) ;" recursive="true" caseInsensitive="true" type="JAVA">
 	<constraint name="__context__" within="" contains="" />
-	<constraint name="HookAnnotation" regexp="cucumber\.api\.java\.(Before|BeforeStep|After|AfterStep)" maxCount="2147483647" within="" contains="" />
+	<constraint name="HookAnnotation" regexp="(cucumber\.api\.java\|io\.cucumber\.java)\.(Before|BeforeStep|After|AfterStep)" maxCount="2147483647" within="" contains="" />
 	<constraint name="ReturnType" within="" contains="" />
 	<constraint name="hookMethod" within="" contains="" />
-	<constraint name="HookType" regexp="cucumber\.api\.Scenario" target="true" negateName="true" within="" contains="" />
+	<constraint name="HookType" regexp="(cucumber\.api|io\.cucumber\.core\.api)\.Scenario" target="true" negateName="true" within="" contains="" />
 	<constraint name="parameter" within="" contains="" />
 </searchConfiguration>
 ```
@@ -58,7 +58,7 @@ It supports tagged hooks and all of the hook annotations: `@Before`, `@BeforeSte
 ```xml
 <searchConfiguration name="Hooks must declare 0 or 1 arguments." text="@$HookAnnotation$&#10;$ReturnType$ $hookMethod$($HookType$ $parameter$) ;" recursive="true" caseInsensitive="true" type="JAVA">
     <constraint name="__context__" within="" contains="" />
-    <constraint name="HookAnnotation" regexp="cucumber\.api\.java\.(Before|BeforeStep|After|AfterStep)" maxCount="2147483647" within="" contains="" />
+    <constraint name="HookAnnotation" regexp="(cucumber\.api\.java\|io\.cucumber\.java)\.(Before|BeforeStep|After|AfterStep)" maxCount="2147483647" within="" contains="" />
     <constraint name="ReturnType" within="" contains="" />
     <constraint name="hookMethod" target="true" within="" contains="" />
     <constraint name="HookType" negateName="true" within="" contains="" />
@@ -85,10 +85,12 @@ This inspection would signal a code snippet like the following, as incorrect (it
 **Template:**
 
 ```xml
-<searchConfiguration name="You must supply an output argument to html. Like so: html:output" text="@cucumber.api.CucumberOptions($plugin$ = &quot;html&quot;)&#10;class $Class$ {}" recursive="true" caseInsensitive="true" type="JAVA">
+<searchConfiguration name="You must supply an output argument to html. Like so: html:output" text="@$CucumberOptions$($plugin$ = &quot;$html$&quot;)&#10;class $Class$ {}" recursive="true" caseInsensitive="true" type="JAVA" pattern_context="default">
     <constraint name="__context__" within="" contains="" />
     <constraint name="Class" script="&quot;!__context__.interface &amp;&amp; !__context__.enum&quot;" within="" contains="" />
-    <constraint name="plugin" regexp="plugin" target="true" within="" contains="" />
+    <constraint name="plugin" regexp="plugin" within="" contains="" />
+    <constraint name="CucumberOptions" regexp="(cucumber\.api|io\.cucumber\.junit|io\.cucumber\.testng)\.CucumberOptions" within="" contains="" />
+    <constraint name="html" regexp="^html$" target="true" within="" contains="" />
 </searchConfiguration>
 ```
 
@@ -111,10 +113,12 @@ This inspection would signal a code snippet like the following, as incorrect (it
 **Template:**
 
 ```xml
-<searchConfiguration name="You must supply an output argument to junit. Like so: junit:output" text="@cucumber.api.CucumberOptions($plugin$ = &quot;junit&quot;)&#10;class $Class$ {}" recursive="true" caseInsensitive="true" type="JAVA">
+<searchConfiguration name="You must supply an output argument to html. Like so: junit:output" text="@$CucumberOptions$($plugin$ = &quot;$junit$&quot;)&#10;class $Class$ {}" recursive="true" caseInsensitive="true" type="JAVA" pattern_context="default">
     <constraint name="__context__" within="" contains="" />
     <constraint name="Class" script="&quot;!__context__.interface &amp;&amp; !__context__.enum&quot;" within="" contains="" />
-    <constraint name="plugin" regexp="plugin" target="true" within="" contains="" />
+    <constraint name="plugin" regexp="plugin" within="" contains="" />
+    <constraint name="CucumberOptions" regexp="(cucumber\.api|io\.cucumber\.junit|io\.cucumber\.testng)\.CucumberOptions" within="" contains="" />
+    <constraint name="junit" regexp="^junit$" target="true" within="" contains="" />
 </searchConfiguration>
 ```
 
@@ -140,7 +144,7 @@ This inspection would signal a code snippet like the following, as incorrect (it
     <constraint name="Class" script="&quot;!__context__.interface &amp;&amp; !__context__.enum&quot;" within="" contains="" />
     <constraint name="glue" within="" contains="" />
     <constraint name="extraGlue" within="" contains="" />
-    <constraint name="CucumberOptions" regexp="cucumber\.api\.CucumberOptions" maxCount="2147483647" target="true" within="" contains="" />
+    <constraint name="CucumberOptions" regexp="(cucumber\.api|io\.cucumber\.junit|io\.cucumber\.testng)\.CucumberOptions" maxCount="2147483647" target="true" within="" contains="" />
 </searchConfiguration>
 ```
 
@@ -180,7 +184,7 @@ public class JUnitTest {
 <searchConfiguration name="Classes annotated with @RunWith(Cucumber.class) must not define any Step Definition or Hook methods" text="@org.junit.runner.RunWith(cucumber.api.junit.Cucumber.class)&#10;public class $Class$ {&#10;&#10;    @$HookOrStepDefAnnotation$&#10;    public void $hookOrStepDefMethod$($Parameter$ $param$) {}&#10;}" recursive="true" caseInsensitive="true" type="JAVA">
     <constraint name="__context__" within="" contains="" />
     <constraint name="Class" within="" contains="" />
-    <constraint name="HookOrStepDefAnnotation" regexp="cucumber\.api\.java\.((en\.(Given|When|Then|And|But))|(Before|BeforeStep|After|AfterStep))" maxCount="2147483647" target="true" within="" contains="" />
+    <constraint name="HookOrStepDefAnnotation" regexp="(cucumber\.api\.java\|io\.cucumber\.java)\.((en\.(Given|When|Then|And|But))|(Before|BeforeStep|After|AfterStep))" maxCount="2147483647" target="true" within="" contains="" />
     <constraint name="hookOrStepDefMethod" maxCount="2147483647" within="" contains="" />
     <constraint name="Parameter" within="" contains="" />
     <constraint name="param" minCount="0" maxCount="2147483647" within="" contains="" />
@@ -269,7 +273,7 @@ matcher ? true : false
     <constraint name="stepDefinitionMethod" within="" contains="" />
     <constraint name="ParameterType" within="" contains="" />
     <constraint name="parameter" minCount="0" maxCount="2147483647" within="" contains="" />
-    <constraint name="StepAnnotation" regexp="cucumber\.api\.java\.en\.(Given|When|Then|And|But)" maxCount="2147483647" within="" contains="" />
+    <constraint name="StepAnnotation" regexp="(cucumber\.api\.java\|io\.cucumber\.java)\.((en\.(Given|When|Then|And|But))" maxCount="2147483647" within="" contains="" />
 </searchConfiguration>
 ```
 
@@ -337,7 +341,7 @@ if (matcher) {
     <constraint name="stepDefinitionMethod" within="" contains="" />
     <constraint name="ParameterType" within="" contains="" />
     <constraint name="parameter" minCount="0" maxCount="2147483647" within="" contains="" />
-    <constraint name="StepAnnotation" regexp="cucumber\.api\.java\.en\.(Given|When|Then|And|But)" maxCount="2147483647" within="" contains="" />
+    <constraint name="StepAnnotation" regexp="(cucumber\.api\.java\|io\.cucumber\.java)\.((en\.(Given|When|Then|And|But))" maxCount="2147483647" within="" contains="" />
 </searchConfiguration>
 ```
 
@@ -404,7 +408,9 @@ but in that case the class might need to be renamed to something else more prope
 ```groovy
 import com.intellij.psi.*
 
-def stepAnnotations = ["cucumber.api.java.en.Given", "cucumber.api.java.en.When", "cucumber.api.java.en.Then"]
+def stepAnnotations = ["cucumber.api.java.en.Given", "cucumber.api.java.en.When", "cucumber.api.java.en.Then",
+    "cucumber.api.java.en.And", "cucumber.api.java.en.But", "io.cucumber.java.en.Given", "io.cucumber.java.en.When", "io.cucumber.java.en.Then",
+    "io.cucumber.java.en.And", "io.cucumber.java.en.But"]
 PsiElement superclass = Parent.resolve();
 if (superclass instanceof PsiClass) {
 	for (PsiMethod method : superclass.getMethods()) {
@@ -424,7 +430,7 @@ The list of validated annotations may be extended or changed entirely in the lis
 
 ```xml
 <searchConfiguration name="Classes defining Step Definitions or hooks are not allowed to be extended." text="class $Class$ extends $Parent$ {}" recursive="true" caseInsensitive="true" type="JAVA" pattern_context="default">
-    <constraint name="__context__" script="&quot;import com.intellij.psi.*&#10;&#10;def stepAnnotations = [&quot;cucumber.api.java.en.Given&quot;, &quot;cucumber.api.java.en.When&quot;, &quot;cucumber.api.java.en.Then&quot;]&#10;PsiElement superclass = Parent.resolve();&#10;if (superclass instanceof PsiClass) {&#10;&#9;for (PsiMethod method : superclass.getMethods()) {&#10;&#9;&#9;for (PsiAnnotation methodAnnotation : method.getAnnotations()) {&#10;&#9;&#9;&#9;if (stepAnnotations.contains(methodAnnotation.getQualifiedName())) {&#10;&#9;&#9;&#9;&#9;return true&#10;&#9;&#9;&#9;}&#10;&#9;&#9;}&#10;&#9;}&#10;}&#10;false&quot;" within="" contains="" />
+    <constraint name="__context__" script="&quot;import com.intellij.psi.*&#10;&#10;def stepAnnotations = [&quot;cucumber.api.java.en.Given&quot;, &quot;cucumber.api.java.en.When&quot;, &quot;cucumber.api.java.en.Then&quot;,&quot;cucumber.api.java.en.And&quot;, &quot;cucumber.api.java.en.But&quot;, &quot;io.cucumber.java.en.Given&quot;, &quot;io.cucumber.java.en.When&quot;, &quot;io.cucumber.java.en.Then&quot;, &quot;io.cucumber.java.en.And&quot;, &quot;io.cucumber.java.en.But&quot;]&#10;PsiElement superclass = Parent.resolve();&#10;if (superclass instanceof PsiClass) {&#10;&#9;for (PsiMethod method : superclass.getMethods()) {&#10;&#9;&#9;for (PsiAnnotation methodAnnotation : method.getAnnotations()) {&#10;&#9;&#9;&#9;if (stepAnnotations.contains(methodAnnotation.getQualifiedName())) {&#10;&#9;&#9;&#9;&#9;return true&#10;&#9;&#9;&#9;}&#10;&#9;&#9;}&#10;&#9;}&#10;}&#10;false&quot;" within="" contains="" />
     <constraint name="Class" within="" contains="" />
     <constraint name="Parent" target="true" within="" contains="" />
 </searchConfiguration>
@@ -490,12 +496,14 @@ for many classes both of the templates above have support for both packaging.
 - There might be other cases or forms of parameter type conversion that this inspection doesn't handle at the moment.
 - These inspections cannot identify code snippets where the target parameter type is a parent interface type of the one that is being created,
 e.g.
+
     ```java
     new ParameterType<>("nodetype", ".*", NodeType.class, (String value) -> ComponentType.valueOf(value)));
     ```
     where `NodeType` is an interface implemented by `ComponentType`.
 - These inspections also cannot identify cases where the `TypeRegistry.defineParameterType()` method is not directly parameterized
 with the actual values but it gets them for example from method parameters e.g.:
+
     ```java
     private <T> void addConverter(TypeRegistry typeRegistry, String keyword, Class<T> type, Transformer<T> transformer) {
         typeRegistry.defineParameterType(new ParameterType<>(keyword, ".*", type, transformer));
@@ -522,7 +530,7 @@ public void i_open_the_homepage() {
     <constraint name="Method" withinHierarchy="true" target="true" within="" contains="" />
     <constraint name="ParameterType" within="" contains="" />
     <constraint name="Parameter" minCount="0" maxCount="2147483647" within="" contains="" />
-    <constraint name="Step" regexp="cucumber\.api\.java\.en\.(Given|When|Then|And|But)" within="" contains="" />
+    <constraint name="Step" regexp="(cucumber\.api\.java\|io\.cucumber\.java)\.((en\.(Given|When|Then|And|But))" within="" contains="" />
     <constraint name="body" minCount="0" maxCount="0" within="" contains="" />
     <constraint name="Class" within="" contains="" />
 </searchConfiguration>
