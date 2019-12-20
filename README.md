@@ -18,7 +18,5 @@ To configure your git project for these inspections please read through the [How
 
 ## Contribution and support
 
-If you find any issues in the articles, tutorials or in any of the inspections, please create an GitHub issue in this project.
-
-If you find value reading the articles and/or using the already create inspection templates, and it may even makes your life easier, please consider **[Buying Me a Coffee](https://www.buymeacoffee.com/picimako)**.
+If you find any issues in the articles, tutorials or in any of the inspections, please create a GitHub issue in this project.
 
