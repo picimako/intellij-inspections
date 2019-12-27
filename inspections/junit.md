@@ -1,5 +1,9 @@
 # JUnit
 
+- JUnit 4 website: https://junit.org/junit4/
+- JUnit 5 website: https://junit.org/junit5/
+- JUnit on GitHub: https://github.com/junit-team
+
 ## JUnit assertion is not used with static import
 
 In many cases static importing a static method makes the code less cluttered and more readable which some people might find true in case of JUnit assertions as well.

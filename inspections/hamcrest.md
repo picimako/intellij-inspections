@@ -1,5 +1,8 @@
 # Hamcrest
 
+- Hamcrest website: http://hamcrest.org
+- Hamcrest on GitHub: https://github.com/hamcrest/JavaHamcrest
+
 ## Hamcrest matcher is not used with static import.
 
 In many cases static importing a static method makes the code less cluttered and more readable which some people might find true in case of Hamcrest matchers as well.

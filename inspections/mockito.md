@@ -1,5 +1,8 @@
 # Mockito
 
+- Mockito website: https://site.mockito.org
+- Mockito on GitHub: https://github.com/mockito/mockito
+
 ## Licensing
 Please let me know if using the same exact exception messages as the descriptions of the inspections is not permitted due to licensing issues.
 I am happy to change them, it just made sense and I think it is clearer to use the same messages here too.

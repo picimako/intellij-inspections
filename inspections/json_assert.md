@@ -1,5 +1,8 @@
 # JSONAssert
 
+- JSONAssert website: http://jsonassert.skyscreamer.org
+- JSONAssert on GitHub: https://github.com/skyscreamer/JSONassert
+
 ## JSONAssert assertion is not used with static import
 
 In many cases static importing a static method makes the code less cluttered and more readable which some people might find true in case of JSONAssert assertions as well.

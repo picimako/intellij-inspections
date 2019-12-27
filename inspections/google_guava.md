@@ -1,5 +1,8 @@
 # Google Guava
 
+- Guava website: https://guava.dev
+- Guava on GitHub: https://github.com/google/guava 
+
 ## Guava com.google.common.base.Preconditions.checkNotNull is in use
 
 It is generally advised to use native Java functionality over third-party libraries where possible and feasible,

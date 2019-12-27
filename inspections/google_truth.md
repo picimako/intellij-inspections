@@ -1,5 +1,8 @@
 # Google Truth
 
+- Truth website: https://truth.dev
+- Truth on GitHub: https://github.com/google/truth
+
 ## Google Truth assertion is not used with static import.
 
 In many cases static importing a static method makes the code less cluttered and more readable which some people might find true in case of Google Truth assertions as well.

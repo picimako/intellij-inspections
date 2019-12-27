@@ -1,4 +1,7 @@
-# RestAssured
+# REST Assured
+
+- REST Assured website: http://rest-assured.io
+- REST Assured on GitHub: https://github.com/rest-assured/rest-assured
 
 ## Candidates
 

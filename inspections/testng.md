@@ -1,5 +1,8 @@
 # TestNG
 
+- TestNG website: https://testng.org/doc/index.html
+- TestNG on GitHub: https://github.com/cbeust/testng
+
 ## TestNG assertion is not used with static import.
 
 In many cases static importing a static method makes the code less cluttered and more readable which some people might find true in case of TestNG assertions as well.

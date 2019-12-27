@@ -1,8 +1,10 @@
 # FluentLenium
 
-FluentLenium inspections are now also available in [FluentLenium's repository](https://github.com/FluentLenium/FluentLenium/tree/develop/fluentlenium-ide-support/intellij/inspections).
+FluentLenium inspections are now also available in [FluentLenium's repository](https://github.com/FluentLenium/FluentLenium/tree/develop/fluentlenium-ide-support/intellij/inspections)
+which were added in [FluentLenium/711](https://github.com/FluentLenium/FluentLenium/issues/711).
 
-The changes were added in [FluentLenium/711](https://github.com/FluentLenium/FluentLenium/issues/711).
+- FluentLenium website: https://fluentlenium.com
+- FluentLenium on GitHub: https://github.com/FluentLenium/FluentLenium/
 
 ## Inspections
 
