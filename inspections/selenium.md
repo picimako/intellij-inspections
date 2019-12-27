@@ -1,5 +1,8 @@
 # Selenium
 
+- Selenium website: https://selenium.dev
+- Selenium on GitHub: https://github.com/SeleniumHQ/selenium
+
 ## Use css locator strategy instead of xpath.
 
 Some projects may want to enforce using CSS selectors over XPath. This inspection highlights `@FindBy` annotations using xpath as locator strategy, e.g.:
