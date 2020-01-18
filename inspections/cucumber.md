@@ -7,7 +7,7 @@
 Please let me know if using the same exact exception messages as the descriptions of the inspections is not permitted due to licensing issues.
 I am happy to change them, it just made sense and I think it is clearer to use the same messages here too.
 
-## When a hook declares an argument it must be of type cucumber.api.Scenario
+## When a hook declares an argument it must be of type cucumber.api.Scenario/io.cucumber.core.api.Scenario
 
 This is based on one of the exception handling happening in [`cucumber.runtime.java.JavaHookDefinition`](https://github.com/cucumber/cucumber-jvm/blob/352a62e01ee66088baf548864cf067bdc7c7af11/java/src/main/java/cucumber/runtime/java/JavaHookDefinition.java).
 
@@ -32,7 +32,7 @@ It supports tagged hooks and all of the hook annotations: `@Before`, `@BeforeSte
 **Template:**
 
 ```xml
-<searchConfiguration name="When a hook declares an argument it must be of type cucumber.api.Scenario." text="@$HookAnnotation$&#10;$ReturnType$ $hookMethod$($HookType$ $parameter$) ;" recursive="true" caseInsensitive="true" type="JAVA">
+<searchConfiguration name="When a hook declares an argument it must be of type cucumber.api.Scenario/io.cucumber.core.api.Scenario." text="@$HookAnnotation$&#10;$ReturnType$ $hookMethod$($HookType$ $parameter$) ;" recursive="true" caseInsensitive="true" type="JAVA">
 	<constraint name="__context__" within="" contains="" />
 	<constraint name="HookAnnotation" regexp="(cucumber\.api\.java\|io\.cucumber\.java)\.(Before|BeforeStep|After|AfterStep)" maxCount="2147483647" within="" contains="" />
 	<constraint name="ReturnType" within="" contains="" />
