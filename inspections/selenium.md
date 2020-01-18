@@ -5,12 +5,19 @@
 
 ## Use css locator strategy instead of xpath.
 
-Some projects may want to enforce using CSS selectors over XPath. This inspection highlights `@FindBy` annotations using xpath as locator strategy, e.g.:
+Some projects may want to enforce using CSS selectors over XPath. This may happen because of a couple of things:
+- developers'/testers' preference
+- CSS selectors' better general performance over XPath
+- Xpath engines may differ between browsers
+- based on the application under test, CSS selectors are enough (maybe combined with JQuery selectors), and there's no
+need for xpath's capabilities.
 
-```java
-@FindBy(xpath = "//xpath/selector")
-public WebElement element;
-```
+This inspection highlights `@FindBy` annotations using xpath as locator strategy:
+
+| Compliant code | Non-compliant code |
+|---|---|
+| <pre>@FindBy(css = "div > p")<br>public WebElement element;</pre> | <pre>@FindBy(xpath = "//div/p")<br>public WebElement element;</pre> |
+
 
 The element type ($FieldType$ template variable) is not restricted to anything, so that is may be used with any UI automation framework that builds on the `@FindBy` annotation.
 
@@ -28,12 +35,12 @@ The element type ($FieldType$ template variable) is not restricted to anything, 
 
 ## FindBy: id based CSS selector value should not start with \#
 
-This inspection highlights elements like the one below:
+In CSS selectors the # character marks an ID attribute identifier but when id locator strategy is used directly
+adding the # also is invalid.
 
-```java
-@FindBy(id = "#some-id")
-public WebElement element;
-```
+| Compliant code | Non-compliant code |
+|---|---|
+| <pre>@FindBy(id = "some-id")<br>public WebElement element;</pre> | <pre>@FindBy(id = "#some-id")<br>public WebElement element;</pre> |
 
 **Template:**
 
@@ -48,12 +55,12 @@ public WebElement element;
 
 ## FindBy: className based CSS selector value should not start with a dot
 
-This inspection highlights elements like the one below:
+In CSS selectors the . character marks a class attribute identifier but when className locator strategy is used directly
+adding the . also is invalid.
 
-```java
-@FindBy(className = ".some-class")
-public WebElement element;
-```
+| Compliant code | Non-compliant code |
+|---|---|
+| <pre>@FindBy(className = "some-class")<br>public WebElement element;</pre> | <pre>@FindBy(className = ".some-class")<br>public WebElement element;</pre> |
 
 **Template:**
 
@@ -68,11 +75,12 @@ public WebElement element;
 
 ## By: id based CSS selector value should not start with \#
 
-This inspection highlights elements like the one below:
+In CSS selectors the # character marks an ID attribute identifier but when id locator strategy is used directly
+adding the # also is invalid.
 
-```java
-By.id("#some-id")
-```
+| Compliant code | Non-compliant code |
+|---|---|
+| `By.id("some-id")` | `By.id("#some-id")` |
 
 **Template:**
 
@@ -85,11 +93,12 @@ By.id("#some-id")
 
 ## By: className based CSS selector value should not start with a dot
 
-This inspection highlights elements like the one below:
+In CSS selectors the . character marks a class attribute identifier but when className locator strategy is used directly
+adding the . also is invalid.
 
-```java
-By.className(".some-class")
-```
+| Compliant code | Non-compliant code |
+|---|---|
+| `By.className("some-class")` | `By.className(".some-class")` |
 
 **Template:**
 
@@ -100,9 +109,19 @@ By.className(".some-class")
 </searchConfiguration>
 ```
 
-## FindBy: id, className and tagName selector values should not contain whitespace
+## id, className and tagName selector values should not contain whitespace
 
-These values (in `@org.openqa.selenium.FindBy`) are either incorrect selectors or were put together as a selector for the css locator strategy.
+A whitespace between parts of a CSS selector means it *Selects all X elements inside Y elements*, see the official [CSS Selector Reference](https://www.w3schools.com/cssref/css_selectors.asp).
+Therefore these values (defined either in `@org.openqa.selenium.FindBy` annotation or `org.openqa.selenium.By` objects) are either incorrect selectors or were created to be used with the **css** locator strategy.
+
+| Compliant code | Non-compliant code |
+|---|---|
+| <pre>@FindBy(className = "some-class")<br>public WebElement element;</pre> | <pre>@FindBy(className = "some class")<br>public WebElement element;</pre> |
+| <pre>@FindBy(id = "some-id")<br>public WebElement element;</pre> | <pre>@FindBy(id = "some id")<br>public WebElement element;</pre> |
+| <pre>@FindBy(tagName = "div")<br>public WebElement element;</pre> | <pre>@FindBy(tagName = "custom tag")<br>public WebElement element;</pre> |
+| `By.className("some-class")` | `By.className("some class")` |
+| `By.id("some-id")` | `By.id("some id")` |
+| `By.tagName("div")` | `By.tagName("custom tag")` |
 
 **Script filter ($Locator$):**
 
@@ -110,10 +129,10 @@ These values (in `@org.openqa.selenium.FindBy`) are either incorrect selectors o
 Locator.text.contains(" ")
 ```
 
-**Template:**
+**Template for @FindBy:**
 
 ```xml
-<searchConfiguration name="id, className and tagName selector values should not contain whitespace" text="@org.openqa.selenium.support.FindBy($LocatorStrategy$ = &quot;$Locator$&quot;)&#10;@Modifier(&quot;Instance&quot;) $FieldType$ $Element$;" recursive="true" caseInsensitive="true" type="JAVA">
+<searchConfiguration name="FindBy: id, className and tagName selector values should not contain whitespace" text="@org.openqa.selenium.support.FindBy($LocatorStrategy$ = &quot;$Locator$&quot;)&#10;@Modifier(&quot;Instance&quot;) $FieldType$ $Element$;" recursive="true" caseInsensitive="true" type="JAVA">
     <constraint name="__context__" within="" contains="" />
     <constraint name="Locator" script="&quot;Locator.text.contains(&quot; &quot;)&quot;" target="true" within="" contains="" />
     <constraint name="FieldType" within="" contains="" />
@@ -122,17 +141,7 @@ Locator.text.contains(" ")
 </searchConfiguration>
 ```
 
-## By: id, className and tagName selector values should not contain whitespace
-
-These values (in `org.openqa.selenium.By`) are either incorrect selectors or were put together as a selector for the css locator strategy.
-
-**Script filter ($Locator$):**
-
-```groovy
-Locator.text.contains(" ")
-```
-
-**Template:**
+**Template for By:**
 
 ```xml
 <searchConfiguration name="By: id, className and tagName selector values should not contain whitespace" text="org.openqa.selenium.By.$LocatorStrategy$(&quot;$Locator$&quot;)" recursive="true" caseInsensitive="true" type="JAVA">
@@ -144,19 +153,23 @@ Locator.text.contains(" ")
 
 ## CSS selector matching a tag name may be defined with tagName locator strategy
 
-This inspection would signal a code snippet like the following, as incorrect:
+In some cases it might be more readable to use the tagName locator strategy when targeting elements by their tag name
+instead of using the css locator strategy.
 
-```java
-@FindBy(css = "div")
-public WebElement gallery;
-```
+However tagName and css locator strategies may be used in a mixed manner within projects, this inspection would
+highlight code snippets in places too where you intentionally not use `tagName`.
+
+| Compliant code | Non-compliant code |
+|---|---|
+| <pre>@FindBy(tagName = "div")<br>public WebElement gallery;</pre> | <pre>@FindBy(css = "div")<br>public WebElement gallery;</pre> |
+| `By gallery = By.tagName("div");` | `By gallery = By.cssSelector("div");` |
 
 This inspection has support for all standard HTML tags listed on the [W3C Schools Tags page](https://www.w3schools.com/TAGs/) except:
 - `<!-- -->`
 - `<!DOCTYPE>`
 - all other tags that are marked as not supported in HTML5
 
-**Template:**
+**Template for @FindBy:**
 
 ```xml
 <searchConfiguration name="CSS selector matching a tag name may be defined with tagName locator strategy." text="@org.openqa.selenium.support.FindBy($locatorStrategy$ = &quot;$Locator$&quot;)&#10;@Modifier(&quot;Instance&quot;) $FieldType$ $Element$;" recursive="true" caseInsensitive="true" type="JAVA" pattern_context="default">
@@ -168,26 +181,7 @@ This inspection has support for all standard HTML tags listed on the [W3C School
 </searchConfiguration>
 ```
 
-## By: CSS selector matching a tag name may be defined with tagName locator strategy
-
-This inspection would signal a code snippet like the following, as incorrect:
-
-```java
-By gallery = By.cssSelector("div");
-```
-
-And also provides a replacement option, so that the code snippet above can be replaced with the following:
-
-```java
-By gallery = By.tagName("div");
-```
-
-This inspection has support for all standard HTML tags listed on the [W3C Schools Tags page](https://www.w3schools.com/TAGs/) except:
-- `<!-- -->`
-- `<!DOCTYPE>`
-- all other tags that are marked as not supported in HTML5
-
-**Template:**
+**Template for By:**
 
 ```xml
 <replaceConfiguration name="By: CSS selector matching a tag name may be defined with tagName locator strategy." text="org.openqa.selenium.By.$locatorStrategy$(&quot;$Locator$&quot;)" recursive="false" caseInsensitive="true" type="JAVA" pattern_context="default" reformatAccordingToStyle="true" shortenFQN="true" replacement="org.openqa.selenium.By.tagName(&quot;$Locator$&quot;)">
@@ -197,24 +191,20 @@ This inspection has support for all standard HTML tags listed on the [W3C School
 </replaceConfiguration>
 ```
 
-## By element is used in String concatenation
+## By or WebElement is used in String concatenation
 
 It can happen that you want to concatenate multiple CSS selector snippets because of parameterization or such.
-However one may make the mistake of concatenating a `By` object to a String which won't result in a valid CSS selector.
-This inspection is meant to mark this kind of issues.
+However one may make the mistake of concatenating a `By` or `WebElement` object to a String which won't result in a valid CSS selector.
+These inspections are meant to mark this issue.
 
-This inspection would signal a code snippet like the following, as incorrect:
+| Compliant code | Non-compliant code |
+|---|---|
+| <pre>String gallery = ".gallery";<br>String selectorRight = "div.some-other-selector " + gallery;<br>String selectorLeft = gallery + " div.some-other-selector";</pre> | <pre>By gallery = By.cssSelector(".gallery");<br>String selectorRight = "div.some-other-selector " + gallery;<br>String selectorLeft = gallery + " div.some-other-selector";</pre> |
+| <pre>String gallery = ".gallery";<br>String selectorRight = "div.some-other-selector " + gallery;<br>String selectorLeft = gallery + " div.some-other-selector";</pre> | <pre>@FindBy(css = ".gallery")<br>WebElement gallery;<br>String selectorRight = "div.some-other-selector " + gallery;<br>String selectorLeft = gallery + " div.some-other-selector";</pre> |
 
-```java
-By gallery = By.cssSelector(".gallery");
+These templates allow having additional concatenations on each side.
 
-String selectorRight = "div.some-other-selector " + gallery;
-String selectorLeft = gallery + " div.some-other-selector";
-```
-
-The template allows to have additional concatenations on either side.
-
-**Template:**
+**Templates:**
 
 For when the `By` object is at the right-hand side of the concatenation:
 
@@ -237,26 +227,6 @@ For when the `By` object is at the left-hand side of the concatenation:
   <constraint name="other" minCount="0" maxCount="2147483647" within="" contains="" />
 </searchConfiguration>
 ```
-
-## WebElement is used in String concatenation
-
-It can happen that you want to concatenate multiple CSS selector snippets because of parameterization or such.
-However one may make the mistake of concatenating a `WebElement` object to a String which won't result in a valid CSS
-selector. This inspection is meant to mark this kind of issues.
-
-This inspection would signal a code snippet like the following, as incorrect:
-
-```java
-@FindBy(className = "gallery")
-WebElement gallery;
-
-String selectorRight = "div.some-other-selector " + gallery;
-String selectorLeft = gallery + " div.some-other-selector";
-```
-
-The template allows to have additional concatenations on either side.
-
-**Template:**
 
 For when the `WebElement` object is at the right-hand side of the concatenation:
 
@@ -282,12 +252,12 @@ For when the `WebElement` object is at the left-hand side of the concatenation:
 
 ## The Actions#keyDown and Actions#keyUp methods accept only modifier keys
 
-Based on their javadoc they both accept only modifier keys such as `Keys.SHIFT`, `Keys.ALT` and `Keys.CONTROL`, thus
-this inspection will signal a code snippet like the following, as incorrect:
+Based on their javadoc both `Actions#keyDown` and `Actions#keyUp` accept only modifier keys such as `Keys.SHIFT`, `Keys.ALT` and `Keys.CONTROL`.
 
-```java
-Actions actions = new Actions(driver).keyDown(Keys.CANCEL);
-```
+| Compliant code | Non-compliant code |
+|---|---|
+| `Actions actions = new Actions(driver).keyDown(Keys.ALT);` | `Actions actions = new Actions(driver).keyDown(Keys.CANCEL);` |
+| `Actions actions = new Actions(driver).keyDown(aWebElement, Keys.ALT);` | `Actions actions = new Actions(driver).keyDown(aWebElement, Keys.CANCEL);` |
 
 This template has support for both signatures of `keyDown` and `keyUp` as well.
 
@@ -310,26 +280,38 @@ This template has support for both signatures of `keyDown` and `keyUp` as well.
 </searchConfiguration>
 ```
 
-## Consecutive Actions#moveToElement(WebElement) and Actions#click() calls can be simplified to Actions#click(WebElement).
+## Certain consecutive calls from Actions can be simplified
 
-According to the javadoc of `Actions#click(WebElement)` it is
-> Equivalent to: Actions.moveToElement(onElement).click()
+According to the method level javadocs in the `Actions` class some methods are equivalent to other multiple other consecutive calls. These are:
 
-thus this inspection will signal a code snippet like the following, as incorrect:
+| Method call | Equivalent to |
+|---|---|
+| `Actions.click(WebElement)` | `Actions.moveToElement(WebElement).click()` |
+| `Actions.clickAndHold(WebElement)` | `Actions.moveToElement(WebElement).clickAndHold()` |
+| `Actions.doubleClick(WebElement)` | `Actions.moveToElement(WebElement).doubleClick()` |
+| `Actions.release(WebElement)` | `Actions.moveToElement(WebElement).release()` |
+| `Actions(driver).sendKeys(WebElement, String)` | `Actions(driver).click(WebElement).sendKeys(String)` |
+| `Actions.perform()` | `Actions.build().perform()` |
 
-```java
-WebDriver driver = new FirefoxDriver();
-WebElement element;
+All the templates below provide quick fixes to replace the consecutive calls to their simpler variants.
 
-Actions actions = new Actions(driver).moveToElement(element).click();
-```
+If the chained methods have other methods than the two mentioned consecutive calls, they might be highlighted as well by IntelliJ due to
+the type match with `Actions`, but the quick fix works properly regardless of that.
 
-and also provides quick fix to replace the mentioned calls to `click(element)`.
+**Examples:**
 
-If the chained methods have other methods than `moveToElement` and `click` they might be highlighted as well by IntelliJ due to
-the type match with `Actions`, but the quick fix works properly regardless of that. 
+| Non-compliant code | Replacement |
+|---|---|
+| <pre>WebDriver driver = new FirefoxDriver();<br>WebElement element;<br>Actions actions = new Actions(driver).moveToElement(element).click();</pre> | <pre>WebDriver driver = new FirefoxDriver();<br>WebElement element;<br>Actions actions = new Actions(driver).click(element);</pre> |
+| <pre>WebDriver driver = new FirefoxDriver();<br>WebElement element;<br>Actions actions = new Actions(driver).moveToElement(element).clickAndHold();</pre> | <pre>WebDriver driver = new FirefoxDriver();<br>WebElement element;<br>Actions actions = new Actions(driver).clickAndHold(element);</pre> |
+| <pre>WebDriver driver = new FirefoxDriver();<br>WebElement element;<br>Actions actions = new Actions(driver).moveToElement(element).doubleClick();</pre> | <pre>WebDriver driver = new FirefoxDriver();<br>WebElement element;<br>Actions actions = new Actions(driver).doubleClick(element);</pre> |
+| <pre>WebDriver driver = new FirefoxDriver();<br>WebElement element;<br>Actions actions = new Actions(driver).moveToElement(element).release();</pre> | <pre>WebDriver driver = new FirefoxDriver();<br>WebElement element;<br>Actions actions = new Actions(driver).release(element);</pre> |
+| <pre>WebDriver driver = new FirefoxDriver();<br>WebElement element;<br>Actions actions = new Actions(driver).click(element).sendKeys("some keys");</pre> | <pre>WebDriver driver = new FirefoxDriver();<br>WebElement element;<br>Actions actions = new Actions(driver).sendKeys(element, "some keys");</pre> |
+| <pre>WebDriver driver = new FirefoxDriver();<br>WebElement element;<br>Actions actions = new Actions(driver).click(element).build().perform();</pre> | <pre>WebDriver driver = new FirefoxDriver();<br>WebElement element;<br>Actions actions = new Actions(driver).click(element).perform();</pre> |
 
-**Template:**
+**Templates:**
+
+**moveToElement(element).click() -> click(element)**
 
 ```xml
 <replaceConfiguration name="Consecutive moveToElement(element) and click() calls can be simplified to click(element)." text="$actions$.moveToElement($element$).click()" recursive="false" caseInsensitive="true" type="JAVA" pattern_context="default" reformatAccordingToStyle="true" shortenFQN="true" replacement="$actions$.click($element$)">
@@ -339,26 +321,7 @@ the type match with `Actions`, but the quick fix works properly regardless of th
 </replaceConfiguration>
 ```
 
-## Consecutive Actions#moveToElement(WebElement) and Actions#clickAndHold() calls can be simplified to Actions#clickAndHold(WebElement).
-
-According to the javadoc of `Actions#clickAndHold(WebElement)`
-> This is equivalent to: Actions.moveToElement(onElement).clickAndHold()
-
-thus this inspection will signal a code snippet like the following, as incorrect:
-
-```java
-WebDriver driver = new FirefoxDriver();
-WebElement element;
-
-Actions actions = new Actions(driver).moveToElement(element).clickAndHold();
-```
-
-and also provides quick fix to replace the mentioned calls to `clickAndHold(element)`.
-
-If the chained methods have other methods than `moveToElement` and `clickAndHold` they might be highlighted as well by IntelliJ due to
-the type match with `Actions`, but the quick fix works properly regardless of that. 
-
-**Template:**
+**moveToElement(element).clickAndHold() -> clickAndHold(element)**
 
 ```xml
 <replaceConfiguration name="Consecutive moveToElement(element) and clickAndHold() calls can be simplified to clickAndHold(element)." text="$actions$.moveToElement($element$).clickAndHold()" recursive="false" caseInsensitive="true" type="JAVA" pattern_context="default" reformatAccordingToStyle="true" shortenFQN="true" replacement="$actions$.clickAndHold($element$)">
@@ -368,26 +331,7 @@ the type match with `Actions`, but the quick fix works properly regardless of th
 </replaceConfiguration>
 ```
 
-## Consecutive Actions#moveToElement(WebElement) and Actions#doubleClick() calls can be simplified to Actions#doubleClick(WebElement).
-
-According to the javadoc of `Actions#doubleClick(WebElement)` it is
-> Equivalent to: Actions.moveToElement(onElement).doubleClick()
-
-thus this inspection will signal a code snippet like the following, as incorrect:
-
-```java
-WebDriver driver = new FirefoxDriver();
-WebElement element;
-
-Actions actions = new Actions(driver).moveToElement(element).doubleClick();
-```
-
-and also provides quick fix to replace the mentioned calls to `doubleClick(element)`.
-
-If the chained methods have other methods than `moveToElement` and `doubleClick` they might be highlighted as well by IntelliJ due to
-the type match with `Actions`, but the quick fix works properly regardless of that. 
-
-**Template:**
+**moveToElement(element).doubleClick() -> doubleClick(element)**
 
 ```xml
 <replaceConfiguration name="Consecutive moveToElement(element) and doubleClick() calls can be simplified to doubleClick(element)." text="$actions$.moveToElement($element$).doubleClick()" recursive="false" caseInsensitive="true" type="JAVA" pattern_context="default" reformatAccordingToStyle="true" shortenFQN="true" replacement="$actions$.doubleClick($element$)">
@@ -397,26 +341,7 @@ the type match with `Actions`, but the quick fix works properly regardless of th
 </replaceConfiguration>
 ```
 
-## Consecutive Actions#moveToElement(WebElement) and Actions#release() calls can be simplified to Actions#release(WebElement).
-
-According to the javadoc of `Actions#release(WebElement)`
-> This is equivalent to: Actions.moveToElement(onElement).release()
-
-thus this inspection will signal a code snippet like the following, as incorrect:
-
-```java
-WebDriver driver = new FirefoxDriver();
-WebElement element;
-
-Actions actions = new Actions(driver).moveToElement(element).release();
-```
-
-and also provides quick fix to replace the mentioned calls to `release(element)`.
-
-If the chained methods have other methods than `moveToElement` and `release` they might be highlighted as well by IntelliJ due to
-the type match with `Actions`, but the quick fix works properly regardless of that. 
-
-**Template:**
+**moveToElement(element).release() -> release(element)**
 
 ```xml
 <replaceConfiguration name="Consecutive moveToElement(element) and release() calls can be simplified to release(element)." text="$actions$.moveToElement($element$).release()" recursive="false" caseInsensitive="true" type="JAVA" pattern_context="default" reformatAccordingToStyle="true" shortenFQN="true" replacement="$actions$.release($element$)">
@@ -426,26 +351,7 @@ the type match with `Actions`, but the quick fix works properly regardless of th
 </replaceConfiguration>
 ```
 
-## Consecutive Actions#click(WebElement) and Actions#sendKeys(CharSequence...) calls can be simplified to Actions#sendKeys(WebElement, CharSequence...).
-
-According to the javadoc of `Actions#sendKeys(WebElement, CharSequence...)` it is
-> Equivalent to calling: Actions.click(onElement).sendKeys(keys)
-
-thus this inspection will signal a code snippet like the following, as incorrect:
-
-```java
-WebDriver driver = new FirefoxDriver();
-WebElement element;
-
-Actions actions = new Actions(driver).click(element).sendKeys("some keys");
-```
-
-and also provides quick fix to replace the mentioned calls to `sendKeys(element, keys)`.
-
-If the chained methods have other methods than `click` and `sendKeys` they might be highlighted as well by IntelliJ due to
-the type match with `Actions`, but the quick fix works properly regardless of that. 
-
-**Template:**
+**click(element).sendKeys("string") -> sendKeys(element, "string")**
 
 ```xml
 <replaceConfiguration name="Consecutive click(element) and sendKeys(keys) calls can be simplified to sendKeys(element, keys)." text="$actions$.click($element$).sendKeys($keys$)" recursive="false" caseInsensitive="true" type="JAVA" pattern_context="default" reformatAccordingToStyle="true" shortenFQN="true" replacement="$actions$.sendKeys($element$, $keys$)">
@@ -456,26 +362,7 @@ the type match with `Actions`, but the quick fix works properly regardless of th
 </replaceConfiguration>
 ```
 
-## Consecutive Actions#build() and Actions#perform() calls can be simplified to Actions#perform().
-
-According to the javadoc of `Actions#perform()` it is
-> A convenience method for performing the actions without calling build() first.
-
-thus this inspection will signal a code snippet like the following, as incorrect:
-
-```java
-WebDriver driver = new FirefoxDriver();
-WebElement element;
-
-Actions actions = new Actions(driver).click(element).build().perform();
-```
-
-and also provides quick fix to replace the mentioned calls to `perform()`.
-
-If the chained methods have other methods than `build` and `perform` they might be highlighted as well by IntelliJ due to
-the type match with `Actions`, but the quick fix works properly regardless of that. 
-
-**Template:**
+**build().perform() -> perform()**
 
 ```xml
 <replaceConfiguration name="Consecutive build() and perform() calls can be simplified to perform()." text="$actions$.build().perform()" recursive="false" caseInsensitive="true" type="JAVA" pattern_context="default" reformatAccordingToStyle="true" shortenFQN="true" replacement="$actions$.perform()">
