@@ -7,15 +7,14 @@ You can find more information on the *[Sauce Java GitHub project](https://github
 
 ## ConcurrentParameterized.Parameters: The parameter value is malformed. See javadoc for the list of valid values.
 
-This is based on the javadoc written for the `@Parameters` annotation in [`com.saucelabs.junit.ConcurrentParameterized`](https://github.com/saucelabs/sauce-java/blob/master/junit/src/main/java/com/saucelabs/junit/ConcurrentParameterized.java)
+The javadoc written for the `@Parameters` annotation in [`com.saucelabs.junit.ConcurrentParameterized`](https://github.com/saucelabs/sauce-java/blob/master/junit/src/main/java/com/saucelabs/junit/ConcurrentParameterized.java)
+provides details about what placeholders it accepts.
 
-This inspection would signal a code snippet like the following, as incorrect:
+| Compliant code | Non-compliant code |
+|---|---|
+| <pre>@ConcurrentParameterized.Parameters(name = "{index}")<br>public void someMethod() {<br>}</pre> | <pre>@ConcurrentParameterized.Parameters(name = "{incorrect")<br>public void someMethod() {<br>}</pre> |
+| <pre>@ConcurrentParameterized.Parameters(name = "{1}")<br>public void someMethod() {<br>}</pre> |  |
 
-```java
-@ConcurrentParameterized.Parameters(name = "{incorrect")
-public void someMethod() {
-}
-```
 
 This template can handle all the following kind of incorrect values:
 - no curly braces: `"asdf"`
@@ -68,18 +67,11 @@ isIncorrect
 
 ## SauceREST: getFullJobs(20) call can be replaced with getFullJobs() call. The default value is 20.
 
-This inspection would signal a code snippet like the following, as incorrect:
+As the title says there is a replacement option for the `SauceREST#getFullJobs(int)` method:
 
-```java
-SauceREST rest = new SauceREST("someUserName", "somePassword");
-rest.getFullJobs(20);
-```
-
-And also provides a replacement option, so that the code snippet above can be replaced with the following:
-
-```java
-rest.getFullJobs();
-```
+| Non-compliant code | Replacement |
+|---|---|
+| <pre>SauceREST rest = new SauceREST("someUserName", "somePassword");<br>rest.getFullJobs(20);</pre> | <pre>SauceREST rest = new SauceREST("someUserName", "somePassword");<br>rest.getFullJobs();</pre> |
 
 **Template:**
 
@@ -92,19 +84,11 @@ rest.getFullJobs();
 
 ## SauceREST#uploadFile(): Last, overwrite parameter may be removed. The default value is true.
 
-This inspection would signal a code snippet like the following, as incorrect:
+As the title says there is a replacement option for the `SauceREST#uploadFile()` method:
 
-```java
-SauceREST rest = new SauceREST("someUserName", "somePassword");
-File file;
-rest.uploadFile(file, "aString", true);
-```
-
-And also provides a replacement option, so that the code snippet above can be replaced with the following:
-
-```java
-rest.uploadFile(file, "aString");
-```
+| Non-compliant code | Replacement (only the `uploadFile()` call) |
+|---|---|
+| <pre>SauceREST rest = new SauceREST("someUserName", "somePassword");<br>File file;<br>rest.uploadFile(file, "aString", true);</pre> | <pre>SauceREST rest = new SauceREST("someUserName", "somePassword");<br>File file;<br>rest.uploadFile(file, "aString");</pre> |
 
 **Template:**
 
