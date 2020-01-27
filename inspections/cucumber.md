@@ -7,25 +7,21 @@
 Please let me know if using the same exact exception messages as the descriptions of the inspections is not permitted due to licensing issues.
 I am happy to change them, it just made sense and I think it is clearer to use the same messages here too.
 
-## When a hook declares an argument it must be of type cucumber.api.Scenario/io.cucumber.core.api.Scenario
+## General information
+
+Package naming was updated with [Cucumber 4.5.0](https://github.com/cucumber/cucumber-jvm/blob/master/CHANGELOG.md#450-2019-06-30),
+but the inspection below have support for 2 or 3 different packaging structures where possible and was not forgot about to update.
+
+## When a hook declares an argument it must be of type Scenario
 
 This is based on one of the exception handling happening in [`cucumber.runtime.java.JavaHookDefinition`](https://github.com/cucumber/cucumber-jvm/blob/352a62e01ee66088baf548864cf067bdc7c7af11/java/src/main/java/cucumber/runtime/java/JavaHookDefinition.java).
 
-This inspection would signal a code snippet like the following, as incorrect:
+Cucumber doesn't allow any other `Scenario` types as hook method arguments other than from the packages `cucumber.api` and `io.cucumber.core.api`. This applies to not just
+scenario hooks but step hooks as well. 
 
-```java
-@Before
-public void beforeScenario(TestCase testCase) {
-}
-```
-
-A correct snippet looks like the one below:
-
-```java
-@Before
-public void beforeScenario(Scenario scenario) {
-}
-```
+| Compliant code | Non-compliant code |
+|---|---|
+| <pre>@Before<br>public void beforeScenario(Scenario scenario) {<br>}</pre> | <pre>@Before<br>public void beforeScenario(TestCase testCase) {<br>}</pre> |
 
 It supports tagged hooks and all of the hook annotations: `@Before`, `@BeforeStep`, `@After`, `@AfterStep`.
 
@@ -46,13 +42,13 @@ It supports tagged hooks and all of the hook annotations: `@Before`, `@BeforeSte
 
 This is based on one of the exception handling happening in [`cucumber.runtime.java.JavaHookDefinition`](https://github.com/cucumber/cucumber-jvm/blob/352a62e01ee66088baf548864cf067bdc7c7af11/java/src/main/java/cucumber/runtime/java/JavaHookDefinition.java).
 
-This inspection would signal a code snippet like the following, as incorrect:
+Cucumber doesn't allow more than 1 argument for hook methods, which in fact wouldn't make much sense because you can only run a hook for a single scenario or step but not multiple ones
+with the same hooks method at the same time.
 
-```java
-@BeforeStep
-public void beforeStep(Scenario scenario, TestCase testCase) {
-}
-```
+| Compliant code | Non-compliant code |
+|---|---|
+| <pre>@BeforeStep<br>public void beforeStep(Scenario scenario) {<br>}</pre> | <pre>@BeforeStep<br>public void beforeStep(Scenario scenario, TestCase testCase) {<br>}</pre> |
+| <pre>@BeforeStep<br>public void beforeStep() {<br>}</pre> |  |
 
 It supports tagged hooks and all of the hook annotations: `@Before`, `@BeforeStep`, `@After`, `@AfterStep`.
 
@@ -69,15 +65,16 @@ It supports tagged hooks and all of the hook annotations: `@Before`, `@BeforeSte
 </searchConfiguration>
 ```
 
-## You must supply an output argument to html. Like so: html:output.
+## You must supply an output argument to certain plugins.
 
 This is based on one of the exception handling happening in [`cucumber.runtime.formatter.PluginFactory`](https://github.com/cucumber/cucumber-jvm/blob/311c6f8e8ba21526abdbac6f27295551421a1d6f/core/src/main/java/cucumber/runtime/formatter/PluginFactory.java).
 
-This inspection would signal a code snippet like the following, as incorrect (it is being highlighted regardless of the position of the the **plugin** attribute):
+This inspection would signal a code snippet like the following, as incorrect (it is being highlighted regardless of the position of the the **plugin** attribute).
 
-```java
-@CucumberOptions(plugin = "html")
-```
+| Compliant code | Non-compliant code |
+|---|---|
+| <pre>@CucumberOptions(plugin = "html:output")</pre> | <pre>@CucumberOptions(plugin = "html")</pre> |
+| <pre>@CucumberOptions(plugin = "junit:output")</pre> | <pre>@CucumberOptions(plugin = "junit")</pre> |
 
 **Script filter ($Class$):**
 
@@ -85,7 +82,7 @@ This inspection would signal a code snippet like the following, as incorrect (it
 !__context__.interface && !__context__.enum
 ```
 
-**Template:**
+**Template (html):**
 
 ```xml
 <searchConfiguration name="You must supply an output argument to html. Like so: html:output" text="@$CucumberOptions$($plugin$ = &quot;$html$&quot;)&#10;class $Class$ {}" recursive="true" caseInsensitive="true" type="JAVA" pattern_context="default">
@@ -97,23 +94,7 @@ This inspection would signal a code snippet like the following, as incorrect (it
 </searchConfiguration>
 ```
 
-## You must supply an output argument to junit. Like so: junit:output.
-
-This is based on one of the exception handling happening in [`cucumber.runtime.formatter.PluginFactory`](https://github.com/cucumber/cucumber-jvm/blob/311c6f8e8ba21526abdbac6f27295551421a1d6f/core/src/main/java/cucumber/runtime/formatter/PluginFactory.java).
-
-This inspection would signal a code snippet like the following, as incorrect (it is being highlighted regardless of the position of the the **plugin** attribute):
-
-```java
-@CucumberOptions(plugin = "junit")
-```
-
-**Script filter ($Class$):**
-
-```groovy
-!__context__.interface && !__context__.enum
-```
-
-**Template:**
+**Template (junit):**
 
 ```xml
 <searchConfiguration name="You must supply an output argument to html. Like so: junit:output" text="@$CucumberOptions$($plugin$ = &quot;$junit$&quot;)&#10;class $Class$ {}" recursive="true" caseInsensitive="true" type="JAVA" pattern_context="default">
@@ -129,11 +110,12 @@ This inspection would signal a code snippet like the following, as incorrect (it
 
 This is based on one of the exception handling happening in [`cucumber.runtime.RuntimeOptionsFactory`](https://github.com/cucumber/cucumber-jvm/blob/7a262f077a894367a4a62eb39f1d31d57351923c/core/src/main/java/cucumber/runtime/RuntimeOptionsFactory.java).
 
-This inspection would signal a code snippet like the following, as incorrect (it is being highlighted regardless of the position of these attributes):
+Additional details about the purpose of extraGlue may be found in the [cucumber-jvm/#1438 GitHub issue](https://github.com/cucumber/cucumber-jvm/issues/1438).
 
-```java
-@CucumberOptions(tags = "@tag", glue = "com.project.stepdefs", extraGlue = "com.project.otherthings")
-```
+| Compliant code | Non-compliant code |
+|---|---|
+| <pre>@CucumberOptions(tags = "@tag", glue = "com.project.stepdefs")</pre> | <pre>@CucumberOptions(tags = "@tag", glue = "com.project.stepdefs", extraGlue = "com.project.otherthings")</pre> |
+| <pre>@CucumberOptions(tags = "@tag", extraGlue = "com.project.otherthings")</pre> |  |
 
 ```groovy
 !__context__.interface && !__context__.enum
@@ -155,27 +137,12 @@ This inspection would signal a code snippet like the following, as incorrect (it
 
 This is based on one of the exception handling happening in [`cucumber.runtime.junit.Assertions`](https://github.com/cucumber/cucumber-jvm/blob/e471442b0bd6a6d263bbcac03c8079107a36d84d/junit/src/main/java/cucumber/runtime/junit/Assertions.java).
 
-This inspection would signal a code snippet like the following ones (or the combination of them), as incorrect:
+To see the reason why this validation is put in place, please head to the referenced class, and see the error message provided there.
 
-```java
-@RunWith(Cucumber.class)
-public class JUnitTest {
-
-    @When("the page should be loaded")
-    public void the_page_should_be_loaded() {
-    }
-}
-```
-
-```java
-@RunWith(Cucumber.class)
-public class JUnitTest {
-
-    @Before
-    public void beforeScenario(Scenario scenario) {
-    }
-}
-```
+| Compliant code | Non-compliant code |
+|---|---|
+| <pre>@RunWith(Cucumber.class)<br>public class JUnitTest {<br>    //Without hooks and step definitions<br>}</pre> | <pre>@RunWith(Cucumber.class)<br>public class JUnitTest {<br>    @When("the page should be loaded")<br>    public void the_page_should_be_loaded() {<br>    }<br>}</pre> |
+| <pre></pre> | <pre>@RunWith(Cucumber.class)<br>public class JUnitTest {<br>    @Before<br>    public void beforeScenario(Scenario scenario) {<br>    }<br>}</pre> |
 
 **Supported annotations:**
 - **Hooks (including tagged hooks):** Before, BeforeStep, After, AfterStep
@@ -202,9 +169,9 @@ the value of that attribute must start with `@` otherwise Cucumber won't be able
 
 This inspection would signal a code snippet like the following, as incorrect:
 
-```java
-@CucumberOptions(tags = "sometag")
-```
+| Compliant code | Non-compliant code |
+|---|---|
+| <pre>@CucumberOptions(tags = "@sometag")</pre> | <pre>@CucumberOptions(tags = "sometag")</pre> |
 
 This inspection supports this annotation from the following packages:
 - `cucumber.api` (deprecated in Cucumber-JVM 4.5.0)
@@ -231,27 +198,23 @@ This inspection supports this annotation from the following packages:
 ## Step pattern contains incomplete parameter placeholder
 
 Cucumber has its own expression language and elements for step patterns which includes parameter type placeholders like `{string}`. There are built-in ones but custom ones may be
-implemented as well. See official documentation here: https://cucumber.io/docs/cucumber/cucumber-expressions/
+implemented as well. See official documentation here: [Cucumber expression](https://cucumber.io/docs/cucumber/cucumber-expressions/).
 
 However if one makes a mistake and misses the starting or closing curly brace of these placeholders then Cucumber will fail to parse that step properly.
 
-This inspection would signal code snippets like the following, as incorrect:
-
-```java
-@When("I have {int apples")
-public void i_have_X_apples(int numberOfApples) {
-}
-```
-
-```java
-@When("I have int} apples")
-public void i_have_X_apples(int numberOfApples) {
-}
-```
+| Compliant code | Non-compliant code |
+|---|---|
+| Original format:
+| <pre>@When("I have {int} apples")<br>public void i_have_X_apples(int numberOfApples) {<br>}</pre> | <pre>@When("I have {int apples")<br>public void i_have_X_apples(int numberOfApples) {<br>}</pre> |
+|  | <pre>@When("I have int} apples")<br>public void i_have_X_apples(int numberOfApples) {<br>}</pre> |
+| Java8 format: |  |
+| <pre>this.Given("I have {int} apples", () -> {});</pre> | <pre>this.Given("I have {int apples", () -> {});</pre> |
+|  | <pre>this.Given("I have int} apples", () -> {});</pre> |
 
 Regardless of the position and number of placeholders the inspection will mark the pattern incorrect if it finds at least one incorrect placeholder.
 
-This inspection supports all the built-in placeholders, except `{}`, and the `@Given`, `@When`, `@Then`, `@And` and `@But` annotations from the `cucumber.api.java.en` package.
+This inspection supports all the built-in placeholders, except `{}`, and the `@Given`, `@When`, `@Then`, `@And` and `@But` annotations from the `cucumber.api.java.en`
+and `io.cucumber.java.en` packages.
 
 To alter/extend the support for other step annotations one has to change the regexp of the `StepAnnotation` template variable.
 
@@ -302,15 +265,14 @@ Step.resolveMethod().getContainingClass().getQualifiedName().matches("(cucumber\
 
 ## Step pattern contains unregistered parameter type
 
-During writing step patterns one may make a mistake and have a typo in the name of the parameter type placeholders which Cucumber won't recognize, which one will only find out when the related test is executed.
+During writing step patterns one may make a mistake and have a typo in the name of the parameter type placeholders which Cucumber won't recognize, which it will only find out when the related test is executed.
 
-This inspection would signal a code snippet like the following, as incorrect, considering that there is no custom parameter type converter registered for `{quality}`:
-
-```java
-@When("I have {quality} apples")
-public void i_have_X_apples(Quality quality) {
-}
-```
+| Compliant code | Non-compliant code |
+|---|---|
+| Original format: |   |
+| <pre>@When("I have {string} apples")<br>public void i_have_X_apples(String quality) {<br>}</pre> | <pre>@When("I have {Strng} apples")<br>public void i_have_X_apples(String quality) {<br>}</pre> |
+| Java8 format: |  |
+| <pre>this.Given("I have {string} apples", () -> {});</pre> | <pre>this.Given("I have {Strng} apples", () -> {});</pre> |
 
 Regardless of the position and number of placeholders the inspection will mark the pattern incorrect if it finds at least one unregistered placeholder.
 
@@ -372,18 +334,17 @@ Step.resolveMethod().getContainingClass().getQualifiedName().matches("(cucumber\
 
 This is based on the specific exception type: [`InvalidMethodException`](https://github.com/cucumber/cucumber-jvm/blob/1f9085426716acb26414acdb010d3fbb06b9f364/java/src/main/java/io/cucumber/java/InvalidMethodException.java)
 
-This inspection would signal a code snippet like the following, as incorrect:
+For the reason why Step Definitions and Hooks classes are not allowed to be extended, see Aslak Hellesøy's answer in [this Google Groups discussion](https://groups.google.com/forum/#!topic/cukes/ke7MhnjqQGQ).
 
-```java
-public class HomepageSteps extends CommonSteps {
-}
-```
+| Compliant code | Non-compliant code |
+|---|---|
+| <pre>public class HomepageSteps {<br>    @Inject //use the DI framework of your choice<br>    HeroImageSteps heroImageSteps;<br>}</pre> | <pre>public class HomepageSteps extends HeroImageSteps {<br>}</pre> |
 
-highlighting the class that is being extended, in this case `CommonSteps`.
+THe highlighted part in this case is `CommonSteps`.
 
 I found two different ways that this can be validated. Below you can find them.
 
-### Validating that the name of the superclass ends with a certain keyword
+### Validating if the name of the superclass ends with a certain keyword
 
 This is a very simple check and it doesn't validate the existence of actual Step Definitions and hooks, but may be useful
 when the step definitions classes are always named in a certain way, for instance they always end with `Steps`.  
@@ -400,11 +361,11 @@ when the step definitions classes are always named in a certain way, for instanc
 
 ### Validating whether there is a step or hook annotated class among the declared methods of this class
 
-This is the more strict one because it checks for the existence of actual step and hook annotations, and stops at the
+This is the more strict than the previous inspection because it checks for the existence of actual step and hook annotations, and stops at the
 first one if it comes across one.
 
 It may also happen that a class named as a step definition might not contain step definition methods or hooks at all
-but in that case the class might need to be renamed to something else more proper.
+but in that case the class might need to be renamed to something more appropriate.
 
 **Script filter (Complete match)**
 
@@ -427,7 +388,7 @@ if (superclass instanceof PsiClass) {
 false
 ```
 
-The list of validated annotations may be extended or changed entirely in the list called `stepAnnotations` to suit project needs.
+The list of validated annotations may be extended or changed entirely in the list called `stepAnnotations` to suit custom needs.
 
 **Template:**
 
@@ -442,18 +403,20 @@ The list of validated annotations may be extended or changed entirely in the lis
 ## Explicit parameter type converter definition is not necessary for an enum type.
 
 In case of Cucumber expressions there is a special, anonymous parameter (`{}`) with which, among other types, enum
-parameter types can be targeted. Therefore it sounds reasonable to validate `TypeRegistryConfigurer` implementations whether
+parameter types can be targeted. However if someone is not familiar with this parameter, might start defining custom parameter type converters
+for each enum types they want to convert.
+
+This makes it reasonable to validate `TypeRegistryConfigurer` implementations whether
 they explicitly define parameter type converters for Enum types.
 
 The related, official documentation can be found at [Cucumber Expressions - Parameter types](https://cucumber.io/docs/cucumber/cucumber-expressions/#parameter-types).
 
-This inspection would signal a code snippet like the following, as incorrect:
+| Compliant code | Non-compliant code |
+|---|---|
+| Use the `{}` parameter in step definition patterns, e.g. <pre>@When("I navigate to {} page")<br>public void i_navigate_to_X_page(PageType pageType) {<br>}</pre> | <pre>typeRegistry.defineParameterType(new ParameterType<>("type", ".*", PageType.class, (String value) -> PageType.valueOf(value)));</pre> |
+|  | <pre>typeRegistry.defineParameterType(new ParameterType<>("type", ".*", PageType.class, (Transformer<PageType>) PageType::valueOf));</pre> |
+The type `PageType` is just for the sake of the example, it may be any type that is enum.
 
-```java
-typeRegistry.defineParameterType(new ParameterType<>("type", ".*", Type.class, (String value) -> Type.valueOf(value)));
-```
-
-where `Type` is an enum.
 
 **Script filter (Complete match)**
 
@@ -474,13 +437,7 @@ typeRegistry.resolve().getType().getCanonicalText().matches("(io\\.cucumber\\.co
 </searchConfiguration>
 ```
 
-Since the above mentioned code snippet may be expressed differently, with a method reference like:
-
-```java
-typeRegistry.defineParameterType(new ParameterType<>("type", ".*", Type.class, (Transformer<Type>) Type::valueOf));
-```
-
-the following template has support to identify enum converters in that form as well:
+Since the above mentioned code snippet may be expressed differently, with a method reference, the following template has support to identify enum converters in that form as well:
 
 ```xml
 <searchConfiguration name="Explicit parameter type converter is not necessary for an enum type. You can use empty {} placeholder instead." text="$typeRegistry$.defineParameterType(new io.cucumber.cucumberexpressions.ParameterType&lt;&gt;($keyword$, $pattern$, $Type$.class, (io.cucumber.cucumberexpressions.Transformer&lt;$Type$&gt;) $Type$::valueOf));" recursive="true" caseInsensitive="true" type="JAVA" pattern_context="default">
@@ -491,9 +448,6 @@ the following template has support to identify enum converters in that form as w
     <constraint name="typeRegistry" script="&quot;typeRegistry.resolve().getType().getCanonicalText().matches(&quot;(io\\.cucumber\\.core\\.api|io\\.cucumber\\.stepexpression)\\.TypeRegistry&quot;)&quot;" nameOfExprType="io\.cucumber\.stepexpression\.TypeRegistry" expressionTypes="io.cucumber.stepexpression.TypeRegistry" within="" contains="" />
 </searchConfiguration>
 ```
-
-Since there were [package changes in 4.5.0](https://github.com/cucumber/cucumber-jvm/blob/master/CHANGELOG.md#450-2019-06-30)
-for many classes both of the templates above have support for both packaging.
 
 **Notes, caveats:**
 - There might be other cases or forms of parameter type conversion that this inspection doesn't handle at the moment.
@@ -515,15 +469,11 @@ with the actual values but it gets them for example from method parameters e.g.:
 
 ## Step definition method is not implemented, has no body.
 
-Step definition methods with empty body are considered unimplemented, which Cucumber also informs you about when you run a test suite.
+Step definition methods with empty body are considered unimplemented, which Cucumber also informs you about when you run a test.
 
-This inspection would signal a code snippet like the following, as incorrect:
-
-```java
-@When("I open the homepage")
-public void i_open_the_homepage() {
-}
-```
+| Compliant code | Non-compliant code |
+|---|---|
+| <pre>@When("I open the homepage")<br>public void i_open_the_homepage() {<br>    //Some test logic<br>}</pre> | <pre>@When("I open the homepage")<br>public void i_open_the_homepage() {<br>}</pre> |
 
 **Template:**
 
