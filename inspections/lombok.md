@@ -1,6 +1,6 @@
 # Lombok
 
-If you would like to use more Lombok specific inspection, it is already built in in the Lombok IntelliJ plugin [JetBrains page](https://plugins.jetbrains.com/plugin/6317-lombok)/[GitHub project](https://github.com/mplushnikov/lombok-intellij-plugin)
+If you would like to use more Lombok specific inspection, it is already built into the Lombok IntelliJ plugin [JetBrains page](https://plugins.jetbrains.com/plugin/6317-lombok)/[GitHub project](https://github.com/mplushnikov/lombok-intellij-plugin)
 which is already an essential part of working with Lombok in IntelliJ.
 
 - Lombok website: https://projectlombok.org
@@ -12,13 +12,15 @@ There is already a GitHub issue created for Lombok to have these inspections rev
 
 ## Slf4j Logger is defined explicitly. Use Lombok @Slf4j annotation instead
 
-There are couple of Lombok annotation for different logger APIs. This one checks for explicit Slf4j logger field definitions:
+There are couple of Lombok annotations for various logger APIs, so one might want to use (enforce the usage, or migrate to) one of these annotations
+instead of using explicit logger field definitions. This inspection checks for explicit Slf4j logger field definitions, but with some type updates
+other libraries can be validated as well.
 
-```java
-Logger LOG = LoggerFactory.getLogger(CurrentClass.class)
-```
+Neither the field type (instance or static, visibility) nor the name of the field name is restricted to anything, making it more flexible.
 
-Neither the field type (instance or static) nor the name of the field name is restricted to anything, making it more flexible. 
+| Compliant code | Non-compliant code |
+|---|---|
+| <pre>@Slf4j<br>public class ANiceClass {<br>}</pre> | <pre>public class ANiceClass {<br>    private static final Logger LOG = LoggerFactory.getLogger(ANiceClass.class)<br>}</pre> |
 
 ```xml
 <searchConfiguration name="Slf4j Logger is defined explicitly. Use Lombok @Slf4j annotation instead." text="$Logger$ $LOG$ = $LoggerFactory$.getLogger($Class$.class);&#10;" recursive="false" caseInsensitive="true" type="JAVA">
@@ -36,17 +38,13 @@ According to Lombok's [official documentation](https://projectlombok.org/feature
 > lombok will treat that builder node as a collection, and it generates 2 'adder' methods instead of a 'setter' method.
 > One which adds a single element to the collection, and one which adds all elements of another collection to the collection. No setter to just set the collection (replacing whatever was already added) will be generated.
 
-Therefore there is now way a @Singular collection could get `null` value, thus having the `@NonNull` annotation on such fields is superfluous.
+Therefore there is no way a @Singular collection could get `null` value, thus having the `@NonNull` annotation on such fields is superfluous.
 
-This inspection only checks classes that annotated as `@lombok.Builder`, since `@Singular` field are allowed only is such classes. 
+This inspection only checks classes that are annotated as `@lombok.Builder`, since `@Singular` fields are allowed only is such classes. 
 
-Example of incorrect usage:
-
-```java
-@NonNull
-@Singular
-private List<Cake> cakes;
-```
+| Compliant code | Non-compliant code |
+|---|---|
+| <pre>@Singular<br>private List<Cake> cakes;</pre> | <pre>@NonNull<br>@Singular<br>private List<Cake> cakes;</pre> |
 
 **Template:**
 
@@ -64,18 +62,16 @@ private List<Cake> cakes;
 
 ## @Builder.Default field is not initialized. Either remove the annotation or initialize the field explicitly
 
-`@Builder.Default` annotated fields are designed to provide a default/fallback value for that field in case it is not defined explicitly.
+`@Builder.Default` annotated fields are designed to provide a default/fallback value for those fields in case they are not defined explicitly.
 
-Thus having the this annotation on a field but missing the field initialization can mean two things:
+Thus having this annotation on a field but missing the field initialization can mean two things:
 - it lacks initialization intentionally in which case the annotation may be removed
 - it lacks initialization accidentally in which case it needs to be added
 
-An example of incorrect usage:
-
-```java
-@Builder.Default
-private final City city;
-```
+| Compliant code (depending on the fields's purpose) | Non-compliant code |
+|---|---|
+| <pre>private final City city;</pre> | <pre>@Builder.Default<br>private final City city;</pre> |
+| <pre>@Builder.Default<br>private final City city = City.SZEGED;</pre> |  |
 
 **Template:**
 
@@ -94,17 +90,14 @@ private final City city;
 
 ## Lombok @NonNull is used on a method parameter. You may replace it with an explicit check e.g. java.util.Objects.requireNonNull
 
-This inspection is based on the fact that including Lombok annotations in your code makes it a little bit more difficult to debug it, at least in IntelliJ.
-Though this inspection might not be considered good practice, it might at least be an example how one can create such inspection with any desired annotation.
+This inspection is based on the fact that including Lombok annotations in your code makes it a little bit more difficult to debug it, at least in my experience with IntelliJ.
+Although this inspection might not be considered good practice, it might at least be an example how one can create such inspection with any desired annotation.
 
-This inspection (for now) only works for methods whose parameters are all annotated as Lombok.@NonNull.
+This inspection (for now) only works for methods whose parameters are all annotated as `Lombok.@NonNull`.
 
-This inspection would signal code snippets like the following, as incorrect:
-
-```java
-public void someMethod(@NonNull String parameter, @NonNull Integer parameter) {
-}
-```
+| Compliant code | Non-compliant code |
+|---|---|
+| <pre>public void someMethod(String strParam, Integer intParam) {<br>    doSomethingWith(requireNonNull(strParam));<br>    doSomethingWith(requireNonNull(intParam));<br>}</pre> | <pre>public void someMethod(@NonNull String strParam, @NonNull Integer intParam) {<br>}</pre> |
 
 **Template:**
 
@@ -123,12 +116,11 @@ public void someMethod(@NonNull String parameter, @NonNull Integer parameter) {
 Since primitive types in Java cannot have `null` value, it doesn't make sense to annotate primitive type fields and variables as `@NonNull`,
 though doing so does not result in any error, it's just unnecessary.
 
-This inspection would signal code snippets like the following, as incorrect:
+This inspection has support for all primitive types.
 
-```java
-@NonNull
-private int anInteger;
-```
+| Compliant code | Non-compliant code |
+|---|---|
+| <pre>private int anInteger;</pre> | <pre>@NonNull<br>private int anInteger;</pre> |
 
 **Template:**
 
@@ -146,14 +138,11 @@ private int anInteger;
 According to the [official documentation](https://projectlombok.org/features/Cleanup):
 > You can use @Cleanup to ensure a given resource is automatically cleaned up before the code execution path exits your current scope.
 
-But such logic has been introduced in Java 7 with the try-with-resources statement, so it's usage is preferred.
+Since such logic has been introduced in Java 7 with the *try-with-resources* statement, some might prefer using the native solution over the Lombok annotation.
 
-This inspection would signal code snippets like the following, as incorrect:
-
-```java
-@Cleanup
-private InputStream inputStream;
-```
+| Compliant code | Non-compliant code |
+|---|---|
+| <pre>try (InputStream inputStream = new FileInputStream(file)) {<br>}</pre> | <pre>@Cleanup<br>private InputStream inputStream;</pre> |
 
 **Template:**
 
@@ -169,19 +158,12 @@ private InputStream inputStream;
 
 ## Static field in a @Builder class is annotated as @Builder.Default, which has no effect. It can be removed
 
-Static fields in Builder classes are not meant to be a part of the built object and have builder methods, and Lombok's `@Builder` annotation
-won't create any builder method for static fields, thus annotating those fields as `@Builder.Default` is superfluous because it has no effect.
+Static fields in Builder classes are not meant to be part of the built object and have builder methods. Also Lombok's `@Builder` annotation
+doesn't create builder methods for static fields, thus annotating such fields as `@Builder.Default` is superfluous because it has no effect.
 
-This inspection would signal code snippets like the following, as incorrect:
-
-```java
-@Builder
-public class SomeBuilder {
-    
-    @Builder.Default
-    private static final int anInteger = 5;
-}
-```
+| Compliant code | Non-compliant code |
+|---|---|
+| <pre>@Builder<br>public class SomeBuilder {<br>    private static final int anInteger = 5;<br>}</pre> | <pre>@Builder<br>public class SomeBuilder {<br>    @Builder.Default<br>    private static final int anInteger = 5;<br>}</pre> |
 
 **Template:**
 
@@ -204,15 +186,9 @@ annotated as `@Builder` it has no effect. But it may signal two things:
 - it is the `@Builder` annotation that is missing from the class level, and it should be added
 - or the class is indeed not a builder, so the `@Builder.Default` annotation may be removed
 
-This inspection would signal code snippets like the following, as incorrect:
-
-```java
-public class SomeBuilder {
-    
-    @Builder.Default
-    private final Integer anInteger = 5;
-}
-```
+| Compliant code | Non-compliant code |
+|---|---|
+| <pre>public class SomeBuilder {<br>    private final Integer anInteger = 5;<br>}</pre> | <pre>public class SomeBuilder {<br>    @Builder.Default<br>    private final Integer anInteger = 5;<br>}</pre> |
 
 ```xml
 <searchConfiguration name="Field in a non-@Builder class is annotated as @Builder.Default. It has no effect, thus can be removed." text="@$BuilderAnnotation$( )&#10;class $Class$ {&#10;    @$BuilderDefaultAnnotation$( )&#10;    @Modifier(&quot;Instance&quot;) $FieldType$ $Field$ = $Init$;&#10;}" recursive="false" caseInsensitive="true" type="JAVA">
@@ -227,18 +203,12 @@ public class SomeBuilder {
 
 ## Explicit @Singular field initialization as empty collection can be removed, @Singular itself initializes it as an empty collection
 
-When a collection type field in a `@Builder` annotated class is annotated as `@Singular` without a having defined a default value,
+When a collection type field in a `@Builder` annotated class is annotated as `@Singular` without having defined a default value,
 it is by default initialized as an empty collection, thus initializing it explicitly as an empty collection is superfluous, and can be removed.
 
-This inspection would signal code snippets like the following, as incorrect:
-
-```java
-public class SomeBuilder {
-    
-    @Singular
-    private final List<String> elements = new ArrayList<>;
-}
-```
+| Compliant code | Non-compliant code |
+|---|---|
+| <pre>public class SomeBuilder {<br>    @Singular<br>    private final List<String> elements;<br>}</pre> | <pre>public class SomeBuilder {<br>    @Singular<br>    private final List<String> elements = new ArrayList()<>;<br>}</pre> |
 
 Supported collection types:
 - Java: java.util: List, ArrayList, Iterable, Collection, SortedSet, SortedMap, NavigableSet, NavigableMap, HashSet, HashMap, TreeSet, TreeMap
