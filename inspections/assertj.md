@@ -9,13 +9,12 @@ For people who are looking for a more comprehensive set of AssertJ inspections I
 
 ## AssertJ assertion or assumption is not used with static import
 
-In many cases static importing a static method makes the code less cluttered and more readable which some people might find true in case of AssertJ assertions as well.
+In many cases static importing a static method makes the code less cluttered and more readable which some people might
+find true in case of AssertJ assertions as well.
 
-This inspection would signal code snippets like the following, as incorrect:
-
-```java
-Assertions.assertThat(someString).isEmpty();
-```
+| Compliant code | Non-compliant code |
+|---|---|
+| <pre>assertThat(someString).isEmpty();</pre> | <pre>Assertions.assertThat(someString).isEmpty();</pre> |
 
 **Template:**
 
@@ -33,11 +32,11 @@ Assertions.assertThat(someString).isEmpty();
 ## There is no actual assertion called from AssertJ
 
 Since syntactically calling no method after `Assertions.assertThat...()` is correct, the test where this is present will produce a false-positive result, since actually there is
-no assertion that would run in this case. An example code snippet might be:
+no assertion that would run in this case.
 
-```java
-Assertions.assertThat(someString);
-```
+| Compliant code | Non-compliant code |
+|---|---|
+| <pre>Assertions.assertThat(someString).isEqualTo(someOtherString);</pre> | <pre>Assertions.assertThat(someString);</pre> |
 
 It supports the following assertion methods on `org.assertj.core.api.Assertions`:
 - assertThat...: ThrownBy, Code, ExceptionOfType, NullPointerException, IllegalArgumentException, IOException, IllegalStateException
@@ -55,12 +54,11 @@ It supports the following assertion methods on `org.assertj.core.api.Assertions`
 ## There is no actual assertion called from AssertJ SoftAssertions
 
 Since syntactically calling no method after `SoftAssertions.assertThat...()` is correct, the test where this is present will produce a false-positive result, since actually there is
-no assertion that would run in this case. An example code snippet might be:
+no assertion that would run in this case.
 
-```java
-SoftAssertions softly = new SoftAssertions();
-softly.assertThat(someString);
-```
+| Compliant code | Non-compliant code |
+|---|---|
+| <pre>SoftAssertions softly = new SoftAssertions();<br>softly.assertThat(someString).isEqualTo(someOtherString);</pre> | <pre>SoftAssertions softly = new SoftAssertions();<br>softly.assertThat(someString);</pre> |
 
 It supports the following assertion methods on `org.assertj.core.api.SoftAssertions`: assertThat, assertThatCode, assertThatThrownBy
 

@@ -5,13 +5,12 @@
 
 ## Hamcrest matcher is not used with static import.
 
-In many cases static importing a static method makes the code less cluttered and more readable which some people might find true in case of Hamcrest matchers as well.
+In many cases static importing a static method makes the code less cluttered and more readable which some people might
+find true in case of Hamcrest matchers as well.
 
-This inspection would signal code snippets like the following, as incorrect:
-
-```java
-Matchers.isEmpty(someString)
-```
+| Compliant code | Non-compliant code |
+|---|---|
+| <pre>isEmpty(someString)</pre> | <pre>Matchers.isEmpty(someString)</pre> |
 
 Supported classes:
 - `org.hamcrest.Matchers`

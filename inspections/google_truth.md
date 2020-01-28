@@ -5,13 +5,12 @@
 
 ## Google Truth assertion is not used with static import.
 
-In many cases static importing a static method makes the code less cluttered and more readable which some people might find true in case of Google Truth assertions as well.
+In many cases static importing a static method makes the code less cluttered and more readable which some people might
+find true in case of Google Truth assertions as well.
 
-This inspection would signal code snippets like the following, as incorrect:
-
-```java
-Truth.assertThat(someString).isEmpty();
-```
+| Compliant code | Non-compliant code |
+|---|---|
+| <pre>assertThat(someString).isEmpty();</pre> | <pre>Truth.assertThat(someString).isEmpty();</pre> |
 
 Supported classes:
 - `com.google.common.truth.Truth`

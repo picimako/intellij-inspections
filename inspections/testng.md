@@ -5,13 +5,12 @@
 
 ## TestNG assertion is not used with static import.
 
-In many cases static importing a static method makes the code less cluttered and more readable which some people might find true in case of TestNG assertions as well.
+In many cases static importing a static method makes the code less cluttered and more readable which some people might
+find true in case of TestNG assertions as well.
 
-This inspection would signal code snippets like the following, as incorrect:
-
-```java
-Assert.assertEquals(someString, anotString)
-```
+| Compliant code | Non-compliant code |
+|---|---|
+| <pre>assertEquals(someString, anotString)</pre> | <pre>Assert.assertEquals(someString, anotString)</pre> |
 
 Supported classes:
 - `org.testng.Assert`

@@ -6,13 +6,12 @@
 
 ## JUnit assertion is not used with static import
 
-In many cases static importing a static method makes the code less cluttered and more readable which some people might find true in case of JUnit assertions as well.
+In many cases static importing a static method makes the code less cluttered and more readable which some people might
+find true in case of JUnit assertions as well.
 
-This inspection would signal code snippets like the following, as incorrect:
-
-```java
-Assert.assertEquals(someString, anotherString)
-```
+| Compliant code | Non-compliant code |
+|---|---|
+| <pre>assertEquals(someString, anotherString)</pre> | <pre>Assert.assertEquals(someString, anotherString)</pre> |
 
 **Template:**
 
