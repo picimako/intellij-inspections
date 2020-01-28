@@ -5,13 +5,12 @@
 
 ## JSONAssert assertion is not used with static import
 
-In many cases static importing a static method makes the code less cluttered and more readable which some people might find true in case of JSONAssert assertions as well.
+In many cases static importing a static method makes the code less cluttered and more readable which some people might
+find true in case of JSONAssert assertions as well.
 
-This inspection would signal code snippets like the following, as incorrect:
-
-```java
-JSONAssert.assertEquals(aJsonString, anotherJsonString)
-```
+| Compliant code | Non-compliant code |
+|---|---|
+| <pre>assertEquals(aJsonString, anotherJsonString)</pre> | <pre>JSONAssert.assertEquals(aJsonString, anotherJsonString)</pre> |
 
 Supported assertion methods:
 - `assertEquals`
