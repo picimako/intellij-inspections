@@ -1,8 +1,9 @@
 # IntelliJ inspections
 
-This project is a collection of IntelliJ Structural Search and Replace Templates for various Java libraries, and a storage place for the blog posts on https://ijnspector.wordpress.com.
+This project is a collection of IntelliJ Structural Search and Replace Templates for various Java libraries,
+and a storage place for the blog posts on the [IJnspector blog](https://ijnspector.wordpress.com).
 
-These templates are created via IntelliJ's built-in creation dialogs, that are stored in `.xml` config.
+These templates are created via IntelliJ's built-in creation dialogs, that are stored in `.xml` configuration.
 
 You can find all the inspections created in the tutorials in [tutorial-inspections.md](tutorial/summary/tutorial-inspections.md).
 
@@ -20,3 +21,10 @@ To configure your git project for these inspections please read through the [How
 
 If you find any issues in the articles, tutorials or in any of the inspections, please create a GitHub issue in this project.
 
+## Future plans
+
+New inspections and inspections for new Java libraries are continuously added, and they also serve as a nice basis for future IntelliJ plugins.
+
+Libraries that are planned to be covered next:
+- [romankh3/image-comparison](https://github.com/romankh3/image-comparison)
+- [Selenide](https://selenide.org)
