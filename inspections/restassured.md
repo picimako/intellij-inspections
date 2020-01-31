@@ -9,12 +9,13 @@
 
 ## RequestSpecification port must be greater than 0
 
-This is based on the exception handling happening in [`io.restassured.internal.RequestSpecificationImpl#port(int)`](https://github.com/rest-assured/rest-assured/blob/38e0188dcf9bab3ce81c6e787e69e480929cb544/rest-assured/src/main/groovy/io/restassured/internal/RequestSpecificationImpl.groovy)
+According to the exception handling in [`io.restassured.internal.RequestSpecificationImpl#port(int)`](https://github.com/rest-assured/rest-assured/blob/38e0188dcf9bab3ce81c6e787e69e480929cb544/rest-assured/src/main/groovy/io/restassured/internal/RequestSpecificationImpl.groovy)
+and network protocols in general, consider port numbers valid only if they are greater than 0. (0 may be a reserved port number not recommended to be used.)
 
-```java
-RestAssured.given().port(0);
-RestAssured.given().port(-2);
-```
+| Compliant code | Non-compliant code |
+|---|---|
+| <pre>RestAssured.given().port(1000);</pre> | <pre>RestAssured.given().port(0);</pre> |
+|  | <pre>RestAssured.given().port(-2);</pre> |
 
 **Script filter ($port$):**
 
@@ -38,20 +39,19 @@ try {
 
 ## Request URI cannot end with ?
 
-This is based on the exception handling happening in [`io.restassured.internal.RequestSpecificationImpl#newFilterContext(assertionClosure, filters, properties)`](https://github.com/rest-assured/rest-assured/blob/38e0188dcf9bab3ce81c6e787e69e480929cb544/rest-assured/src/main/groovy/io/restassured/internal/RequestSpecificationImpl.groovy)
+This is based on the exception handling happening in [`io.restassured.internal.RequestSpecificationImpl#newFilterContext(assertionClosure, filters, properties)`](https://github.com/rest-assured/rest-assured/blob/38e0188dcf9bab3ce81c6e787e69e480929cb544/rest-assured/src/main/groovy/io/restassured/internal/RequestSpecificationImpl.groovy).
+
+The reason behind this check might be that a ? character in a request URI signals that URI parameters follow, but if the URI ends with ?, it means that there is no parameter defined,
+considering it as an invalid value.
+
+This check is split into two inspections, one targeting methods name as specific request method, the other targeting more general methods named `request()`.
 
 ### Specific HTTP request methods
 
-This inspection would signal a code snippet like the following, as incorrect:
-
-```java
-RestAssured.post("some/uri?", param1, param2);
-```
-
-```java
-RequestSpecification spec = RestAssured.given();
-spec.post("some/uri?", param1, param2);
-```
+| Compliant code | Non-compliant code |
+|---|---|
+| <pre>RestAssured.post("some/path/{param1}/{param2}", param1, param2);</pre> | <pre>RestAssured.post("some/param/{param1}/{param2}?", param1, param2);</pre> |
+| <pre>RequestSpecification spec = RestAssured.given();<br>spec.post("some/path/{param1}/{param2}", param1, param2);</pre> | <pre>RequestSpecification spec = RestAssured.given();<br>spec.post("some/uri/{param1}/{param2}?", param1, param2);</pre> |
 
 It supports all of the following methods from `RequestSpecification`:
 - `get(String, Object...)` / `get(String, Map)`
@@ -87,24 +87,16 @@ Static method case:
 
 **Script template ($requestUri$):**
 
-```groovy0
+```groovy
 requestUri.value?.endsWith("?")
 ```
 
 ### General HTTP request methods
 
-This inspection would signal a code snippet like the following, as incorrect:
-
-```java
-RequestSpecification spec = RestAssured.given();
-spec.request("post", "path?", someObject);
-spec.request(Method.DELETE, "path?");
-```
-
-```java
-RestAssured.request("post", "path?", new Object());
-RestAssured.request(Method.DELETE, "path?", new Object())
-```
+| Compliant code | Non-compliant code |
+|---|---|
+| <pre>RequestSpecification spec = RestAssured.given();<br>spec.request("post", "path/{param}", param);<br>spec.request(Method.DELETE, "path");</pre> | <pre>RequestSpecification spec = RestAssured.given();<br>spec.request("post", "path/{param}?", param);<br>spec.request(Method.DELETE, "path?");</pre> |
+| <pre>RestAssured.request("post", "path/{param}", new Object());<br>RestAssured.request(Method.DELETE, "path/{param}", new Object());</pre> | <pre>RestAssured.request("post", "path?", new Object());<br>RestAssured.request(Method.DELETE, "path/{param}?", new Object());</pre> |
 
 There is no restriction set for the request method in case of either String or Method type thus supporting all available ones.
 
@@ -134,13 +126,13 @@ Static method case:
 
 ## CloseIdleConnectionConfig: Idle time cannot be less than 0
 
-This is based on the exception handling happening in [`io.restassured.config.ConnectionConfig.CloseIdleConnectionConfig`](https://github.com/rest-assured/rest-assured/blob/adea885dd97dd977a6e7b142b560577404b7811f/rest-assured/src/main/java/io/restassured/config/ConnectionConfig.java)
+This is based on the exception handling happening in [`io.restassured.config.ConnectionConfig.CloseIdleConnectionConfig`](https://github.com/rest-assured/rest-assured/blob/adea885dd97dd977a6e7b142b560577404b7811f/rest-assured/src/main/java/io/restassured/config/ConnectionConfig.java).
 
-This inspection would signal a code snippet like the following, as incorrect:
+Since the configuration value represents a time amount it wouldn't really make sense to define a negative value, hence the validation. 
 
-```java
-RestAssured.config().connectionConfig(new ConnectionConfig(new CloseIdleConnectionConfig(-500, MILLISECONDS)));
-```
+| Compliant code | Non-compliant code |
+|---|---|
+| <pre>RestAssured.config().connectionConfig(new ConnectionConfig(new CloseIdleConnectionConfig(1000, MILLISECONDS)));</pre> | <pre>RestAssured.config().connectionConfig(new ConnectionConfig(new CloseIdleConnectionConfig(-500, MILLISECONDS)));</pre> |
 
 **Script filter ($idleTime$):**
 
@@ -168,18 +160,12 @@ try {
 This is based on the validation logic in (indirectly) the constructor of [io.restassured.specification.ProxySpecification](https://github.com/rest-assured/rest-assured/blob/adea885dd97dd977a6e7b142b560577404b7811f/rest-assured/src/main/java/io/restassured/specification/ProxySpecification.java).
 
 It is also called (indirectly) from [io.restassured.RestAssured#proxy(String, int, String)](https://github.com/rest-assured/rest-assured/blob/adea885dd97dd977a6e7b142b560577404b7811f/rest-assured/src/main/java/io/restassured/RestAssured.java),
-so there are two inspections created for this validation, one is for calling `RestAssured.proxy()` the other is calling the constructor of `ProxySpecification` directly.
+so there are two inspections created for this validation, one is for calling `RestAssured.proxy()` the other one is calling the constructor of `ProxySpecification` directly.
 
-This inspection would signal a code snippet like the following, as incorrect:
-
-```java
-io.restassured.RestAssured.proxy("127.0.0.1", -10, "ftp")
-```
-
-```java
-new io.restassured.specification.ProxySpecification("127.0.0.1", -10, "ftp") {
-}
-```
+| Compliant code | Non-compliant code |
+|---|---|
+| <pre></pre> | <pre>io.restassured.RestAssured.proxy("127.0.0.1", -10, "ftp")</pre> |
+| <pre></pre> | <pre>new io.restassured.specification.ProxySpecification("127.0.0.1", -10, "ftp") {<br>}</pre> |
 
 **Script filter (Complete Match)**
 
@@ -221,11 +207,11 @@ try {
 
 This is based on the exception handling happening in [`io.restassured.builder.ResponseBuilder#build()`](https://github.com/rest-assured/rest-assured/blob/4d3b484d7160638c69e9b45b0a386ff612fe611c/rest-assured/src/main/java/io/restassured/builder/ResponseBuilder.java)
 
-This inspection would signal a code snippet like the following, as incorrect:
+The reason behind this check is that official (and unofficial) HTTP status codes range from 100 to 599.
 
-```java
-new ResponseBuilder().setStatusCode(50).build();
-```
+| Compliant code | Non-compliant code |
+|---|---|
+| <pre>new ResponseBuilder().setStatusCode(404).build();</pre> | <pre>new ResponseBuilder().setStatusCode(50).build();</pre> |
 
 For the template it doesn't matter if the `setStatusCode(int)` is called on an inline instantiated `ResponseBuilder` object or an one created beforehand. 
 
