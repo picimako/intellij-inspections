@@ -9,11 +9,12 @@ I am happy to change them, it just made sense and I think it is clearer to use t
 
 ## Mockito matcher is not used with static import
 
-This inspection would signal code snippets like the following, as incorrect:
+In many cases static importing a static method makes the code less cluttered and more readable which some people might
+find true in case of JUnit assertions as well.
 
-```java
-Matchers.any()
-```
+| Compliant code | Non-compliant code |
+|---|---|
+| <pre>any()</pre> | <pre>Matchers.any()</pre> |
 
 **Template:**
 
@@ -60,13 +61,13 @@ This is based on the exception handling happening in:
 - [`org.mockito.internal.verification.AtMost`](https://github.com/mockito/mockito/blob/4f72147c464c1a8a642d01fc3334e98e92b464cd/src/main/java/org/mockito/internal/verification/AtMost.java)
 - [`org.mockito.internal.verification.Times`](https://github.com/mockito/mockito/blob/4f72147c464c1a8a642d01fc3334e98e92b464cd/src/main/java/org/mockito/internal/verification/Times.java)
 
-This inspection would signal code snippets like the following, as incorrect:
+Since methods on any object cannot be called negative times, it is not valid to check them whether they are called negative times.
 
-```java
-verify(mockObject, times(-1)).doSomething()
-verify(mockObject, atLeast(-1)).doSomething()
-verify(mockObject, atMost(-1)).doSomething()
-```
+| Compliant code | Non-compliant code |
+|---|---|
+| <pre>verify(mockObject, times(3)).doSomething()</pre> | <pre>verify(mockObject, times(-1)).doSomething()</pre> |
+| <pre>verify(mockObject, atLeast(1)).doSomething()</pre> | <pre>verify(mockObject, atLeast(-1)).doSomething()</pre> |
+| <pre>verify(mockObject, atMost(2)).doSomething()</pre> | <pre>verify(mockObject, atMost(-1)).doSomething()</pre> |
 
 It supports the `times`, `atLeast` and `atMost` verification modes.
 
@@ -98,12 +99,12 @@ try {
 
 This is based on one of the exception handling happening in [`org.mockito.internal.verification.Calls`](https://github.com/mockito/mockito/blob/4f72147c464c1a8a642d01fc3334e98e92b464cd/src/main/java/org/mockito/internal/verification/Calls.java)
 
-This inspection would signal a code snippet like the following, as incorrect:
+In order to validate that methods are called in order, at least one call of a method is necessary.
 
-```java
-InOrder inOrder = Mockito.inOrder(mockObject);
-inOrder.verify(mockObject, calls(-1)).doSomething()
-```
+| Compliant code | Non-compliant code |
+|---|---|
+| <pre>InOrder inOrder = Mockito.inOrder(mockObject);<br>inOrder.verify(mockObject, calls(2)).doSomething()</pre> | <pre>InOrder inOrder = Mockito.inOrder(mockObject);<br>inOrder.verify(mockObject, calls(-1)).doSomething()</pre> |
+|  | <pre>InOrder inOrder = Mockito.inOrder(mockObject);<br>inOrder.verify(mockObject, calls(0)).doSomething()</pre> |
 
 This inspection is not prepared for signaling calling `Mockito.calls()` in `Mockito.verify()` because it is designed to work only with `InOrder.verify()`.
 But there is a specific inspection for that. See **Mockito.calls() is only intended to work with InOrder** below.
@@ -112,7 +113,7 @@ But there is a specific inspection for that. See **Mockito.calls() is only inten
 
 ```groovy
 try { 
-    value?.text?.toInteger() < 0
+    value?.text?.toInteger() <= 0
 } catch (NumberFormatException e) {
     false
 }
@@ -126,7 +127,7 @@ try {
     <constraint name="mockObject" within="" contains="" />
     <constraint name="Mockito" regexp="org\.mockito\.Mockito" minCount="0" within="" contains="" />
     <constraint name="verifiedMethod" within="" contains="" />
-    <constraint name="value" script="&quot;try { &#10;    value?.text?.toInteger() &lt; 0&#10;} catch (NumberFormatException e) {&#10;    false&#10;}&quot;" target="true" within="" contains="" />
+    <constraint name="value" script="&quot;try { &#10;    value?.text?.toInteger() &lt;= 0&#10;} catch (NumberFormatException e) {&#10;    false&#10;}&quot;" target="true" within="" contains="" />
     <constraint name="calls" regexp="calls" within="" contains="" />
     <constraint name="InOrder" nameOfExprType="org\.mockito\.InOrder" expressionTypes="org.mockito.InOrder" within="" contains="" />
     <constraint name="arguments" minCount="0" maxCount="2147483647" within="" contains="" />
@@ -137,11 +138,9 @@ try {
 
 This is based on one of the exception handling happening in [`org.mockito.internal.verification.Calls`](https://github.com/mockito/mockito/blob/4f72147c464c1a8a642d01fc3334e98e92b464cd/src/main/java/org/mockito/internal/verification/Calls.java)
 
-This inspection would signal a code snippet like the following, as incorrect:
-
-```java
-Mockito.verify(mockObject, calls(5)).doSomething()
-```
+| Compliant code | Non-compliant code |
+|---|---|
+| <pre>InOrder inOrder = Mockito.inOrder(mockObject);<br>inOrder.verify(mockObject, calls(2)).doSomething()</pre> | <pre>Mockito.verify(mockObject, calls(5)).doSomething()</pre> |
 
 **Template:**
 
@@ -159,32 +158,24 @@ Mockito.verify(mockObject, calls(5)).doSomething()
 
 ## @Captor field must be of the type ArgumentCaptor
 
-This is a collection of Replace templates that are most useful when all of them used, but it is up to everyone which ones are actually used.
-
 These are based on the exception handling happening in [`org.mockito.internal.configuration.CaptorAnnotationProcessor`](https://github.com/mockito/mockito/blob/4f72147c464c1a8a642d01fc3334e98e92b464cd/src/main/java/org/mockito/internal/configuration/CaptorAnnotationProcessor.java)
+
+For a bit more details see the [`@Captor` annotation's javadoc](https://javadoc.io/doc/org.mockito/mockito-core/latest/org/mockito/Captor.html).
+
+This is a collection of Replace templates that are most useful when all of them used, but it is up to everyone's needs which ones are actually used.
 
 ### Matching types other than primitive types and ArgumentCaptor
 
-This inspection would signal a code snippet like the following, as incorrect:
-
-```java
-@Captor
-private String captor;
-```
+| Compliant code/Replacement | Non-compliant code |
+|---|---|
+| <pre>@Captor<br>private ArgumentCaptor<String> captor;</pre> | <pre>@Captor<br>private String captor;</pre> |
 
 Since this is a replace template it provides a quick fix to replace the type with an argument captor.
 Since the Search target of the template is the field type, the quick fix suggestion is visible only when the Alt+Enter menu is opened having
 the cursor on the field type.
 
-When the quick fix is applied the field would look like:
-
-```java
-@Captor
-private ArgumentCaptor<String> captor;
-```
-
 This inspection doesn't support ArgumentCaptor without a generic type, and the Java primitives because at least the latter ones need a bit more complex logic to map them to their
-boxed type. For the latter one please check out the inspections in the next section.
+boxed type. For the latter ones please check out the inspections in the next section.
 
 **Template:**
 
@@ -208,121 +199,122 @@ Each matches a single primitive type for the field type, and nothing else.
 
 NOTE: primitive type arrays are not handled by these inspections.
 
-**byte**
-
-```xml
-<replaceConfiguration name="@Captor field must be of the type ArgumentCaptor. Apply quick fix to wrap current type [byte] in ArgumentCaptor." text="class $Class$ {&#10;    @$CaptorAnnotation$()&#10;    @Modifier(&quot;Instance&quot;) $FieldType$ $Field$ = $Init$;&#10;}" recursive="true" caseInsensitive="true" type="JAVA" reformatAccordingToStyle="true" shortenFQN="true" replacement="org.mockito.ArgumentCaptor&lt;java.lang.Byte&gt;">
-    <constraint name="__context__" within="" contains="" />
-    <constraint name="Class" within="" contains="" />
-    <constraint name="FieldType" regexp="byte" target="true" within="" contains="" />
-    <constraint name="Field" withinHierarchy="true" maxCount="2147483647" within="" contains="" />
-    <constraint name="Init" minCount="0" within="" contains="" />
-    <constraint name="CaptorAnnotation" regexp="org\.mockito\.Captor" within="" contains="" />
-</replaceConfiguration>
-```
-
-**short**
-
-```xml
-<replaceConfiguration name="@Captor field must be of the type ArgumentCaptor. Apply quick fix to wrap current type [short] in ArgumentCaptor." text="class $Class$ {&#10;    @$CaptorAnnotation$()&#10;    @Modifier(&quot;Instance&quot;) $FieldType$ $Field$ = $Init$;&#10;}" recursive="true" caseInsensitive="true" type="JAVA" reformatAccordingToStyle="true" shortenFQN="true" replacement="org.mockito.ArgumentCaptor&lt;java.lang.Short&gt;">
-    <constraint name="__context__" within="" contains="" />
-    <constraint name="Class" within="" contains="" />
-    <constraint name="FieldType" regexp="short" target="true" within="" contains="" />
-    <constraint name="Field" withinHierarchy="true" maxCount="2147483647" within="" contains="" />
-    <constraint name="Init" minCount="0" within="" contains="" />
-    <constraint name="CaptorAnnotation" regexp="org\.mockito\.Captor" within="" contains="" />
-</replaceConfiguration>
-```
-
-**int**
-
-```xml
-<replaceConfiguration name="@Captor field must be of the type ArgumentCaptor. Apply quick fix to wrap current type [int] in ArgumentCaptor." text="class $Class$ {&#10;    @$CaptorAnnotation$()&#10;    @Modifier(&quot;Instance&quot;) $FieldType$ $Field$ = $Init$;&#10;}" recursive="true" caseInsensitive="true" type="JAVA" reformatAccordingToStyle="true" shortenFQN="true" replacement="org.mockito.ArgumentCaptor&lt;java.lang.Integer&gt;">
-    <constraint name="__context__" within="" contains="" />
-    <constraint name="Class" within="" contains="" />
-    <constraint name="FieldType" regexp="int" target="true" within="" contains="" />
-    <constraint name="Field" withinHierarchy="true" maxCount="2147483647" within="" contains="" />
-    <constraint name="Init" minCount="0" within="" contains="" />
-    <constraint name="CaptorAnnotation" regexp="org\.mockito\.Captor" within="" contains="" />
-</replaceConfiguration>
-```
-
-**long**
-
-```xml
-<replaceConfiguration name="@Captor field must be of the type ArgumentCaptor. Apply quick fix to wrap current type [long] in ArgumentCaptor." text="class $Class$ {&#10;    @$CaptorAnnotation$()&#10;    @Modifier(&quot;Instance&quot;) $FieldType$ $Field$ = $Init$;&#10;}" recursive="true" caseInsensitive="true" type="JAVA" reformatAccordingToStyle="true" shortenFQN="true" replacement="org.mockito.ArgumentCaptor&lt;java.lang.Long&gt;">
-    <constraint name="__context__" within="" contains="" />
-    <constraint name="Class" within="" contains="" />
-    <constraint name="FieldType" regexp="long" target="true" within="" contains="" />
-    <constraint name="Field" withinHierarchy="true" maxCount="2147483647" within="" contains="" />
-    <constraint name="Init" minCount="0" within="" contains="" />
-    <constraint name="CaptorAnnotation" regexp="org\.mockito\.Captor" within="" contains="" />
-</replaceConfiguration>
-```
-
-**float**
-
-```xml
-<replaceConfiguration name="@Captor field must be of the type ArgumentCaptor. Apply quick fix to wrap current type [float] in ArgumentCaptor." text="class $Class$ {&#10;    @$CaptorAnnotation$()&#10;    @Modifier(&quot;Instance&quot;) $FieldType$ $Field$ = $Init$;&#10;}" recursive="true" caseInsensitive="true" type="JAVA" reformatAccordingToStyle="true" shortenFQN="true" replacement="org.mockito.ArgumentCaptor&lt;java.lang.Float&gt;">
-    <constraint name="__context__" within="" contains="" />
-    <constraint name="Class" within="" contains="" />
-    <constraint name="FieldType" regexp="float" target="true" within="" contains="" />
-    <constraint name="Field" withinHierarchy="true" maxCount="2147483647" within="" contains="" />
-    <constraint name="Init" minCount="0" within="" contains="" />
-    <constraint name="CaptorAnnotation" regexp="org\.mockito\.Captor" within="" contains="" />
-</replaceConfiguration>
-```
-
-**double**
-
-```xml
-<replaceConfiguration name="@Captor field must be of the type ArgumentCaptor. Apply quick fix to wrap current type [double] in ArgumentCaptor." text="class $Class$ {&#10;    @$CaptorAnnotation$()&#10;    @Modifier(&quot;Instance&quot;) $FieldType$ $Field$ = $Init$;&#10;}" recursive="true" caseInsensitive="true" type="JAVA" reformatAccordingToStyle="true" shortenFQN="true" replacement="org.mockito.ArgumentCaptor&lt;java.lang.Double&gt;">
-    <constraint name="__context__" within="" contains="" />
-    <constraint name="Class" within="" contains="" />
-    <constraint name="FieldType" regexp="double" target="true" within="" contains="" />
-    <constraint name="Field" withinHierarchy="true" maxCount="2147483647" within="" contains="" />
-    <constraint name="Init" minCount="0" within="" contains="" />
-    <constraint name="CaptorAnnotation" regexp="org\.mockito\.Captor" within="" contains="" />
-</replaceConfiguration>
-```
-
-**boolean**
-
-```xml
-<replaceConfiguration name="@Captor field must be of the type ArgumentCaptor. Apply quick fix to wrap current type [boolean] in ArgumentCaptor." text="class $Class$ {&#10;    @$CaptorAnnotation$()&#10;    @Modifier(&quot;Instance&quot;) $FieldType$ $Field$ = $Init$;&#10;}" recursive="true" caseInsensitive="true" type="JAVA" reformatAccordingToStyle="true" shortenFQN="true" replacement="org.mockito.ArgumentCaptor&lt;java.lang.Boolean&gt;">
-    <constraint name="__context__" within="" contains="" />
-    <constraint name="Class" within="" contains="" />
-    <constraint name="FieldType" regexp="boolean" target="true" within="" contains="" />
-    <constraint name="Field" withinHierarchy="true" maxCount="2147483647" within="" contains="" />
-    <constraint name="Init" minCount="0" within="" contains="" />
-    <constraint name="CaptorAnnotation" regexp="org\.mockito\.Captor" within="" contains="" />
-</replaceConfiguration>
-```
-
-**char**
-
-```xml
-<replaceConfiguration name="@Captor field must be of the type ArgumentCaptor. Apply quick fix to wrap current type [char] in ArgumentCaptor." text="class $Class$ {&#10;    @$CaptorAnnotation$()&#10;    @Modifier(&quot;Instance&quot;) $FieldType$ $Field$ = $Init$;&#10;}" recursive="true" caseInsensitive="true" type="JAVA" reformatAccordingToStyle="true" shortenFQN="true" replacement="org.mockito.ArgumentCaptor&lt;java.lang.Character&gt;">
-    <constraint name="__context__" within="" contains="" />
-    <constraint name="Class" within="" contains="" />
-    <constraint name="FieldType" regexp="char" target="true" within="" contains="" />
-    <constraint name="Field" withinHierarchy="true" maxCount="2147483647" within="" contains="" />
-    <constraint name="Init" minCount="0" within="" contains="" />
-    <constraint name="CaptorAnnotation" regexp="org\.mockito\.Captor" within="" contains="" />
-</replaceConfiguration>
-```
+<details>
+  <summary>Expand to see inspections for primitive types...</summary>
+  
+  **byte**
+  
+  ```xml
+  <replaceConfiguration name="@Captor field must be of the type ArgumentCaptor. Apply quick fix to wrap current type [byte] in ArgumentCaptor." text="class $Class$ {&#10;    @$CaptorAnnotation$()&#10;    @Modifier(&quot;Instance&quot;) $FieldType$ $Field$ = $Init$;&#10;}" recursive="true" caseInsensitive="true" type="JAVA" reformatAccordingToStyle="true" shortenFQN="true" replacement="org.mockito.ArgumentCaptor&lt;java.lang.Byte&gt;">
+      <constraint name="__context__" within="" contains="" />
+      <constraint name="Class" within="" contains="" />
+      <constraint name="FieldType" regexp="byte" target="true" within="" contains="" />
+      <constraint name="Field" withinHierarchy="true" maxCount="2147483647" within="" contains="" />
+      <constraint name="Init" minCount="0" within="" contains="" />
+      <constraint name="CaptorAnnotation" regexp="org\.mockito\.Captor" within="" contains="" />
+  </replaceConfiguration>
+  ```
+  
+  **short**
+  
+  ```xml
+  <replaceConfiguration name="@Captor field must be of the type ArgumentCaptor. Apply quick fix to wrap current type [short] in ArgumentCaptor." text="class $Class$ {&#10;    @$CaptorAnnotation$()&#10;    @Modifier(&quot;Instance&quot;) $FieldType$ $Field$ = $Init$;&#10;}" recursive="true" caseInsensitive="true" type="JAVA" reformatAccordingToStyle="true" shortenFQN="true" replacement="org.mockito.ArgumentCaptor&lt;java.lang.Short&gt;">
+      <constraint name="__context__" within="" contains="" />
+      <constraint name="Class" within="" contains="" />
+      <constraint name="FieldType" regexp="short" target="true" within="" contains="" />
+      <constraint name="Field" withinHierarchy="true" maxCount="2147483647" within="" contains="" />
+      <constraint name="Init" minCount="0" within="" contains="" />
+      <constraint name="CaptorAnnotation" regexp="org\.mockito\.Captor" within="" contains="" />
+  </replaceConfiguration>
+  ```
+  
+  **int**
+  
+  ```xml
+  <replaceConfiguration name="@Captor field must be of the type ArgumentCaptor. Apply quick fix to wrap current type [int] in ArgumentCaptor." text="class $Class$ {&#10;    @$CaptorAnnotation$()&#10;    @Modifier(&quot;Instance&quot;) $FieldType$ $Field$ = $Init$;&#10;}" recursive="true" caseInsensitive="true" type="JAVA" reformatAccordingToStyle="true" shortenFQN="true" replacement="org.mockito.ArgumentCaptor&lt;java.lang.Integer&gt;">
+      <constraint name="__context__" within="" contains="" />
+      <constraint name="Class" within="" contains="" />
+      <constraint name="FieldType" regexp="int" target="true" within="" contains="" />
+      <constraint name="Field" withinHierarchy="true" maxCount="2147483647" within="" contains="" />
+      <constraint name="Init" minCount="0" within="" contains="" />
+      <constraint name="CaptorAnnotation" regexp="org\.mockito\.Captor" within="" contains="" />
+  </replaceConfiguration>
+  ```
+  
+  **long**
+  
+  ```xml
+  <replaceConfiguration name="@Captor field must be of the type ArgumentCaptor. Apply quick fix to wrap current type [long] in ArgumentCaptor." text="class $Class$ {&#10;    @$CaptorAnnotation$()&#10;    @Modifier(&quot;Instance&quot;) $FieldType$ $Field$ = $Init$;&#10;}" recursive="true" caseInsensitive="true" type="JAVA" reformatAccordingToStyle="true" shortenFQN="true" replacement="org.mockito.ArgumentCaptor&lt;java.lang.Long&gt;">
+      <constraint name="__context__" within="" contains="" />
+      <constraint name="Class" within="" contains="" />
+      <constraint name="FieldType" regexp="long" target="true" within="" contains="" />
+      <constraint name="Field" withinHierarchy="true" maxCount="2147483647" within="" contains="" />
+      <constraint name="Init" minCount="0" within="" contains="" />
+      <constraint name="CaptorAnnotation" regexp="org\.mockito\.Captor" within="" contains="" />
+  </replaceConfiguration>
+  ```
+  
+  **float**
+  
+  ```xml
+  <replaceConfiguration name="@Captor field must be of the type ArgumentCaptor. Apply quick fix to wrap current type [float] in ArgumentCaptor." text="class $Class$ {&#10;    @$CaptorAnnotation$()&#10;    @Modifier(&quot;Instance&quot;) $FieldType$ $Field$ = $Init$;&#10;}" recursive="true" caseInsensitive="true" type="JAVA" reformatAccordingToStyle="true" shortenFQN="true" replacement="org.mockito.ArgumentCaptor&lt;java.lang.Float&gt;">
+      <constraint name="__context__" within="" contains="" />
+      <constraint name="Class" within="" contains="" />
+      <constraint name="FieldType" regexp="float" target="true" within="" contains="" />
+      <constraint name="Field" withinHierarchy="true" maxCount="2147483647" within="" contains="" />
+      <constraint name="Init" minCount="0" within="" contains="" />
+      <constraint name="CaptorAnnotation" regexp="org\.mockito\.Captor" within="" contains="" />
+  </replaceConfiguration>
+  ```
+  
+  **double**
+  
+  ```xml
+  <replaceConfiguration name="@Captor field must be of the type ArgumentCaptor. Apply quick fix to wrap current type [double] in ArgumentCaptor." text="class $Class$ {&#10;    @$CaptorAnnotation$()&#10;    @Modifier(&quot;Instance&quot;) $FieldType$ $Field$ = $Init$;&#10;}" recursive="true" caseInsensitive="true" type="JAVA" reformatAccordingToStyle="true" shortenFQN="true" replacement="org.mockito.ArgumentCaptor&lt;java.lang.Double&gt;">
+      <constraint name="__context__" within="" contains="" />
+      <constraint name="Class" within="" contains="" />
+      <constraint name="FieldType" regexp="double" target="true" within="" contains="" />
+      <constraint name="Field" withinHierarchy="true" maxCount="2147483647" within="" contains="" />
+      <constraint name="Init" minCount="0" within="" contains="" />
+      <constraint name="CaptorAnnotation" regexp="org\.mockito\.Captor" within="" contains="" />
+  </replaceConfiguration>
+  ```
+  
+  **boolean**
+  
+  ```xml
+  <replaceConfiguration name="@Captor field must be of the type ArgumentCaptor. Apply quick fix to wrap current type [boolean] in ArgumentCaptor." text="class $Class$ {&#10;    @$CaptorAnnotation$()&#10;    @Modifier(&quot;Instance&quot;) $FieldType$ $Field$ = $Init$;&#10;}" recursive="true" caseInsensitive="true" type="JAVA" reformatAccordingToStyle="true" shortenFQN="true" replacement="org.mockito.ArgumentCaptor&lt;java.lang.Boolean&gt;">
+      <constraint name="__context__" within="" contains="" />
+      <constraint name="Class" within="" contains="" />
+      <constraint name="FieldType" regexp="boolean" target="true" within="" contains="" />
+      <constraint name="Field" withinHierarchy="true" maxCount="2147483647" within="" contains="" />
+      <constraint name="Init" minCount="0" within="" contains="" />
+      <constraint name="CaptorAnnotation" regexp="org\.mockito\.Captor" within="" contains="" />
+  </replaceConfiguration>
+  ```
+  
+  **char**
+  
+  ```xml
+  <replaceConfiguration name="@Captor field must be of the type ArgumentCaptor. Apply quick fix to wrap current type [char] in ArgumentCaptor." text="class $Class$ {&#10;    @$CaptorAnnotation$()&#10;    @Modifier(&quot;Instance&quot;) $FieldType$ $Field$ = $Init$;&#10;}" recursive="true" caseInsensitive="true" type="JAVA" reformatAccordingToStyle="true" shortenFQN="true" replacement="org.mockito.ArgumentCaptor&lt;java.lang.Character&gt;">
+      <constraint name="__context__" within="" contains="" />
+      <constraint name="Class" within="" contains="" />
+      <constraint name="FieldType" regexp="char" target="true" within="" contains="" />
+      <constraint name="Field" withinHierarchy="true" maxCount="2147483647" within="" contains="" />
+      <constraint name="Init" minCount="0" within="" contains="" />
+      <constraint name="CaptorAnnotation" regexp="org\.mockito\.Captor" within="" contains="" />
+  </replaceConfiguration>
+  ```
+</details>
 
 ## ArgumentCaptor field should define a generic type
 
 Though it is not incorrect if a `@Captor` annotated `ArgumentCaptor` type field doesn't have an explicitly defined generic type, some projects might want to enforce
 defining it in every use case.
 
-This inspection would signal a code snippet like the following, as incorrect:
-
-```java
-@Captor
-ArgumentCaptor captor;
-```
+| Compliant code | Non-compliant code |
+|---|---|
+| <pre>@Captor<br>ArgumentCaptor<String> captor;</pre> | <pre>@Captor<br>ArgumentCaptor captor;</pre> |
 
 It won't signal the problem in any case when the generic type is defined, be it a specific type (e.g. String), wildcard (?) or a class level generic type (e.g. T).
 
@@ -344,11 +336,11 @@ It won't signal the problem in any case when the generic type is defined, be it 
 
 This is based on the exception handling happening in [`org.mockito.MockitoAnnotations`](https://github.com/mockito/mockito/blob/28012a49cb1b1aab1b957ac5e7507dd8b807a47e/src/main/java/org/mockito/MockitoAnnotations.java)
 
-This inspection would signal code snippets like the following, as incorrect:
+The argument `MockitoAnnotations#initMocks()` cannot be null because the argument is meant to be the test class whose field need to be initialized.
 
-```java
-MockitoAnnotations.initMocks(null);
-```
+| Compliant code | Non-compliant code |
+|---|---|
+| <pre>MockitoAnnotations.initMocks(this);</pre> | <pre>MockitoAnnotations.initMocks(null);</pre> |
 
 This template can handle only the explicit `null` value since object null value can only be checked runtime.
 
@@ -364,11 +356,13 @@ This template can handle only the explicit `null` value since object null value 
 
 This is based on the exception handling happening in [`org.mockito.internal.exceptions.Reporter#cannotStubVoidMethodWithAReturnValue(String)`](https://github.com/mockito/mockito/blob/53e8a93141e1f8c41d6b6d4fd72c20488826269a/src/main/java/org/mockito/internal/exceptions/Reporter.java)
 
-This inspection would signal code snippets like the following, as incorrect:
+Since void methods have no return value, trying to mock such a method to return something is incorrect.
 
-```java
-Mockito.doReturn(5).when(mockObject).voidMethod();
-```
+| Compliant code | Non-compliant code |
+|---|---|
+| Don't try to mock a return value to a void method. | <pre>Mockito.doReturn(5).when(mockObject).voidMethod();</pre> |
+| You may have wanted to mock a return value to another non-void method. |  |
+| You may have wanted to mock something else for the void method. |  |
 
 NOTE: This template doesn't signal problem in cases when there is at least one other stubbing method (`do...()`) called after `doReturn()`, e.g. `doReturn().doThrow()...`.
 
@@ -395,13 +389,11 @@ NOTE: This template doesn't signal problem in cases when there is at least one o
 
 This is based on the exception handling happening in [`org.mockito.internal.exceptions.Reporter#incorrectUseOfApi()`](https://github.com/mockito/mockito/blob/53e8a93141e1f8c41d6b6d4fd72c20488826269a/src/main/java/org/mockito/internal/exceptions/Reporter.java)
 
-This inspection would signal code snippets like the following, as incorrect:
+Result of `Mockito.when()` calls are not supposed to be stored in a separate `OngoingStubbing` reference.
 
-```java
-OngoingStubbing<String> ongoingStubbing = when(mockObject.someMethod());
-ongoingStubbing.thenReturn("some text");
-ongoingStubbing.thenThrow(new RuntimeException());
-```
+| Compliant code | Non-compliant code |
+|---|---|
+| <pre>when(mockObject.someMethod()).thenReturn("some text").thenThrow(new RuntimeException());</pre> | <pre>OngoingStubbing<String> ongoingStubbing = when(mockObject.someMethod());<br>ongoingStubbing.thenReturn("some text");<br>ongoingStubbing.thenThrow(new RuntimeException());</pre> |
 
 But based on Mockito's behaviour the following construct is correct, so it is not included in the template:
 
@@ -437,24 +429,20 @@ The template always highlights the second `then...` method call, which in the ca
 
 These are based on the exception handling happening in [`org.mockito.internal.exceptions.Reporter#unfinishedVerificationException(Location)`](https://github.com/mockito/mockito/blob/53e8a93141e1f8c41d6b6d4fd72c20488826269a/src/main/java/org/mockito/internal/exceptions/Reporter.java)
 
-The first inspection would signal code snippets like the following, as incorrect, when there is a missing method call for `verify(mock)`:
+There are two different inspection signaling the two different constructs:
 
-```java
-verify(mockObject);
-```
+| Compliant code | Non-compliant code |
+|---|---|
+| There is a missing method call for `verify(mock)` |  |
+| <pre>Mockito.verify(mockObject).hasSomeProperty()</pre> | <pre>Mockito.verify(mockObject);</pre> |
+| Calls `equals()` or `hashCode()` from verify(mock) |  |
+| According to Mockito's error message:<br>*"... this error might show up because you verify either of: final/private/equals()/hashCode() methods.<br>Those methods cannot be stubbed/verified."* | <pre>verify(mockObject).equals(otherObject);<br>verify(mockObject).hashCode();</pre> |
 
 ```xml
 <searchConfiguration name="Missing method call for verify(mock)." text="org.mockito.Mockito.verify($mockObject$);" recursive="true" caseInsensitive="true" type="JAVA">
     <constraint name="__context__" within="" contains="" />
     <constraint name="mockObject" within="" contains="" />
 </searchConfiguration>
-```
-
-The other would signal code snippets that call `equals()` or `hashCode()` from verify(mock):
-
-```java
-verify(mockObject).equals(otherObject);
-verify(mockObject).hashCode();
 ```
 
 ```xml
@@ -470,12 +458,13 @@ verify(mockObject).hashCode();
 
 This is based on the exception handling happening in [`org.mockito.internal.exceptions.Reporter#mocksHaveToBePassedToVerifyNoMoreInteractions()`](https://github.com/mockito/mockito/blob/53e8a93141e1f8c41d6b6d4fd72c20488826269a/src/main/java/org/mockito/internal/exceptions/Reporter.java)
 
-This inspection would signal code snippets like the following, as incorrect:
+Both `verifyNoMoreInteractions()` and `verifyZeroInteractions()` have to passed at least one argument, the mocked/stubbed object on which they are supposed to
+validate the number of interactions.
 
-```java
-verifyZeroInteractions();
-verifyNoMoreInteractions();
-```
+| Compliant code | Non-compliant code |
+|---|---|
+| <pre>verifyZeroInteractions(mockObject, anotherMockObject);</pre> | <pre>verifyZeroInteractions();</pre> |
+| <pre>verifyNoMoreInteractions(mockObject);</pre> | <pre>verifyNoMoreInteractions();</pre> |
 
 The template doesn't signal the case when the passed argument(s) is/are not a mock, it only checks if the number of arguments is zero or not.
 
@@ -493,11 +482,11 @@ The template doesn't signal the case when the passed argument(s) is/are not a mo
 
 This is based on the exception handling happening in [`org.mockito.internal.exceptions.Reporter#mocksHaveToBePassedWhenCreatingInOrder()`](https://github.com/mockito/mockito/blob/53e8a93141e1f8c41d6b6d4fd72c20488826269a/src/main/java/org/mockito/internal/exceptions/Reporter.java)
 
-This inspection would signal code snippets like the following, as incorrect:
+The `Mockito.inOrder()` method should be passed at least on argument, the mock objects on which you want to do in order validation.
 
-```java
-InOrder inOrder = Mockito.inOrder();
-```
+| Compliant code | Non-compliant code |
+|---|---|
+| <pre>InOrder inOrder = Mockito.inOrder(mockObject, anotherMock);</pre> | <pre>InOrder inOrder = Mockito.inOrder();</pre> |
 
 The template doesn't signal the case when the passed argument(s) is/are not a mock, it only checks if the number of arguments is zero or not.
 
@@ -512,15 +501,19 @@ The template doesn't signal the case when the passed argument(s) is/are not a mo
 </searchConfiguration>
 ```
 
-## Some arguments don't use argument matchers. Either none or all of them should use matchers.
+## Some (AdditionalMatchers) arguments don't use argument matchers. Either none or all of them must use matchers.
 
 This is based on the exception handling happening in [`org.mockito.internal.exceptions.Reporter#invalidUseOfMatchers(int, List)`](https://github.com/mockito/mockito/blob/53e8a93141e1f8c41d6b6d4fd72c20488826269a/src/main/java/org/mockito/internal/exceptions/Reporter.java)
+and [`org.mockito.internal.exceptions.Reporter#incorrectUseOfAdditionalMatchers(String, int, Collection)`](https://github.com/mockito/mockito/blob/53e8a93141e1f8c41d6b6d4fd72c20488826269a/src/main/java/org/mockito/internal/exceptions/Reporter.java).
 
-This inspection would signal code snippets like the following, as incorrect:
+When mocking arguments of a mocked method, either all or none of the arguments must use argument matchers, a mixed version is not allowed by Mockito. 
 
-```java
-when(mockObject.mockMethod(ArgumentMatchers.any(SomeClass.class), someExpression)).thenReturn(aReturnValue);
-```
+| Compliant code | Non-compliant code |
+|---|---|
+| <pre>when(mockObject.mockMethod(ArgumentMatchers.<br>    any(SomeClass.class), eq(someExpression)))<br>        .thenReturn(aReturnValue);</pre> | <pre>when(mockObject.mockMethod(ArgumentMatchers<br>    .any(SomeClass.class), someExpression))<br>        .thenReturn(aReturnValue);</pre> |
+| <pre>when(mockObject.mockMethod(SomeClass.class, someExpression))<br>    .thenReturn(aReturnValue);</pre> |  |
+| <pre>when(mockObject.mockMethod(AdditionalMatchers<br>    .and(someExpression, SomeClass.class)))<br>        .thenReturn(aReturnValue);</pre> | <pre>when(mockObject.mockMethod(AdditionalMatchers.<br>    and(someExpression, any(SomeClass.class)))).<br>        thenReturn(aReturnValue);</pre> |
+| <pre>when(mockObject.mockMethod(AdditionalMatchers.<br>    and(eq(someExpression), any(SomeClass.class))))<br>        .thenReturn(aReturnValue);</pre> |  |
 
 For the template it doesn't matter where in the argument list the inconsistent arguments are (be it matcher or non-matcher), it will signal it as a problem.
 
@@ -549,7 +542,7 @@ arguments.each { it ->
 !((hasMatcher && hasOnlyMatchers) || (!hasMatcher && !hasOnlyMatchers))
 ```
 
-**Template:**
+**Template (ArgumentMatchers):**
 
 ```xml
 <searchConfiguration name="Some arguments don't use argument matchers. Either none or all of them should use them." text="org.mockito.Mockito.when($mockObject$.$mockMethod$($arguments$))" recursive="true" caseInsensitive="true" type="JAVA" pattern_context="default">
@@ -560,44 +553,7 @@ arguments.each { it ->
 </searchConfiguration>
 ```
 
-## Some AdditionalMatchers arguments don't use argument matchers. Either none or all of them should use a matcher.
-
-This is based on the exception handling happening in [`org.mockito.internal.exceptions.Reporter#incorrectUseOfAdditionalMatchers(String, int, Collection)`](https://github.com/mockito/mockito/blob/53e8a93141e1f8c41d6b6d4fd72c20488826269a/src/main/java/org/mockito/internal/exceptions/Reporter.java)
-
-This inspection would signal code snippets like the following, as incorrect:
-
-```java
-when(mockObject.mockMethod(AdditionalMatchers.and(someExpression, any(SomeClass.class)))).thenReturn(aReturnValue);
-```
-
-For the template it doesn't matter where in the AdditionalMatchers' argument list the inconsistent arguments are (be it matcher or non-matcher), it will signal it as a problem.
-
-**Script filter (Complete match):**
-
-```groovy
-boolean hasOnlyMatchers = true
-boolean hasMatcher = false
-arguments.each { it ->
-    //If the argument is a method call
-    if (it instanceof com.intellij.psi.PsiMethodCallExpression) {
-        //A method call from ArgumentMatchers
-        if (it?.resolveMethod()?.getContainingClass()?.getQualifiedName() == "org.mockito.ArgumentMatchers") {
-            hasMatcher = true
-        //A method call from a non-ArgumentMatchers class
-        } else {
-            hasOnlyMatchers = false
-        }
-    //Not a method call, but an other type of expression
-    } else {
-        hasOnlyMatchers = false
-    }
-}
-
-//If there is not only matchers, or not only non-matchers, then it will signal a problem.
-!((hasMatcher && hasOnlyMatchers) || (!hasMatcher && !hasOnlyMatchers))
-```    
-
-**Template:**
+**Template (AdditionalMatchers):**
 
 ```xml
 <searchConfiguration name="Some AdditionalMatchers arguments don't use argument matchers. Either none or all of them should use a matcher." text="org.mockito.AdditionalMatchers.$additionalMatcher$($arguments$)" recursive="true" caseInsensitive="true" type="JAVA" pattern_context="default">
@@ -611,11 +567,11 @@ arguments.each { it ->
 
 This is based on the exception handling happening in [`org.mockito.internal.exceptions.Reporter#onlyVoidMethodsCanBeSetToDoNothing()`](https://github.com/mockito/mockito/blob/53e8a93141e1f8c41d6b6d4fd72c20488826269a/src/main/java/org/mockito/internal/exceptions/Reporter.java)
 
-This inspection would signal code snippets like the following, as incorrect:
+For details when calling `doNothing()` can be useful, please refer to the javadoc of `Mockito.doNothing()`.
 
-```java
-doNothing().when(mock).someNotVoidMethod();
-```
+| Compliant code | Non-compliant code |
+|---|---|
+| <pre>doNothing().when(mock).aVoidMethod();</pre> | <pre>doNothing().when(mock).someNotVoidMethod();</pre> |
 
 NOTE: This template doesn't signal problem in cases when there is at least one other stubbing method `do...()`) called after `doNothing()`, e.g. `doNothing().doThrow()...`.
 
@@ -639,34 +595,19 @@ mockNotVoidMethod.resolveMethod().getReturnType().getPresentableText() != "void"
 
 This is based on the exception handling happening in [`org.mockito.internal.exceptions.Reporter#extraInterfacesAcceptsOnlyInterfaces(Class)`](https://github.com/mockito/mockito/blob/53e8a93141e1f8c41d6b6d4fd72c20488826269a/src/main/java/org/mockito/internal/exceptions/Reporter.java)
 
-For more information about the creation of these template head over to this [IntelliJ support ticket](https://intellij-support.jetbrains.com/hc/en-us/community/posts/360004135280-SSR-Check-whether-an-attribute-value-immediate-class-type-is-an-interface).
+For more information about the creation of these templates head over to this [IntelliJ support ticket](https://intellij-support.jetbrains.com/hc/en-us/community/posts/360004135280-SSR-Check-whether-an-attribute-value-immediate-class-type-is-an-interface).
 
-Currently there is support only for the `@Mock` annotation based `extraInterfaces` configuration, for the method based one templates will be added later.
-
-### Annotation
+The `extraInterfaces` attribute of the `@Mock` takes at least one type that is also an interface, 0 number of values and non-interface types are not allowed.
 
 To make the implementation easier and simpler of this inspection, there are two separate templates.
 
-#### Single
+### Single value
 
 This template matches occurrences where the `extraInterfaces` attribute is provided a single value, without the array initializers, e.g.:
 
-```java
-@Mock(extraInterfaces = NotAnInterface.class)
-public MockedClass mocked;
-```
-
-**Template:**
-
-```xml
-<searchConfiguration name="@Mock annotation: extraInterfaces() accepts only interfaces." text="@org.mockito.Mock($extraInterfaces$ = $attributes$)&#10;@Modifier(&quot;Instance&quot;) $FieldType$ $field$;" recursive="true" caseInsensitive="true" type="JAVA">
-    <constraint name="__context__" script="&quot;import com.intellij.psi.*;&#10;boolean hasOnlyInterfaces = true&#10;if (attributes instanceof PsiClassObjectAccessExpression) {&#10;  PsiJavaCodeReferenceElement classReference = (PsiJavaCodeReferenceElement)attributes.firstChild?.firstChild;&#10;  if (!classReference?.resolve()?.isInterface()) {&#10;    hasOnlyInterfaces = false&#10;  }&#10;}&#10;&#10;!hasOnlyInterfaces&quot;" within="" contains="" />
-    <constraint name="FieldType" within="" contains="" />
-    <constraint name="field" within="" contains="" />
-    <constraint name="extraInterfaces" regexp="extraInterfaces" within="" contains="" />
-    <constraint name="attributes" target="true" within="" contains="" />
-</searchConfiguration>
-```
+| Compliant code | Non-compliant code |
+|---|---|
+| <pre>@Mock(extraInterfaces = AnInterfaceType.class)<br>public MockedClass mocked;</pre> | <pre>@Mock(extraInterfaces = NotAnInterface.class)<br>public MockedClass mocked;</pre> |
 
 **Script filter (Complete match):**
 
@@ -683,31 +624,30 @@ if (attributes instanceof PsiClassObjectAccessExpression) {
 !hasOnlyInterfaces
 ```
 
-#### Array
+**Template:**
+
+```xml
+<searchConfiguration name="@Mock annotation: extraInterfaces() accepts only interfaces." text="@org.mockito.Mock($extraInterfaces$ = $attributes$)&#10;@Modifier(&quot;Instance&quot;) $FieldType$ $field$;" recursive="true" caseInsensitive="true" type="JAVA">
+    <constraint name="__context__" script="&quot;import com.intellij.psi.*;&#10;boolean hasOnlyInterfaces = true&#10;if (attributes instanceof PsiClassObjectAccessExpression) {&#10;  PsiJavaCodeReferenceElement classReference = (PsiJavaCodeReferenceElement)attributes.firstChild?.firstChild;&#10;  if (!classReference?.resolve()?.isInterface()) {&#10;    hasOnlyInterfaces = false&#10;  }&#10;}&#10;&#10;!hasOnlyInterfaces&quot;" within="" contains="" />
+    <constraint name="FieldType" within="" contains="" />
+    <constraint name="field" within="" contains="" />
+    <constraint name="extraInterfaces" regexp="extraInterfaces" within="" contains="" />
+    <constraint name="attributes" target="true" within="" contains="" />
+</searchConfiguration>
+```
+
+### Array value
 
 This template matches occurrences where the `extraInterfaces` attribute is provided multiple values within an array initializer, e.g.:
 
-```java
-@Mock(extraInterfaces = {NotAnInterface.class, AnInterface.class})
-public MockedClass mocked;
-```
+| Compliant code | Non-compliant code |
+|---|---|
+| <pre>@Mock(extraInterfaces = {AnInterface.class, AnotherInterface.class})<br>public MockedClass mocked;</pre> | <pre>@Mock(extraInterfaces = {NotAnInterface.class, AnInterface.class})<br>public MockedClass mocked;</pre> |
 
 In order for this template to match, it is enough that at least one of the provided values is not an interface.
 
 The target of this inspection is set to Complete Match to be consistent with the single value variant but regardless of which values are not
 interfaces, all provided values are highlighted.
-
-**Template:**
-
-```xml
-<searchConfiguration name="@Mock annotation: extraInterfaces() accepts only interfaces." text="@org.mockito.Mock($extraInterfaces$ = {$attributes$})&#10;@Modifier(&quot;Instance&quot;) $FieldType$ $field$;" recursive="true" caseInsensitive="true" type="JAVA">
-    <constraint name="__context__" script="&quot;import com.intellij.psi.*;&#10;boolean hasOnlyInterfaces = true&#10;attributes.each { attribute -&gt;&#10;    if (attribute instanceof PsiClassObjectAccessExpression) {&#10;      PsiJavaCodeReferenceElement ref = (PsiJavaCodeReferenceElement)attribute.firstChild?.firstChild;&#10;      if (!ref?.resolve()?.isInterface()) {&#10;        hasOnlyInterfaces = false&#10;      }&#10;    }&#10;  }&#10;!hasOnlyInterfaces&quot;" within="" contains="" />
-    <constraint name="FieldType" within="" contains="" />
-    <constraint name="field" within="" contains="" />
-    <constraint name="extraInterfaces" regexp="extraInterfaces" within="" contains="" />
-    <constraint name="attributes" maxCount="2147483647" target="true" within="" contains="" />
-</searchConfiguration>
-```
 
 **Script filter (Complete match):**
 
@@ -725,20 +665,27 @@ attributes.each { attribute ->
 !hasOnlyInterfaces
 ```
 
-### Method
+**Template:**
 
-TODO: this in the queue to be added
- 
-    
+```xml
+<searchConfiguration name="@Mock annotation: extraInterfaces() accepts only interfaces." text="@org.mockito.Mock($extraInterfaces$ = {$attributes$})&#10;@Modifier(&quot;Instance&quot;) $FieldType$ $field$;" recursive="true" caseInsensitive="true" type="JAVA">
+    <constraint name="__context__" script="&quot;import com.intellij.psi.*;&#10;boolean hasOnlyInterfaces = true&#10;attributes.each { attribute -&gt;&#10;    if (attribute instanceof PsiClassObjectAccessExpression) {&#10;      PsiJavaCodeReferenceElement ref = (PsiJavaCodeReferenceElement)attribute.firstChild?.firstChild;&#10;      if (!ref?.resolve()?.isInterface()) {&#10;        hasOnlyInterfaces = false&#10;      }&#10;    }&#10;  }&#10;!hasOnlyInterfaces&quot;" within="" contains="" />
+    <constraint name="FieldType" within="" contains="" />
+    <constraint name="field" within="" contains="" />
+    <constraint name="extraInterfaces" regexp="extraInterfaces" within="" contains="" />
+    <constraint name="attributes" maxCount="2147483647" target="true" within="" contains="" />
+</searchConfiguration>
+```
+
 ## Mockito.mock() extraInterfaces() requires at least one interface
 
 This is based on the exception handling happening in [`org.mockito.internal.exceptions.Reporter#extraInterfacesRequiresAtLeastOneInterface()`](https://github.com/mockito/mockito/blob/53e8a93141e1f8c41d6b6d4fd72c20488826269a/src/main/java/org/mockito/internal/exceptions/Reporter.java)
 
-This inspection would signal code snippets like the following, as incorrect:
+The `extraInterfaces` attribute of the `@Mock` takes at least one type that is also an interface, 0 number of values and non-interface types are not allowed.
 
-```java
-withSettings().defaultAnswer(null).extraInterfaces().name("").lenient()
-```
+| Compliant code | Non-compliant code |
+|---|---|
+| <pre>withSettings().defaultAnswer(null).extraInterfaces(AnInterface.class, AnotherInterface.class).name("").lenient()</pre> | <pre>withSettings().defaultAnswer(null).extraInterfaces().name("").lenient()</pre> |
 
 Regardless of the position of the problematic `extraInterfaces()` call the template will signal it.
 
@@ -757,11 +704,12 @@ Regardless of the position of the problematic `extraInterfaces()` call the templ
 
 This is based on the exception handling happening in [`org.mockito.internal.exceptions.Reporter#cannotCallAbstractRealMethod()`](https://github.com/mockito/mockito/blob/53e8a93141e1f8c41d6b6d4fd72c20488826269a/src/main/java/org/mockito/internal/exceptions/Reporter.java)
 
-This inspection would signal code snippets like the following, as incorrect:
+Mockito doesn't allow setting to call the real method of a mock object if the called method is abstract. The reason behind it is that abstract methods in Java don't have implementations,
+thus there is no real logic to actually call.
 
-```java
-when(mockObject.abstractMethod()).thenCallRealMethod();
-```
+| Compliant code | Non-compliant code |
+|---|---|
+| <pre>when(mockObject.nonAbstractMethod()).thenCallRealMethod();</pre> | <pre>when(mockObject.abstractMethod()).thenCallRealMethod();</pre> |
 
 NOTE: This template doesn't signal problem in cases when there is at least one other stubbing method called before `thenCallRealMethod()`
 but doesn't have a problem if there are method calls after that.
@@ -786,13 +734,11 @@ abstractMethod.resolveMethod().getModifierList().hasExplicitModifier("abstract")
 
 This is based on the exception handling happening in [`org.mockito.internal.exceptions.Reporter#moreThanOneAnnotationNotAllowed(String)`](https://github.com/mockito/mockito/blob/53e8a93141e1f8c41d6b6d4fd72c20488826269a/src/main/java/org/mockito/internal/exceptions/Reporter.java)
 
-This inspection signals only the following code snippet, as incorrect, combining the `@Mock` and `@Captor` annotations:
+| Compliant code | Non-compliant code |
+|---|---|
+| <pre>@Captor<br>ArgumentCaptor<MockObject> mockObjectCaptor;</pre> | <pre>@Mock<br>@Captor<br>ArgumentCaptor<MockObject> mockObjectCaptor;</pre> |
 
-```java
-@Mock
-@Captor
-ArgumentCaptor<MockObject> mockObjectCaptor;
-```
+The only combination of annotations I've found this exception is thrown for is `@Mock` and `@Captor`.
 
 Regardless of the order in which the two annotations are present, they are both highlighted as incorrect.
 
@@ -811,15 +757,7 @@ Regardless of the order in which the two annotations are present, they are both 
 
 This is based on the exception handling happening in [`org.mockito.internal.exceptions.Reporter#unsupportedCombinationOfAnnotations(String, String)`](https://github.com/mockito/mockito/blob/53e8a93141e1f8c41d6b6d4fd72c20488826269a/src/main/java/org/mockito/internal/exceptions/Reporter.java)
 
-This inspection would signal code snippets like the following, as incorrect:
-
-```java
-@Mock
-@InjectMocks
-ArgumentCaptor<MockObject> mockObjectCaptor;
-``` 
-
-which seem to apply to the following combinations of Mockito annotations:
+Certain combinations of Mockito annotations are not allowed to be used on the same field:
 - @Mock + @InjectMocks
 - @Spy + @Mock
 - @Spy + @Captor
@@ -863,12 +801,12 @@ matches
 
 This is based on the exception handling happening in [`org.mockito.internal.exceptions.Reporter#cannotCreateTimerWithNegativeDurationTime(long)`](https://github.com/mockito/mockito/blob/53e8a93141e1f8c41d6b6d4fd72c20488826269a/src/main/java/org/mockito/internal/exceptions/Reporter.java)
 
-This inspection would signal code snippets like the following, as incorrect:
+Negative values are invalid to be defined for timeout and wait values, thus Mockito doesn't allow it either.
 
-```java
-Runnable runnable = Mockito.mock(Runnable.class);
-Mockito.verify(runnable, Mockito.after(-1000).never()).run();
-```
+| Compliant code | Non-compliant code |
+|---|---|
+| <pre>Runnable runnable = Mockito.mock(Runnable.class);<br>Mockito.verify(runnable, Mockito.after(1000).never()).run();</pre> | <pre>Runnable runnable = Mockito.mock(Runnable.class);<br>Mockito.verify(runnable, Mockito.after(-1000).never()).run();</pre> |
+| <pre>Runnable runnable = Mockito.mock(Runnable.class);<br>Mockito.verify(runnable, Mockito.timeout(1000)).run();</pre> | <pre>Runnable runnable = Mockito.mock(Runnable.class);<br>Mockito.verify(runnable, Mockito.timeout(-1000)).run();</pre> |
 
 The example is from the [originally reported Mockito issue](https://github.com/mockito/mockito/issues/197).
 
@@ -897,22 +835,18 @@ try {
 
 This is based on the exception handling happening in [`org.mockito.internal.verification.VerificationWrapperInOrderWrapper`](https://github.com/mockito/mockito/blob/d77b2fc8b544b7b0ca772e816fcc2ad560edaa03/src/main/java/org/mockito/internal/verification/VerificationWrapperInOrderWrapper.java)
 
-This inspection would signal code snippets like the following, as incorrect:
+For this type of exception/error the only example I found so far is `Mockito.after()` that is not designed to work with `InOrder`.
 
-```java
-inOrder.verify(mockObject, Mockito.after(1000).atLeastOnce()).someMethodCall();
-```
-
-So far the only example I found is `Mockito.after()` that is not designed to work with `InOrder`.
+| Compliant code | Non-compliant code |
+|---|---|
+| <pre>Mockito.verify(mockObject, Mockito.after(1000).atLeastOnce()).someMethodCall();</pre> | <pre>inOrder.verify(mockObject, Mockito.after(1000).atLeastOnce()).someMethodCall();</pre> |
 
 Due to the limitation of the Structural Search and Replace tool, there are two separate templates.
 
-The first one signals calls where only the `after()` method is called like this:
+| Calls where only the `after()` method is called | Calls with additional verification mode call after `after()` |
+|---|---|
+| <pre>inOrder.verify(mockObject, Mockito.after(1000)).someMethodCall();</pre> | <pre>inOrder.verify(mockObject, Mockito.after(1000).atLeastOnce()).someMethodCall();</pre> |
 
-```java
-inOrder.verify(mockObject, Mockito.after(1000)).someMethodCall();
-```
-    
 ```xml
 <searchConfiguration name="X is not implemented to work with InOrder wrapped inside this VerificationMode" text="$InOrder$.verify($mockObject$, $Mockito$.$after$($value$)).$verifiedMethod$()" recursive="true" caseInsensitive="true" type="JAVA">
     <constraint name="__context__" within="" contains="" />
@@ -923,12 +857,6 @@ inOrder.verify(mockObject, Mockito.after(1000)).someMethodCall();
     <constraint name="verifiedMethod" within="" contains="" />
     <constraint name="after" regexp="after" target="true" within="" contains="" />
 </searchConfiguration>
-```
-
-The second one signals code snippets where there is an additional verification mode call after `after()`:
-
-```java
-inOrder.verify(mockObject, Mockito.after(1000).atLeastOnce()).someMethodCall();
 ```
 
 ```xml
@@ -948,14 +876,12 @@ inOrder.verify(mockObject, Mockito.after(1000).atLeastOnce()).someMethodCall();
 
 This is based on the exception handling happening in [`org.mockito.internal.InOrderImpl`](https://github.com/mockito/mockito/blob/4f72147c464c1a8a642d01fc3334e98e92b464cd/src/main/java/org/mockito/internal/InOrderImpl.java)
 
-This inspection would signal code snippets like the following, as incorrect:
+For this type of exception/error the only examples I found so far are `Mockito.only()` and `Mockito.atMost()` that are not designed to work with `InOrder`.
 
-```java
-inOrder.verify(mockObject, Mockito.only()).someMethodCall();
-inOrder.verify(mockObject, Mockito.atMost(5)).someMethodCall();
-```
-
-So far the only examples I have found are `Mockito.only()` and `Mockito.atMost()` that are not designed to work with `InOrder`.
+| Compliant code | Non-compliant code |
+|---|---|
+| <pre>Mockito.verify(mockObject, Mockito.only()).someMethodCall();</pre> | <pre>inOrder.verify(mockObject, Mockito.only()).someMethodCall();</pre> |
+| <pre>Mockito.verify(mockObject, Mockito.atMost(5)).someMethodCall();</pre> | <pre>inOrder.verify(mockObject, Mockito.atMost(5)).someMethodCall();</pre> |
 
 **Template:**
 
@@ -976,11 +902,9 @@ So far the only examples I have found are `Mockito.only()` and `Mockito.atMost()
 This inspection is based on the fact that calling `Mockito.verify(mockObject)` without calling `times()` works the same as `Mockito.verify(mockObject, times(1))`,
 thus calling `times(1)` may be removed.
 
-This inspection would signal code snippets like the following, as incorrect:
-
-```java
-Mockito.verify(mockObject, times(1))
-```
+| Compliant code | Non-compliant code |
+|---|---|
+| <pre>Mockito.verify(mockObject)</pre> | <pre>Mockito.verify(mockObject, times(1))</pre> |
 
 **Script filter ($value$):**
 
@@ -1004,3 +928,9 @@ try {
     <constraint name="times" regexp="times" within="" contains="" />
 </searchConfiguration>
 ```
+---------------------------------------
+---------------------------------------
+Parkolópálya:
+misplacedArgumentMatcher
+cannotVerifyToString (csak warning)
+wrongTypeOfArgumentToReturn
