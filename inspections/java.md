@@ -29,21 +29,9 @@ and in what circumstances, it may also provide better performance than separate 
 - https://stackoverflow.com/questions/44334233/why-is-the-stringbuilder-chaining-pattern-sb-appendx-appendy-faster-than-reg
 - http://hg.openjdk.java.net/jdk8u/jdk8u/hotspot/file/4d9931ebf861/src/share/vm/opto/stringopts.cpp
 
-This inspection would signal a code snippet like the following, as incorrect:
-
-```java
-StringBuilder sb = new StringBuilder();
-sb.append("This");
-sb.append(" is");
-sb.append(" Spartaaaa!!!!");
-```
-
-which calls can be chained together like for instance:
-
-```java
-StringBuilder sb = new StringBuilder();
-sb.append("This").append(" is").append(" Spartaaaa!!!!");
-```
+| Compliant code | Non-compliant code |
+|---|---|
+| <pre>StringBuilder sb = new StringBuilder();<br>sb.append("This").append(" is").append(" Spartaaaa!!!!");</pre> | <pre>StringBuilder sb = new StringBuilder();<br>sb.append("This");<br>sb.append(" is");<br>sb.append(" Spartaaaa!!!!");</pre> |
 
 **Template:**
 
