@@ -167,8 +167,6 @@ Based on the official documentation of the [Cucumber Tag Expressions](https://cu
 must be defined with the `@` character, so when only a single tag is defined in the `tag` attribute of the `@CucumberOptions` annotation
 the value of that attribute must start with `@` otherwise Cucumber won't be able to filter by that expression.
 
-This inspection would signal a code snippet like the following, as incorrect:
-
 | Compliant code | Non-compliant code |
 |---|---|
 | <pre>@CucumberOptions(tags = "@sometag")</pre> | <pre>@CucumberOptions(tags = "sometag")</pre> |
@@ -192,6 +190,44 @@ This inspection supports this annotation from the following packages:
     <constraint name="TAG_EXPRESSION" script="&quot;!TAG_EXPRESSION?.value?.contains(&quot; &quot;) &amp;&amp; !TAG_EXPRESSION?.value?.startsWith(&quot;@&quot;) &quot;" target="true" within="" contains="" />
     <constraint name="Class" within="" contains="" />
     <constraint name="CucumberOptions" regexp="(cucumber\.api|io\.cucumber\.junit|io\.cucumber\.testng)\.CucumberOptions" within="" contains="" />
+</searchConfiguration>
+```
+
+## Single Cucumber tag expression within a tagged hook annotation should start with an @ character.
+
+Based on the official documentation of the [Cucumber Tag Expressions](https://cucumber.io/docs/cucumber/api/#tag-expressions), tags in a tag expression
+must be defined with the `@` character, so when only a single tag is defined as the value of a tagged hook annotation
+that value must start with `@` otherwise Cucumber won't be able to filter by that expression.
+
+| Compliant code | Non-compliant code |
+|---|---|
+| <pre>@After("@sometag")</pre> | <pre>@After("sometag")</pre> |
+| <pre>@Before("@sometag")</pre> | <pre>@Before("sometag")</pre> |
+
+This inspection supports annotations from the following packages:
+- `cucumber.api.java` (deprecated in Cucumber-JVM 4.5.0)
+- `io.cucumber.java`
+
+Supported hook annotations: `@Before`, `@BeforeStep`, `@After`, `@AfterStep`
+
+**Script filter ($TAG_EXPRESSION$)**
+
+```groovy
+!pattern?.value?.contains(" ") && !pattern?.value?.startsWith("@") 
+```
+
+**Template:**
+
+```xml
+<searchConfiguration name="Single Cucumber tag expression in a tagged hook annotation should start with an @ character." text="class $Class$ {&#10;    @$HookAnnotation$($pattern$)&#10;    $ReturnType$ $Method$($ParamType$ $param$);&#10;}" recursive="true" caseInsensitive="true" type="JAVA" pattern_context="default">
+    <constraint name="__context__" within="" contains="" />
+    <constraint name="Class" within="" contains="" />
+    <constraint name="Method" maxCount="2147483647" within="" contains="" />
+    <constraint name="ReturnType" within="" contains="" />
+    <constraint name="param" minCount="0" maxCount="2147483647" within="" contains="" />
+    <constraint name="ParamType" within="" contains="" />
+    <constraint name="pattern" script="&quot;!pattern?.value?.contains(&quot; &quot;) &amp;&amp; !pattern?.value?.startsWith(&quot;@&quot;) &quot;" target="true" within="" contains="" />
+    <constraint name="HookAnnotation" regexp="(cucumber\.api\.java|io\.cucumber\.java)\.(Before|BeforeStep|After|AfterStep)" maxCount="2147483647" within="" contains="" />
 </searchConfiguration>
 ```
 
