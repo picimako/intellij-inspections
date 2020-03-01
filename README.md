@@ -15,7 +15,7 @@ All you need to do is to copy the desired `searchConfiguration`s and `replaceCon
 * your project's IDEA config under `<Your project>\.idea\inspectionProfiles\Project_Default.xml`, or
 * to the default IDEA global config under `<User home>\.IdeaIC2019.1\config\inspection\Default.xml`
 
-To configure your git project for these inspections please read through the [How to add projected specific inspections to your Git project](https://ijnspector.wordpress.com/2018/11/21/how-to-add-project-specific-inspections-to-your-git-project/) article.
+To configure your git project for these inspections please read through the [How to add project specific inspections to your Git project](https://ijnspector.wordpress.com/2018/11/21/how-to-add-project-specific-inspections-to-your-git-project/) article.
 
 ## Contribution and support
 
@@ -26,5 +26,5 @@ If you find any issues in the articles, tutorials or in any of the inspections, 
 New inspections and inspections for new Java libraries are continuously added, and they also serve as a nice basis for future IntelliJ plugins.
 
 Libraries that are planned to be covered next:
-- [romankh3/image-comparison](https://github.com/romankh3/image-comparison)
 - [Selenide](https://selenide.org)
+- [aShot](https://github.com/pazone/ashot)
