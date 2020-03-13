@@ -21,6 +21,9 @@ To configure your git project for these inspections please read through the [How
 
 If you find any issues in the articles, tutorials or in any of the inspections, please create a GitHub issue in this project.
 
+If you like my work and the contents of this repo, please consider buying me delicious coffee:
+<a href="https://www.buymeacoffee.com/picimako" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/default-white.png" alt="Buy Me A Coffee" style="height: 49px !important;width: 150px !important;" ></a>
+
 ## Future plans
 
 New inspections and inspections for new Java libraries are continuously added, and they also serve as a nice basis for future IntelliJ plugins.
