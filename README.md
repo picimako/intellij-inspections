@@ -29,5 +29,6 @@ If you like my work and the contents of this repo, please consider buying me del
 New inspections and inspections for new Java libraries are continuously added, and they also serve as a nice basis for future IntelliJ plugins.
 
 Libraries that are planned to be covered next:
+- [JDI Light](https://github.com/jdi-testing/jdi-light)
 - [Selenide](https://selenide.org)
 - [aShot](https://github.com/pazone/ashot)
