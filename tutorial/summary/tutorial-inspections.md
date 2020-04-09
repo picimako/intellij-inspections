@@ -3,6 +3,25 @@ The purpose of this document is to collect all inspection that are created durin
 mainly because WordPress keeps resolving unicode entities that shouldn't be resolved in order to users be able to copy and paste these inspections
 into their project files.
 
+## 2020.04.09. - [Validating ImageComparison setter method default values](https://ijnspector.wordpress.com/2020/04/09/validating-imagecomparison-setter-method-default-values/)
+```xml
+<searchConfiguration name="ImageComparion setter method is defined with default value. That setter has no effect." text="$ImageComparison$.$setterMethod$($setValue$);" recursive="true" caseInsensitive="true" type="JAVA" pattern_context="default">
+    <constraint name="__context__" script="&quot;import com.intellij.psi.*;&#10;&#10;def setterDefaults = [setPixelToleranceLevel: 0.1f, setThreshold: 5, setRectangleLineWidth: 1, setMinimalRectangleSize: 1, setMaximalRectangleCount: -1, setDrawExcludedRectangles: false]&#10;PsiExpression methodCall = setterMethod; //PsiExpression is the closest common superclass of PsiMethodCallExpression and PsiReferenceExpression&#10;//This iterates through the method call in a reverse order, from the last to the first&#10;while (methodCall instanceof PsiMethodCallExpression) {&#10;&#9;def methodName = methodNameOf(methodCall)&#10;&#9;//Ignoring non-setter methods in the call chain, e.g. imageComparison.setRectangleLineWidth(1).compareImages();&#10;&#9;if (!methodName.startsWith(&quot;set&quot;) || !hasParameterDefined(methodCall) || !isFirstParamLiteral(methodCall)) {&#10;&#9;&#9;methodCall = methodCall.firstChild?.firstChild&#10;&#9;&#9;continue&#10;&#9;}&#10;&#9;def methodParamValue = methodParamValueOf(methodCall)&#10;&#9;if (methodParamValue == setterDefaults[methodName]) {&#10;&#9;&#9;return true&#10;&#9;}&#10;&#9;methodCall = methodCall.firstChild?.firstChild //firstChild: PsiReferenceExpression, firstChild.firstChild: PsiMethodCallExpression&#10;}&#10;return false //fallback return value&#10;&#10;String methodNameOf(PsiMethodCallExpression expr) {&#10;&#9;expr.firstChild.referenceName //firstChild: PsiReferenceExpression&#10;}&#10;&#10;boolean hasParameterDefined(PsiMethodCallExpression expr) {&#10;&#9;expr.lastChild.expressions.length &gt; 0&#10;}&#10;&#10;boolean isFirstParamLiteral(PsiMethodCallExpression expr) {&#10;&#9;expr.lastChild.expressions[0] instanceof PsiLiteralExpression&#10;}&#10;&#10;Object methodParamValueOf(PsiMethodCallExpression expr) {&#10;&#9;expr.lastChild.expressions[0].value //lastChild: PsiExpressionList, lastChild.expressions[0]: PsiLiteralExpression&#10;}&quot;" within="" contains="" />
+    <constraint name="ImageComparison" nameOfExprType="com\.github\.romankh3\.image\.comparison\.ImageComparison" expressionTypes="com.github.romankh3.image.comparison.ImageComparison" within="" contains="" />
+    <constraint name="setValue" minCount="0" maxCount="2147483647" within="" contains="" />
+    <constraint name="setterMethod" within="" contains="" />
+</searchConfiguration>
+```
+
+## 2019.12.03 - [Iterate through methods of a superclass](https://ijnspector.wordpress.com/2019/12/03/iterate-through-methods-of-a-superclass/)
+```xml
+<searchConfiguration name="Classes defining Step Definitions or hooks are not allowed to be extended." text="class $Class$ extends $Parent$ {}" recursive="true" caseInsensitive="true" type="JAVA" pattern_context="default">
+    <constraint name="__context__" script="&quot;import com.intellij.psi.*&#10;&#10;def stepAnnotations = [&quot;cucumber.api.java.en.Given&quot;, &quot;cucumber.api.java.en.When&quot;, &quot;cucumber.api.java.en.Then&quot;,&quot;cucumber.api.java.en.And&quot;, &quot;cucumber.api.java.en.But&quot;, &quot;io.cucumber.java.en.Given&quot;, &quot;io.cucumber.java.en.When&quot;, &quot;io.cucumber.java.en.Then&quot;, &quot;io.cucumber.java.en.And&quot;, &quot;io.cucumber.java.en.But&quot;]&#10;PsiElement superclass = Parent.resolve();&#10;if (superclass instanceof PsiClass) {&#10;&#9;for (PsiMethod method : superclass.getMethods()) {&#10;&#9;&#9;for (PsiAnnotation methodAnnotation : method.getAnnotations()) {&#10;&#9;&#9;&#9;if (stepAnnotations.contains(methodAnnotation.getQualifiedName())) {&#10;&#9;&#9;&#9;&#9;return true&#10;&#9;&#9;&#9;}&#10;&#9;&#9;}&#10;&#9;}&#10;}&#10;false&quot;" within="" contains="" />
+    <constraint name="Class" within="" contains="" />
+    <constraint name="Parent" target="true" within="" contains="" />
+</searchConfiguration>
+```
+
 ## 2019.06.03. - [FluentPage hasExpectedUrl() assertion is not valid without @PageUrl annotation](https://ijnspector.wordpress.com/2019/06/03/fluentpage-hasexpectedurl-assertion-is-not-valid-without-pageurl-annotation/)
 ```xml
 <searchConfiguration name="FluentPage.hasExpectedUrl() call is not valid without @PageUrl annotation." text=" org.fluentlenium.assertj.FluentLeniumAssertions.assertThat($FluentPage$).hasExpectedUrl();" recursive="true" caseInsensitive="true" type="JAVA">
