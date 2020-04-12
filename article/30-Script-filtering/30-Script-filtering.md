@@ -88,8 +88,8 @@ Also, since these variables are handled as PSI nodes, certain values may be retr
 
 You can read more about PSI elements in the official [IntelliJ SDK DevGuide](https://www.jetbrains.org/intellij/sdk/docs/basics/architectural_overview/psi_elements.html).
 
-## \_context_ variable
-> The **\_context_** variable is an artificial variable. All variables used in a pattern can be accessed from the Script Constraints. **\_context_** corresponds to the Complete Match variable.
+## \_\_context__ variable
+> The **\_\_context__** variable is an artificial variable. All variables used in a pattern can be accessed from the Script Constraints. **\_\_context__** corresponds to the Complete Match variable.
 
 There are a few Existing templates that provide examples for using this variable, though I haven't been able to completely wrap my head around them:
 - *classes*
@@ -118,7 +118,7 @@ with which basically anything can be achieved.
 
 Though I haven't been able to totally wrap my head around Complete Match filters there is a practical example I ran into.
 
-Let's say you have a method call and you want to iterate through its arguments in a Script filter:
+Let's say you have a method call, and you want to iterate through its arguments in a Script filter:
 
 ```java
 $someObject$.$methodCall$($arguments$);
@@ -131,16 +131,51 @@ At least in this case it is basically stepping back a little and seeing/inspecti
 
 ## "Debugging" Script filters
 
-There are at least two ways one ca find out what is happening inside a Script filter.
+There are at least two ways one can find out what is happening inside a Script filter.
 
+### Break the template
 You can intentionally make it fail so that IntelliJ gives you an error message. This can be useful e.g. when you want to find out what Psi type a certain template variable is.
 You can call a non-existent method on it, then IntelliJ will tell you that that method doesn't exist on that given Psi type.
 
-The other way is to write expression values into a file to get a type or value of something. It may be a simple Groovy script like this:
+### Write into a file
+An other way is to write expression values into a file to get a type or value of something. It may be a simple Groovy script like this:
 
 ```groovy
 new File("D:\\scriptfilter.txt").withWriter { out -> out.println someTemplateVariable.getType() }
 ```
+
+### Logging to IntelliJ's Event Log
+There is special variable called `__log__` which provides an interface for sending information to the Event Log. This variable is also mentioned
+in the help tooltip of Script filters:
+
+![script_filter_help_tooltip](images/30-script-filtering-script-filter-help-tooltip.png)
+
+This variable is implemented in a class called [ScriptLog](https://github.com/JetBrains/intellij-community/blob/5bc2879f65aa90bc06ea43e94698058427b46f69/platform/structuralsearch/source/com/intellij/structuralsearch/impl/matcher/predicates/ScriptLog.java)
+and provides the following methods for different log levels:
+- `info(Object)`
+- `warn(Object)`
+- `error(Object)`
+
+Within a Script filter you can simply just use them like `__log__.info('some information')`.
+
+Upon logging there are two visual cues to know that the logging has happened:
+- a log entry appears in the Event Log, having red color in case of **error** level,
+![error_message_log](images/30-script-filtering-error-message-log.PNG)
+- a Notification popup appears with the log message and an icon according to the log level:
+
+| Log level | Notification popup |
+|---|---|
+| info | ![info_notification](images/30-script-filtering-info-notification.PNG) |
+| warn | ![warn_notification](images/30-script-filtering-warn-notification.PNG) |
+| error | ![error_notification](images/30-script-filtering-error-notification.PNG) |
+
+The Event Log entry is in the following format: `(<template_variable_name>:<line_number>) <log_message>`, where
+- **<template_variable_name>** is the name of the template variable whose Script filter the logging happened in.
+It is logged without the enclosing $ symbols. E.g. *method* instead of *$method$*.
+- **<line_number>** is the line number within the Script filter on which the logging happened. 
+
+Since the logging methods are called every time a script filter is ran (except when it is tied to a condition in the script), make sure that
+you won't spam users with a bunch of log messages and notifications.
 
 ## Take into account problematic cases, i.e. exception handling
 
