@@ -134,7 +134,7 @@ def setterDefaults = [setPixelToleranceLevel: 0.1f, setThreshold: 5, setRectangl
 
 //Store the currently inspected part of the method chain.
 //PsiExpression is the closest common superclass of PsiMethodCallExpression and PsiReferenceExpression
-PsiExpression methodCall = setterMethod;
+PsiExpression methodCall = setterMethod
 
 //This iterates through the method call in a reverse order, from the last to the first
 while (methodCall instanceof PsiMethodCallExpression) {
