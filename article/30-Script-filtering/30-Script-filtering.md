@@ -144,6 +144,11 @@ An other way is to write expression values into a file to get a type or value of
 new File("D:\\scriptfilter.txt").withWriter { out -> out.println someTemplateVariable.getType() }
 ```
 
+Speaking from experience, this is not the most reliable approach to use, not in terms of the printed content of the file, but rather that writing
+to a file is not always triggered, so you have to keep changing stuff in the template until it is triggered.
+
+For a more reliable approach I recommend using the one in the next section.
+
 ### Logging to IntelliJ's Event Log
 There is special variable called `__log__` which provides an interface for sending information to the Event Log. This variable is also mentioned
 in the help tooltip of Script filters:
