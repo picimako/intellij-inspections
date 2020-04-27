@@ -22,21 +22,9 @@ the following is also valid:
 return AnnotationValue > 5
 ```
 
-Variables can also be created in this filter. So considering the template and filter I created in [Annotation attribute value is greater than the max allowed](https://ijnspector.wordpress.com/2019/01/30/annotation-attribute-value-is-greater-than-the-max-allowed/):
+The Script filter option also has a help tooltip which states "Non-boolean script results will be converted to boolean."
 
-```java
-Template:
-    @picimako.tutorial.annotation.Retry(times = $RetryCount$)
-    
-Filter:
-    RetryCount.text.toInteger() > 5
-```
-
-the filter may also be written as:
-```java
-String retryCount = RetryCount.text;
-retryCount.toInteger() > 5
-```
+So if you return e.g. the string `"true"` or `"TRUE"` they will also be evaluated to the boolean `true`. 
 
 ## import statements
 
