@@ -161,6 +161,78 @@ To see the reason why this validation is put in place, please head to the refere
 </searchConfiguration>
 ```
 
+## JUnit @Rule annotated fields and methods have no effect on JUnit classes with @RunWith(Cucumber.class) annotation
+
+JUnit's `@Rule` annotation, whether it is applied to a field or a method, [is not processed by the `Cucumber` JUnit runner](https://github.com/cucumber/cucumber-jvm/tree/master/junit#using-junit-rules),
+having them in a JUnit test class doesn't have any effect.
+
+Although a `@Rule` annotated field or method must be a subtype of *org.junit.rules.TestRule (preferred) or @link org.junit.rules.MethodRule* (according to the javadoc),
+this template doesn't enforce it because regardless of what is annotated is as `@Rule`, it won't have any effect and (at least the annotation) should be removed.
+
+| Compliant code | Non-compliant code |
+|---|---|
+| <pre>@RunWith(Cucumber.class)<br>public class CucumberJUnitTestClass {<br>}</pre> | <pre>@RunWith(Cucumber.class)<br>public class CucumberJUnitTestClass {<br><br>    @Rule<br>    public TemporaryFolder temporaryFolder = new TemporaryFolder();<br>}</pre> |
+|  | <pre>@RunWith(Cucumber.class)<br>public class CucumberJUnitTestClass {<br><br>    public TemporaryFolder temporaryFolder = new TemporaryFolder();<br><br>    @Rule<br>    public TemporaryFolder getFolder() {<br>        return temporaryFolder;<br>    }<br>}</pre> |
+
+There are three templates:
+- the first two validates fields and methods separately, and highlights the `@Rule` annotation. These two should be used together.
+- the third one validates both fields and methods but highlights the test class name. This can be used in itself.
+
+Depending on what part of the code you would like to get highlighted, you can use either the first two or the third template.
+
+| Target | Template text | Comment |
+|---|---|---|
+| fields | <pre>@org.junit.runner.RunWith(io.cucumber.junit.Cucumber.class)<br>class $Class$ {<br><br>    @$Rule$<br>    $RuleType$ $ruleName$ = $Init$;<br>}</pre> | All occurrences of the @Rule annotation are highlighted. |
+| methods | <pre>@org.junit.runner.RunWith(io.cucumber.junit.Cucumber.class)<br>class $Class$ {<br><br>    @$Rule$<br>    $RuleType$ $getRule$(){<br>        $body$;<br>    }<br>}</pre> | All occurrences of the @Rule annotation are highlighted. |
+| field and methods | <pre>@org.junit.runner.RunWith(io.cucumber.junit.Cucumber.class)<br>class $JUnitTestClass$ {<br>}</pre> | See Script filter below. |
+
+**Template for fields only (Search target: the `@Rule` annotation):**
+```xml
+<searchConfiguration name="JUnit @Rule annotated fields have no effect on JUnit classes with @RunWith(Cucumber.class) annotation" text="@org.junit.runner.RunWith(io.cucumber.junit.Cucumber.class)&#10;class $Class$ {&#10;&#10;    @$Rule$&#10;    $RuleType$ $ruleName$ = $Init$;&#10;}" recursive="true" caseInsensitive="false" type="JAVA" pattern_context="default">
+    <constraint name="__context__" within="" contains="" />
+    <constraint name="Rule" regexp="org\.junit\.Rule" target="true" within="" contains="" />
+    <constraint name="Class" within="" contains="" />
+    <constraint name="RuleType" within="" contains="" />
+    <constraint name="ruleName" maxCount="2147483647" within="" contains="" />
+    <constraint name="Init" minCount="0" within="" contains="" />
+</searchConfiguration>
+```
+
+**Template for methods only (Search target: the `@Rule` annotation):**
+```xml
+<searchConfiguration name="JUnit @Rule annotated methods have no effect on JUnit classes with @RunWith(Cucumber.class) annotation" text="@org.junit.runner.RunWith(io.cucumber.junit.Cucumber.class)&#10;class $Class$ {&#10;&#10;    @$Rule$&#10;    $RuleType$ $getRule$(){&#10;        $body$;&#10;    }&#10;}" recursive="true" caseInsensitive="false" type="JAVA" pattern_context="default">
+    <constraint name="__context__" within="" contains="" />
+    <constraint name="Rule" regexp="org\.junit\.Rule" target="true" within="" contains="" />
+    <constraint name="Class" within="" contains="" />
+    <constraint name="RuleType" within="" contains="" />
+    <constraint name="getRule" maxCount="2147483647" within="" contains="" />
+    <constraint name="body" within="" contains="" />
+</searchConfiguration>
+```
+
+**Template for both (Search target: the class name):**
+```xml
+<searchConfiguration name="JUnit @Rule annotated fields and methods have no effect on JUnit classes with @RunWith(Cucumber.class) annotation" text="@org.junit.runner.RunWith(io.cucumber.junit.Cucumber.class)&#10;class $JUnitTestClass$ {&#10;}" recursive="true" caseInsensitive="false" type="JAVA" pattern_context="default">
+    <constraint name="__context__" script="&quot;return hasRuleField() || hasRuleMethod()&#10;&#10;boolean hasRuleField() {&#10;&#9;def fields = JUnitTestClass.getFields()&#10;&#9;fields.find { it.hasAnnotation(&quot;org.junit.Rule&quot;) }&#10;}&#10;&#10;boolean hasRuleMethod() {&#10;&#9;def methods = JUnitTestClass.getMethods()&#10;&#9;methods.find { it.hasAnnotation(&quot;org.junit.Rule&quot;) }&#10;}&quot;" within="" contains="" />
+    <constraint name="JUnitTestClass" target="true" within="" contains="" />
+</searchConfiguration>
+```
+
+**Script filter - fields and methods (Complete Match):**
+```groovy
+return hasRuleField() || hasRuleMethod()
+
+boolean hasRuleField() {
+	def fields = JUnitTestClass.getFields()
+	fields.find { it.hasAnnotation("org.junit.Rule") }
+}
+
+boolean hasRuleMethod() {
+	def methods = JUnitTestClass.getMethods()
+	methods.find { it.hasAnnotation("org.junit.Rule") }
+}
+```
+
 ## Single Cucumber tag expression should start with an @ character.
 
 Based on the official documentation of the [Cucumber Tag Expressions](https://cucumber.io/docs/cucumber/api/#tag-expressions), tags in a tag expression
