@@ -4,6 +4,8 @@
 - JUnit 5 website: https://junit.org/junit5/
 - JUnit on GitHub: https://github.com/junit-team
 
+You can find more JUnit specific inspections in the IntelliJ Inspections settings under **Java > JUnit**.
+
 ## JUnit assertion is not used with static import
 
 In many cases static importing a static method makes the code less cluttered and more readable which some people might
