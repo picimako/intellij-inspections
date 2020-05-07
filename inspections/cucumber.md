@@ -335,7 +335,7 @@ To have your own custom placeholders supported add them to the `parameterTypes` 
 The matches check at the beginning is added to decrease the performance impact of the script, and execute only when there is an actual (not-escaped)
 placeholder in the pattern.
 ```groovy
-if (stepPattern?.value.matches('.*(?<!\\\\)\\{.*')) {
+if (stepPattern?.value?.matches('.*(?<!\\\\)\\{.*')) {
     def parameterTypes = "(int|float|word|string|biginteger|bigdecimal|byte|short|long|double)"
     def incompleteStepPattern = "(?<!\\\\)\\{" + parameterTypes + "(?![a-zA-Z\\}])|(?<![a-zA-Z\\{])" + parameterTypes + "\\}"
     def matcher = stepPattern?.value =~ incompleteStepPattern
@@ -349,7 +349,7 @@ false
 ```xml
 <searchConfiguration name="Step pattern contains incomplete parameter placeholder." text="@$StepAnnotation$(&quot;$stepPattern$&quot;)&#10;void $stepDefinitionMethod$($ParameterType$ $parameter$);" recursive="true" caseInsensitive="true" type="JAVA" pattern_context="member">
     <constraint name="__context__" within="" contains="" />
-    <constraint name="stepPattern" script="&quot;if (stepPattern?.value.matches('.*(?&lt;!\\\\)\\{.*')) {&#10;&#9;def parameterTypes = &quot;(int|float|word|string|biginteger|bigdecimal|byte|short|long|double)&quot;&#10;&#9;def incompleteStepPattern = &quot;(?&lt;!\\\\)\\{&quot; + parameterTypes + &quot;(?![a-zA-Z\\}])|(?&lt;![a-zA-Z\\{])&quot; + parameterTypes + &quot;\\}&quot;&#10;&#9;def matcher = stepPattern?.value =~ incompleteStepPattern&#10;&#9;return matcher ? true : false&#10;}&#10;false&quot;" target="true" within="" contains="" />
+    <constraint name="stepPattern" script="&quot;if (stepPattern?.value?.matches('.*(?&lt;!\\\\)\\{.*')) {&#10;&#9;def parameterTypes = &quot;(int|float|word|string|biginteger|bigdecimal|byte|short|long|double)&quot;&#10;&#9;def incompleteStepPattern = &quot;(?&lt;!\\\\)\\{&quot; + parameterTypes + &quot;(?![a-zA-Z\\}])|(?&lt;![a-zA-Z\\{])&quot; + parameterTypes + &quot;\\}&quot;&#10;&#9;def matcher = stepPattern?.value =~ incompleteStepPattern&#10;&#9;return matcher ? true : false&#10;}&#10;false&quot;" target="true" within="" contains="" />
     <constraint name="stepDefinitionMethod" within="" contains="" />
     <constraint name="ParameterType" within="" contains="" />
     <constraint name="parameter" minCount="0" maxCount="2147483647" within="" contains="" />
@@ -370,7 +370,7 @@ Step.resolveMethod().getContainingClass().getQualifiedName().matches("(cucumber\
 ```xml
 <searchConfiguration name="Step pattern contains incomplete parameter placeholder." text="$Java8BaseStepDefInterface$.$Step$(&quot;$stepPattern$&quot;, ($Parameters$) -&gt; {});" recursive="true" caseInsensitive="true" type="JAVA" pattern_context="default">
     <constraint name="__context__" within="" contains="" />
-    <constraint name="stepPattern" script="&quot;if (stepPattern?.value.matches('.*(?&lt;!\\\\)\\{.*')) {&#10;&#9;def parameterTypes = &quot;(int|float|word|string|biginteger|bigdecimal|byte|short|long|double)&quot;&#10;&#9;def incompleteStepPattern = &quot;(?&lt;!\\\\)\\{&quot; + parameterTypes + &quot;(?![a-zA-Z\\}])|(?&lt;![a-zA-Z\\{])&quot; + parameterTypes + &quot;\\}&quot;&#10;&#9;def matcher = stepPattern?.value =~ incompleteStepPattern&#10;&#9;return matcher ? true : false&#10;}&#10;false&quot;" target="true" within="" contains="" />
+    <constraint name="stepPattern" script="&quot;if (stepPattern?.value?.matches('.*(?&lt;!\\\\)\\{.*')) {&#10;&#9;def parameterTypes = &quot;(int|float|word|string|biginteger|bigdecimal|byte|short|long|double)&quot;&#10;&#9;def incompleteStepPattern = &quot;(?&lt;!\\\\)\\{&quot; + parameterTypes + &quot;(?![a-zA-Z\\}])|(?&lt;![a-zA-Z\\{])&quot; + parameterTypes + &quot;\\}&quot;&#10;&#9;def matcher = stepPattern?.value =~ incompleteStepPattern&#10;&#9;return matcher ? true : false&#10;}&#10;false&quot;" target="true" within="" contains="" />
     <constraint name="Step" script="&quot;Step.resolveMethod().getContainingClass().getQualifiedName().matches(&quot;(cucumber\\.api\\.java8\\.|io\\.cucumber\\.java8\\.).*&quot;)&quot;" regexp="Given|When|Then|And|But" within="" contains="" />
     <constraint name="Parameters" minCount="0" maxCount="2147483647" within="" contains="" />
     <constraint name="Java8BaseStepDefInterface" minCount="0" within="" contains="" />
@@ -403,7 +403,7 @@ To have your own custom placeholders supported add them to the `parameterTypes` 
 The matches check at the beginning is added to decrease the performance impact of the script, and execute only when there is an actual (not-escaped)
 placeholder in the pattern.
 ```groovy
-if (stepPattern?.value.matches('.*(?<!\\\\)\\{.*')) {
+if (stepPattern?.value?.matches('.*(?<!\\\\)\\{.*')) {
     def placeholderPattern = /(?<!\){((?:[^{])*)}/
     def parameterTypes = ['', 'int', 'float', 'word', 'string', 'biginteger', 'bigdecimal', 'byte', 'short', 'long', 'double']
     def matcher = stepPattern?.value =~ placeholderPattern
@@ -428,7 +428,7 @@ false
 ```xml
 <searchConfiguration name="Step pattern contains unregistered parameter type." text="@$StepAnnotation$(&quot;$stepPattern$&quot;)&#10;void $stepDefinitionMethod$($ParameterType$ $parameter$);" recursive="true" caseInsensitive="true" type="JAVA" pattern_context="member">
     <constraint name="__context__" within="" contains="" />
-    <constraint name="stepPattern" script="&quot;if (stepPattern?.value.matches('.*(?&lt;!\\\\)\\{.*')) {&#10;&#9;def placeholderPattern = /(?&lt;!\\)\{((?:[^{])*)\}/&#10;&#9;def parameterTypes = ['', 'int', 'float', 'word', 'string', 'biginteger', 'bigdecimal', 'byte', 'short', 'long', 'double']&#10;&#9;def matcher = stepPattern?.value =~ placeholderPattern&#10;&#10;&#9;//if there is at least one unregistered placeholder, then signal true&#10;&#9;def hasAtLeastOneUnregisteredPlaceholder = false&#10;&#9;while(matcher.find()) {&#10;&#9;&#9;def type = matcher.group(1)&#10;&#9;    if (!parameterTypes.contains(type)) {&#10;&#9;    &#9;hasAtLeastOneUnregisteredPlaceholder = true&#10;&#9;    &#9;break;&#10;&#9;    }&#10;&#9;}&#10;&#9;return hasAtLeastOneUnregisteredPlaceholder&#10;}&#10;false&quot;" target="true" within="" contains="" />
+    <constraint name="stepPattern" script="&quot;if (stepPattern?.value?.matches('.*(?&lt;!\\\\)\\{.*')) {&#10;&#9;def placeholderPattern = /(?&lt;!\\)\{((?:[^{])*)\}/&#10;&#9;def parameterTypes = ['', 'int', 'float', 'word', 'string', 'biginteger', 'bigdecimal', 'byte', 'short', 'long', 'double']&#10;&#9;def matcher = stepPattern?.value =~ placeholderPattern&#10;&#10;&#9;//if there is at least one unregistered placeholder, then signal true&#10;&#9;def hasAtLeastOneUnregisteredPlaceholder = false&#10;&#9;while(matcher.find()) {&#10;&#9;&#9;def type = matcher.group(1)&#10;&#9;    if (!parameterTypes.contains(type)) {&#10;&#9;    &#9;hasAtLeastOneUnregisteredPlaceholder = true&#10;&#9;    &#9;break;&#10;&#9;    }&#10;&#9;}&#10;&#9;return hasAtLeastOneUnregisteredPlaceholder&#10;}&#10;false&quot;" target="true" within="" contains="" />
     <constraint name="stepDefinitionMethod" within="" contains="" />
     <constraint name="ParameterType" within="" contains="" />
     <constraint name="parameter" minCount="0" maxCount="2147483647" within="" contains="" />
@@ -449,7 +449,7 @@ Step.resolveMethod().getContainingClass().getQualifiedName().matches("(cucumber\
 ```xml
 <searchConfiguration name="Step pattern contains unregistered parameter type." text="$Java8BaseStepDefInterface$.$Step$(&quot;$stepPattern$&quot;, ($Parameters$) -&gt; {});" recursive="true" caseInsensitive="true" type="JAVA" pattern_context="default">
     <constraint name="__context__" within="" contains="" />
-    <constraint name="stepPattern" script="&quot;if (stepPattern?.value.matches('.*(?&lt;!\\\\)\\{.*')) {&#10;&#9;def placeholderPattern = /(?&lt;!\\)\{((?:[^{])*)\}/&#10;&#9;def parameterTypes = ['', 'int', 'float', 'word', 'string', 'biginteger', 'bigdecimal', 'byte', 'short', 'long', 'double']&#10;&#9;def matcher = stepPattern?.value =~ placeholderPattern&#10;&#10;&#9;//if there is at least one unregistered placeholder, then signal true&#10;&#9;def hasAtLeastOneUnregisteredPlaceholder = false&#10;&#9;while(matcher.find()) {&#10;&#9;&#9;def type = matcher.group(1)&#10;&#9;    if (!parameterTypes.contains(type)) {&#10;&#9;    &#9;hasAtLeastOneUnregisteredPlaceholder = true&#10;&#9;    &#9;break;&#10;&#9;    }&#10;&#9;}&#10;&#9;return hasAtLeastOneUnregisteredPlaceholder&#10;}&#10;false&quot;" target="true" within="" contains="" />
+    <constraint name="stepPattern" script="&quot;if (stepPattern?.value?.matches('.*(?&lt;!\\\\)\\{.*')) {&#10;&#9;def placeholderPattern = /(?&lt;!\\)\{((?:[^{])*)\}/&#10;&#9;def parameterTypes = ['', 'int', 'float', 'word', 'string', 'biginteger', 'bigdecimal', 'byte', 'short', 'long', 'double']&#10;&#9;def matcher = stepPattern?.value =~ placeholderPattern&#10;&#10;&#9;//if there is at least one unregistered placeholder, then signal true&#10;&#9;def hasAtLeastOneUnregisteredPlaceholder = false&#10;&#9;while(matcher.find()) {&#10;&#9;&#9;def type = matcher.group(1)&#10;&#9;    if (!parameterTypes.contains(type)) {&#10;&#9;    &#9;hasAtLeastOneUnregisteredPlaceholder = true&#10;&#9;    &#9;break;&#10;&#9;    }&#10;&#9;}&#10;&#9;return hasAtLeastOneUnregisteredPlaceholder&#10;}&#10;false&quot;" target="true" within="" contains="" />
     <constraint name="Step" script="&quot;Step.resolveMethod().getContainingClass().getQualifiedName().matches(&quot;(cucumber\\.api\\.java8\\.|io\\.cucumber\\.java8\\.).*&quot;)&quot;" regexp="Given|When|Then|And|But" within="" contains="" />
     <constraint name="Parameters" minCount="0" maxCount="2147483647" within="" contains="" />
     <constraint name="Java8BaseStepDefInterface" minCount="0" within="" contains="" />
