@@ -433,7 +433,7 @@ false
     <constraint name="ParameterType" within="" contains="" />
     <constraint name="parameter" minCount="0" maxCount="2147483647" within="" contains="" />
     <constraint name="StepAnnotation" regexp="(cucumber\.api\.java|io\.cucumber\.java)\.(en\.(Given|When|Then|And|But))" within="" contains="" />
-</searchConfiguration>
+</searchConfiguration>  
 ```
 
 ### Java8 format support
@@ -625,5 +625,52 @@ Step definition methods with empty body are considered unimplemented, which Cucu
     <constraint name="Parameters" minCount="0" maxCount="2147483647" within="" contains="" />
     <constraint name="Java8BaseStepDefInterface" minCount="0" within="" contains="" />
     <constraint name="methodBody" minCount="0" maxCount="0" target="true" within="" contains="" />
+</searchConfiguration>
+```
+
+## Cucumber step definition method is not used in any Gherkin feature file.
+
+The **Gherkin** and **Cucumber for Java** IntelliJ plugins can link Gherkin steps and Cucumber step definition methods together,
+and they also have inspection support for highlighting steps in Gherkin files that are not linked to any step definition methods.
+
+However, the opposite inspection can be valid too, as in highlighting step definition methods that are not used in any feature files.
+
+There might be multiple reasons why such an inspection can be useful:
+- the step pattern in the step def method has been edited, but it hasn't been updated in the feature files
+- the step pattern in the step def method has been edited but there is an unnoticed typo in it
+- step definition methods may also be called from Java classes (regardless of whether this is a good practice or not) to avoid code duplication or create composite steps,
+and it can happen that a method is no longer used in feature files but is still treated as a step definition method (e.g. it is still annotated as `@Given`, `@When`, etc.).
+
+This inspection searches for the usages of step definition methods everywhere (for now).
+
+Currently, this template supports the following properties (which can be altered easily):
+- annotations: `@Given`, `@When`, `@Then`, `@And`, `@But`
+- packages: cucumber.api.java.en, io.cucumber.java.en 
+
+**Script filter (Complete match)**
+
+```groovy
+import com.intellij.psi.search.EverythingGlobalScope
+import com.intellij.psi.search.searches.ReferencesSearch
+
+return !isFoundGherkinStepForMethod()
+
+def isFoundGherkinStepForMethod() {
+    def methodUsageReferences = ReferencesSearch.search(Method, new EverythingGlobalScope()).findAll()
+    //workaround because the Script filter cannot find CucumberStepReference when referenced as fully qualified
+    return methodUsageReferences.any { it.getClass().getName().endsWith('CucumberStepReference')}
+}
+```
+
+**Template:**
+
+```xml
+<searchConfiguration name="Cucumber step definition method is not used in any Gherkin feature file." text="@$Step$(&quot;$stepPattern$&quot;)&#10;public void $Method$ ($ParameterType$ $Parameter$);" recursive="true" caseInsensitive="true" type="JAVA" pattern_context="member">
+    <constraint name="__context__" script="&quot;import com.intellij.psi.search.EverythingGlobalScope&#10;import com.intellij.psi.search.searches.ReferencesSearch&#10;&#10;return !isFoundGherkinStepForMethod()&#10;&#10;def isFoundGherkinStepForMethod() {&#10;&#9;def methodUsageReferences = ReferencesSearch.search(Method, new EverythingGlobalScope()).findAll()&#10;&#9;//workaround because the Script filter cannot find CucumberStepReference when referenced as fully qualified&#10;&#9;return methodUsageReferences.any { it.getClass().getName().endsWith('CucumberStepReference')}&#10;}&quot;" within="" contains="" />
+    <constraint name="Method" target="true" within="" contains="" />
+    <constraint name="ParameterType" within="" contains="" />
+    <constraint name="Parameter" minCount="0" maxCount="2147483647" within="" contains="" />
+    <constraint name="Step" regexp="(cucumber\.api\.java\|io\.cucumber\.java)\.((en\.(Given|When|Then|And|But))" within="" contains="" />
+    <constraint name="stepPattern" within="" contains="" />
 </searchConfiguration>
 ```
