@@ -5,7 +5,7 @@
 
 ## Licensing
 Please let me know if using the same exact exception messages as the descriptions of the inspections is not permitted due to licensing issues.
-I am happy to change them, it just made sense and I think it is clearer to use the same messages here too.
+I am happy to change them, it just made sense, and I think it is clearer to use the same messages here too.
 
 ## General information
 
