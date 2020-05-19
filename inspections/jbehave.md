@@ -257,3 +257,151 @@ def hasStartingWord(PsiLiteralExpression literal) {
     <constraint name="aliasDef" within="" contains="" />
 </searchConfiguration>
 ```
+
+# @UsingEmbedder's storyTimeout format is incorrect or misleading.
+
+The `@UsingEmbedder` annotation has a `storyTimeouts` attribute in which one can define timeout for the stories run with the current `Embedder`.
+
+There are two built-in timeout parsers for this with two different timeout formats:
+- `org.jbehave.core.embedder.StoryTimeouts.SimpleTimeoutParser`: e.g. `1d 2h 3m 4s`
+- `org.jbehave.core.embedder.StoryTimeouts.DigitTimeoutParser`: e.g. `10`
+
+The following table contains examples for (most of) the valid timout values:
+
+| Timeout with whitespaces | Timeout without whitespaces |
+|---|---|
+| 1d          | 1d       |
+| 1d 2h       | 1d2h     |
+| 1d 2h 3m    | 1d2h3m   |
+| 1d 2h 3m 4s | 1d2h3m4s |
+| 1d 3m       | 1d3m     |
+| 1d 3m 4s    | 1d3m4s   |
+| 1d 4s       | 1d4s     |
+| 2h          | 2h       |
+| 2h 3m       | 2h3m     |
+| 2h 3m 4s    | 2h3m4s   |
+| 2h 4s       | 2h4s     |
+| 3m          | 3m       |
+| 3m 4s       | 3m4s     |
+| 4s          | 4s       |
+| 30          | 30       |
+
+Altough it is also a valid timeout when the last unit character is left out e.g. `1d2h3m4` it is misleading because the 4 at the end is ignored by the parser and not counted into the accumulated timeout value. Thus this inspection also highlight these kind of values too.
+
+Please note that custom units can be defined for the `SimpleTimeoutParser` so adjustment of this inspection might be needed according to that.
+
+| Compliant code | Non-compliant code |
+|---|---|
+| Only positive values: `@UsingEmbedder(storyTimeouts = "10")` | `@UsingEmbedder(storyTimeouts = "-10")` |
+| By default only d, h, s, m are supported units: `@UsingEmbedder(storyTimeouts = "1d")` | `@UsingEmbedder(storyTimeouts = "1dd")` |
+| String values are incorrect: `@UsingEmbedder(storyTimeouts = "10s")` | `@UsingEmbedder(storyTimeouts = "asd")` |
+| Last value without unit is ignored: `@UsingEmbedder(storyTimeouts = "1d 2h 3m 4s")` | `@UsingEmbedder(storyTimeouts = "1d 2h 3m 4")` |
+| Last value without unit is ignored: `@UsingEmbedder(storyTimeouts = "1d2h3m4s")` | `@UsingEmbedder(storyTimeouts = "1d2h3m4")` |
+
+**Script filter (Complete Match):**
+
+```groovy
+import com.intellij.psi.*
+
+def timeoutPattern = /((\d+d\s?)?(\d+h\s?)?(\d+m\s?)?(\d+s\s?)?)|(\d+)/
+timeout instanceof PsiLiteralExpression && timeout.literalElementType == JavaTokenType.STRING_LITERAL && !timeout?.value?.matches(timeoutPattern)
+```
+
+**Template:**
+
+```xml
+<searchConfiguration name="@UsingEmbedder's storyTimeout format is incorrect or misleading." text="@$UsingEmbedder$($storyTimeout$ = $timeout$)&#10;class $Class$ {}" recursive="true" caseInsensitive="true" type="JAVA" pattern_context="default">
+    <constraint name="__context__" script="&quot;import com.intellij.psi.*&#10;&#10;def timeoutPattern = /((\d+d\s?)?(\d+h\s?)?(\d+m\s?)?(\d+s\s?)?)|(\d+)/&#10;timeout instanceof PsiLiteralExpression &amp;&amp; timeout.literalElementType == JavaTokenType.STRING_LITERAL &amp;&amp; !timeout?.value?.matches(timeoutPattern)&quot;" within="" contains="" />
+    <constraint name="Class" within="" contains="" />
+    <constraint name="UsingEmbedder" regexp="org\.jbehave\.core\.annotations\.UsingEmbedder" within="" contains="" />
+    <constraint name="storyTimeout" regexp="storyTimeouts" target="true" within="" contains="" />
+    <constraint name="timeout" within="" contains="" />
+</searchConfiguration>
+```
+
+# Unnecessary list item separator (comma) at the end of @UsingEmbedder's systemProperties attribute.
+
+The `@UsingEmbedder` annotation has a `systemProperties` attribute in which one can define Java system property names and values to pass into the executed tests.
+
+It can be defined in the following formats:
+
+| systemProperties attribute | Created system properties |
+|---|---|
+| `prop` | `prop` with empty String value  |
+| `prop:value` | `prop` with value `value` |
+| `prop1:value1,prop2` | `prop1` with value `value1` and `prop2` with empty String value |
+| `prop1:value1,prop2:value2` | `prop1` with value `value1` and `prop2` with value `value2` |
+
+Leaving a list item separator comma at the end of the attribute value is not invalid, the system properties values will still be parsed, but it might be misleading why it is left there.
+
+| Compliant code | Non-compliant code |
+|---|---|
+| `@UsingEmbedder(systemProperties = "prop")` | `@UsingEmbedder(systemProperties = "prop,")` |
+| `@UsingEmbedder(systemProperties = "prop:value")` | `@UsingEmbedder(systemProperties = "prop:value,")` |
+| `@UsingEmbedder(systemProperties = "prop1:value1,prop2")` | `@UsingEmbedder(systemProperties = "prop1:value1,prop2,")` |
+| `@UsingEmbedder(systemProperties = "prop1:value1,prop2:value2")` | `@UsingEmbedder(systemProperties = "prop1:value1,prop2:value2,")` |
+
+
+**Script filter (Complete Match):**
+
+```groovy
+import com.intellij.psi.*
+
+properties instanceof PsiLiteralExpression && properties.literalElementType == JavaTokenType.STRING_LITERAL && properties?.value?.endsWith(',')
+```
+
+**Template:**
+
+```xml
+<searchConfiguration name="Unnecessary list item separator (comma) at the end of @UsingEmbedder's systemProperties attribute." text="@$UsingEmbedder$($systemProperties$ = $properties$)&#10;class $Class$ {}" recursive="true" caseInsensitive="true" type="JAVA" pattern_context="default">
+    <constraint name="__context__" script="&quot;import com.intellij.psi.*&#10;&#10;properties instanceof PsiLiteralExpression &amp;&amp; properties.literalElementType == JavaTokenType.STRING_LITERAL &amp;&amp; properties?.value?.endsWith(',')&quot;" within="" contains="" />
+    <constraint name="Class" within="" contains="" />
+    <constraint name="UsingEmbedder" regexp="org\.jbehave\.core\.annotations\.UsingEmbedder" within="" contains="" />
+    <constraint name="systemProperties" regexp="systemProperties" target="true" within="" contains="" />
+    <constraint name="properties" within="" contains="" />
+</searchConfiguration>
+```
+
+# One or more meta filters' format is incorrect.
+
+JBehave provides the option to filter executed stories based on meta filters, in multiple ways. One way is to define it via the `@UsingEmbedder` annotation's `metaFilters` attribute. For the supported formats please head over to the official [Meta filtering documentation](https://jbehave.org/reference/latest/meta-filtering.html).
+
+This inspection aims to highlight format problems when the Default meta matcher is used. This also means that if this inspection is added but you use a different meta matcher, like the Groovy one, it will flag all meta matcher values as incorrect.
+
+| Compliant code | Non-compliant code |
+|---|---|
+| `@UsingEmbedder(metaFilters = "+smoke -skip")` | `@UsingEmbedder(metaFilters = "+smoke --skip")` |
+| `@UsingEmbedder(metaFilters = "+smoke *")` | `@UsingEmbedder(metaFilters = "smoke *")` |
+| `@UsingEmbedder(metaFilters = {"+smoke", "-skip"})` | `@UsingEmbedder(metaFilters = {"+ smoke", "-skip"})` |
+| `@UsingEmbedder(metaFilters = {"+smoke this that", "-skip"})` | `@UsingEmbedder(metaFilters = {"+smoke this $that", "-skip"})` |
+
+**Script filter (Complete Match):**
+
+```groovy
+import com.intellij.psi.*
+
+if (filters instanceof PsiLiteralExpression) {
+	return !hasCorrectFormat(filters)
+} else if (filters instanceof PsiArrayInitializerMemberValue) {
+	def aliasValues = filters?.initializers
+	return aliasValues.any { it instanceof PsiLiteralExpression && !hasCorrectFormat(it) }
+} else {
+	return false
+}
+
+def hasCorrectFormat(PsiLiteralExpression literal) {    
+	return literal.literalElementType == JavaTokenType.STRING_LITERAL && literal?.value?.matches('([+-]([\\w\\*]+ ?)+)+')
+}
+```
+
+**Template:**
+
+```xml
+<searchConfiguration name="One or more meta filters' format is incorrect." text="@$UsingEmbedder$($metaFilters$ = $filters$)&#10;class $Class$ {}" recursive="true" caseInsensitive="true" type="JAVA" pattern_context="default">
+    <constraint name="__context__" script="&quot;import com.intellij.psi.*&#10;&#10;if (filters instanceof PsiLiteralExpression) {&#10;&#9;return !hasCorrectFormat(filters)&#10;} else if (filters instanceof PsiArrayInitializerMemberValue) {&#10;&#9;def aliasValues = filters?.initializers&#10;&#9;return aliasValues.any { it instanceof PsiLiteralExpression &amp;&amp; !hasCorrectFormat(it) }&#10;} else {&#10;&#9;return false&#10;}&#10;&#10;def hasCorrectFormat(PsiLiteralExpression literal) {    &#10;&#9;return literal.literalElementType == JavaTokenType.STRING_LITERAL &amp;&amp; literal?.value?.matches('([+-]([\\w\\*]+ ?)+)+')&#10;}&quot;" within="" contains="" />
+    <constraint name="Class" within="" contains="" />
+    <constraint name="UsingEmbedder" regexp="org\.jbehave\.core\.annotations\.UsingEmbedder" within="" contains="" />
+    <constraint name="metaFilters" regexp="metaFilters" target="true" within="" contains="" />
+    <constraint name="filters" within="" contains="" />
+</searchConfiguration>
+```
