@@ -235,20 +235,14 @@ def hasStartingWord(PsiLiteralExpression literal) {
 **Script filter - for @Alias (Complete Match):**
 
 ```groovy
-import com.intellij.psi.*
-
-aliasDef instanceof PsiLiteralExpression ? hasStartingWord(aliasDef) : false
-
-def hasStartingWord(PsiLiteralExpression literal) {    
-	return literal.literalElementType == JavaTokenType.STRING_LITERAL && literal?.value?.matches('^(Given|When|Then) .*')
-}
+aliasDef?.value?.matches('^(Given|When|Then) .*')
 ```
 
 **Template (for @Alias):**
 
 ```xml
-<searchConfiguration name="The alias starts with one of the following keywords: Given, When, Then, And" text="@$Step$&#10;@$Alias$(value = $aliasDef$)&#10;void $Method$($ParameterType$ $Parameter$);" recursive="true" caseInsensitive="true" type="JAVA" pattern_context="member">
-    <constraint name="__context__" script="&quot;import com.intellij.psi.*&#10;&#10;aliasDef instanceof PsiLiteralExpression ? hasStartingWord(aliasDef) : false&#10;&#10;def hasStartingWord(PsiLiteralExpression literal) {    &#10;&#9;return literal.literalElementType == JavaTokenType.STRING_LITERAL &amp;&amp; literal?.value?.matches('^(Given|When|Then) .*')&#10;}&quot;" within="" contains="" />
+<searchConfiguration name="The alias starts with one of the following keywords: Given, When, Then, And" text="@$Step$&#10;@$Alias$(value = &quot;$aliasDef$&quot;)&#10;void $Method$($ParameterType$ $Parameter$);" recursive="true" caseInsensitive="true" type="JAVA" pattern_context="member">
+    <constraint name="__context__" script="&quot;aliasDef?.value?.matches('^(Given|When|Then) .*')&quot;" within="" contains="" />
     <constraint name="Method" within="" contains="" />
     <constraint name="ParameterType" within="" contains="" />
     <constraint name="Parameter" minCount="0" maxCount="2147483647" within="" contains="" />
@@ -301,17 +295,15 @@ Please note that custom units can be defined for the `SimpleTimeoutParser` so ad
 **Script filter (Complete Match):**
 
 ```groovy
-import com.intellij.psi.*
-
 def timeoutPattern = /((\d+d\s?)?(\d+h\s?)?(\d+m\s?)?(\d+s\s?)?)|(\d+)/
-timeout instanceof PsiLiteralExpression && timeout.literalElementType == JavaTokenType.STRING_LITERAL && !timeout?.value?.matches(timeoutPattern)
+!timeout?.value?.matches(timeoutPattern)
 ```
 
 **Template:**
 
 ```xml
-<searchConfiguration name="@UsingEmbedder's storyTimeout format is incorrect or misleading." text="@$UsingEmbedder$($storyTimeout$ = $timeout$)&#10;class $Class$ {}" recursive="true" caseInsensitive="true" type="JAVA" pattern_context="default">
-    <constraint name="__context__" script="&quot;import com.intellij.psi.*&#10;&#10;def timeoutPattern = /((\d+d\s?)?(\d+h\s?)?(\d+m\s?)?(\d+s\s?)?)|(\d+)/&#10;timeout instanceof PsiLiteralExpression &amp;&amp; timeout.literalElementType == JavaTokenType.STRING_LITERAL &amp;&amp; !timeout?.value?.matches(timeoutPattern)&quot;" within="" contains="" />
+<searchConfiguration name="@UsingEmbedder's storyTimeout format is incorrect or misleading." text="@$UsingEmbedder$($storyTimeout$ = &quot;$timeout$&quot;)&#10;class $Class$ {}" recursive="true" caseInsensitive="true" type="JAVA" pattern_context="default">
+    <constraint name="__context__" script="&quot;def timeoutPattern = /((\d+d\s?)?(\d+h\s?)?(\d+m\s?)?(\d+s\s?)?)|(\d+)/&#10;!timeout?.value?.matches(timeoutPattern)&quot;" within="" contains="" />
     <constraint name="Class" within="" contains="" />
     <constraint name="UsingEmbedder" regexp="org\.jbehave\.core\.annotations\.UsingEmbedder" within="" contains="" />
     <constraint name="storyTimeout" regexp="storyTimeouts" target="true" within="" contains="" />
@@ -345,16 +337,14 @@ Leaving a list item separator comma at the end of the attribute value is not inv
 **Script filter (Complete Match):**
 
 ```groovy
-import com.intellij.psi.*
-
-properties instanceof PsiLiteralExpression && properties.literalElementType == JavaTokenType.STRING_LITERAL && properties?.value?.endsWith(',')
+properties?.value?.endsWith(',')
 ```
 
 **Template:**
 
 ```xml
-<searchConfiguration name="Unnecessary list item separator (comma) at the end of @UsingEmbedder's systemProperties attribute." text="@$UsingEmbedder$($systemProperties$ = $properties$)&#10;class $Class$ {}" recursive="true" caseInsensitive="true" type="JAVA" pattern_context="default">
-    <constraint name="__context__" script="&quot;import com.intellij.psi.*&#10;&#10;properties instanceof PsiLiteralExpression &amp;&amp; properties.literalElementType == JavaTokenType.STRING_LITERAL &amp;&amp; properties?.value?.endsWith(',')&quot;" within="" contains="" />
+<searchConfiguration name="Unnecessary list item separator (comma) at the end of @UsingEmbedder's systemProperties attribute." text="@$UsingEmbedder$($systemProperties$ = &quot;$properties$&quot;)&#10;class $Class$ {}" recursive="true" caseInsensitive="true" type="JAVA" pattern_context="default">
+    <constraint name="__context__" script="&quot;properties?.value?.endsWith(',')&quot;" within="" contains="" />
     <constraint name="Class" within="" contains="" />
     <constraint name="UsingEmbedder" regexp="org\.jbehave\.core\.annotations\.UsingEmbedder" within="" contains="" />
     <constraint name="systemProperties" regexp="systemProperties" target="true" within="" contains="" />
