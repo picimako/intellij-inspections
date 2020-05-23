@@ -4,7 +4,25 @@
 - JBehave on GitHub: https://github.com/jbehave
 - JBehave Support plugin with code inspections to report unused steps definitions and undefined step usages: https://plugins.jetbrains.com/plugin/7268-jbehave-support
 
-# At least one @Composite step definition doesn't have any of the following starting words: Given, When, Then, And, !--
+## Table of contents
+
+#### @Composite
+- [At least one @Composite step definition doesn't have any of the following starting words: Given, When, Then, And, !--](#at-least-one-composite-step-definition-doesnt-have-any-of-the-following-starting-words-given-when-then-and---)
+- [@Composite annotation with one step definition can be switched to using the @Alias annotation](#composite-annotation-with-one-step-definition-can-be-switched-to-using-the-alias-annotation)
+
+#### Aliases
+- [@Aliases annotation with one step definition can be switched to using the @Alias annotation](#aliases-annotation-with-one-step-definition-can-be-switched-to-using-the-alias-annotation)
+- [One or more aliases start with one of the following keywords: Given, When, Then, And](#one-or-more-aliases-start-with-one-of-the-following-keywords-given-when-then-and)
+
+#### @UsingEmbedder
+- [@UsingEmbedder's thread count must be greater than or equal to 1](#usingembedders-thread-count-must-be-greater-than-or-equal-to-1)
+- [@UsingEmbedder's storyTimeout format is incorrect or misleading](#usingembedders-storytimeout-format-is-incorrect-or-misleading)
+- [Unnecessary list item separator (comma) at the end of @UsingEmbedder's systemProperties attribute](#unnecessary-list-item-separator-comma-at-the-end-of-usingembedders-systemproperties-attribute)
+
+#### Meta filters
+- [One or more meta filters' format is incorrect](#one-or-more-meta-filters-format-is-incorrect)
+
+## At least one @Composite step definition doesn't have any of the following starting words: Given, When, Then, And, !--
 
 When a step definition method defines a @Composite annotation with some steps, it is crucial that each step pattern includes one of the step keywords or the comment identifier at the beginning of them, otherwise JBehave throws an exception with the following message:
 
@@ -55,7 +73,7 @@ def hasStartingWord(PsiLiteralExpression literal) {
 </searchConfiguration>
 ```
 
-# @Composite annotation with one step definition can be switched to using the @Alias annotation.
+## @Composite annotation with one step definition can be switched to using the @Alias annotation.
 
 Composite steps in JBehave is a way of defining step definition methods that can execute 1 or more other steps without implementing extra test logic and adding or injecting classes to do so.
 
@@ -100,7 +118,7 @@ if (compositeSteps instanceof PsiLiteralExpression) {
 </searchConfiguration>
 ```
 
-# @Aliases annotation with one step definition can be switched to using the @Alias annotation.
+## @Aliases annotation with one step definition can be switched to using the @Alias annotation.
 
 Aliases in JBehave is a way of defining alternate versions of a step with which the same behaviour can be expressed in multiple ways making the story file creation more flexible and the story files themselves more readable.
 
@@ -144,7 +162,7 @@ if (aliasDefs instanceof PsiLiteralExpression) {
 </searchConfiguration>
 ```
 
-# @UsingEmbedder's thread count must be greater than or equal to 1.
+## @UsingEmbedder's thread count must be greater than or equal to 1.
 
 JBehave has the `@UsingEmbedder` annotation with which (besides using other annotations as well) one can configure the Embedder and the test execution properties via annotation based configuration. See [official documentation](https://jbehave.org/reference/latest/configuration.html).
 
@@ -182,7 +200,7 @@ try {
 </searchConfiguration>
 ```
 
-# One or more aliases start with one of the following keywords: Given, When, Then, And
+## One or more aliases start with one of the following keywords: Given, When, Then, And
 
 When defining aliases for a step, the mapping of steps works as follows (for a step originally defined as WHEN):
 
@@ -252,7 +270,7 @@ aliasDef?.value?.matches('^(Given|When|Then) .*')
 </searchConfiguration>
 ```
 
-# @UsingEmbedder's storyTimeout format is incorrect or misleading.
+## @UsingEmbedder's storyTimeout format is incorrect or misleading.
 
 The `@UsingEmbedder` annotation has a `storyTimeouts` attribute in which one can define timeout for the stories run with the current `Embedder`.
 
@@ -280,7 +298,7 @@ The following table contains examples for (most of) the valid timout values:
 | 4s          | 4s       |
 | 30          | 30       |
 
-Altough it is also a valid timeout when the last unit character is left out e.g. `1d2h3m4` it is misleading because the 4 at the end is ignored by the parser and not counted into the accumulated timeout value. Thus this inspection also highlight these kind of values too.
+Although it is also a valid timeout when the last unit character is left out e.g. `1d2h3m4` it is misleading because the 4 at the end is ignored by the parser and not counted into the accumulated timeout value. Thus this inspection also highlight these kind of values too.
 
 Please note that custom units can be defined for the `SimpleTimeoutParser` so adjustment of this inspection might be needed according to that.
 
@@ -311,7 +329,7 @@ def timeoutPattern = /((\d+d\s?)?(\d+h\s?)?(\d+m\s?)?(\d+s\s?)?)|(\d+)/
 </searchConfiguration>
 ```
 
-# Unnecessary list item separator (comma) at the end of @UsingEmbedder's systemProperties attribute.
+## Unnecessary list item separator (comma) at the end of @UsingEmbedder's systemProperties attribute.
 
 The `@UsingEmbedder` annotation has a `systemProperties` attribute in which one can define Java system property names and values to pass into the executed tests.
 
@@ -352,7 +370,7 @@ properties?.value?.endsWith(',')
 </searchConfiguration>
 ```
 
-# One or more meta filters' format is incorrect.
+## One or more meta filters' format is incorrect.
 
 JBehave provides the option to filter executed stories based on meta filters, in multiple ways. One way is to define it via the `@UsingEmbedder` annotation's `metaFilters` attribute. For the supported formats please head over to the official [Meta filtering documentation](https://jbehave.org/reference/latest/meta-filtering.html).
 

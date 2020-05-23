@@ -5,6 +5,15 @@ According to its GitHub page the Sauce Java Helper libraries
 
 You can find more information on the *[Sauce Java GitHub project](https://github.com/saucelabs/sauce-java)*.
 
+## Table of contents
+
+#### ConcurrentParameterized
+- [ConcurrentParameterized.Parameters: The parameter value is malformed. See javadoc for the list of valid values.](#concurrentparameterizedparameters-the-parameter-value-is-malformed-see-javadoc-for-the-list-of-valid-values)
+
+#### SauceREST
+- [SauceREST: getFullJobs(20) call can be replaced with getFullJobs() call. The default value is 20.](#saucerest-getfulljobs20-call-can-be-replaced-with-getfulljobs-call-the-default-value-is-20)
+- [SauceREST#uploadFile(): Last, overwrite parameter may be removed. The default value is true.](#saucerestuploadfile-last-overwrite-parameter-may-be-removed-the-default-value-is-true)
+
 ## ConcurrentParameterized.Parameters: The parameter value is malformed. See javadoc for the list of valid values.
 
 The javadoc written for the `@Parameters` annotation in [`com.saucelabs.junit.ConcurrentParameterized`](https://github.com/saucelabs/sauce-java/blob/master/junit/src/main/java/com/saucelabs/junit/ConcurrentParameterized.java)

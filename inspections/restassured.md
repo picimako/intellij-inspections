@@ -3,6 +3,19 @@
 - REST Assured website: http://rest-assured.io
 - REST Assured on GitHub: https://github.com/rest-assured/rest-assured
 
+## Table contents
+
+#### Requests
+- [RequestSpecification port must be greater than 0](#requestspecification-port-must-be-greater-than-0)
+- [Request URI cannot end with ?](#request-uri-cannot-end-with-)
+
+#### Responses
+- [ResponseBuilder: Status code must be greater than 100 and less than 600](#responsebuilder-status-code-must-be-greater-than-100-and-less-than-600)
+
+#### RestAssured configuration
+- [CloseIdleConnectionConfig: Idle time cannot be less than 0](#closeidleconnectionconfig-idle-time-cannot-be-less-than-0)
+- [ProxySpecification: Cannot determine proxy port](#proxyspecification-cannot-determine-proxy-port)
+
 ## Candidates
 
 - A few `body()` methods of [io.restassured.module.mockmvc.specification.MockMvcRequestSpecification](https://github.com/rest-assured/rest-assured/blob/ce55c98bd9441724182c18dc1bc9bb7b38e85cef/modules/spring-mock-mvc/src/main/java/io/restassured/module/mockmvc/specification/MockMvcRequestSpecification.java) that throw exception in case of certain unsupported HTTP request methods.

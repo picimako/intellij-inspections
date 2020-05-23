@@ -2,6 +2,13 @@
 
 Image comparison on GitHub: https://github.com/romankh3/image-comparison
 
+## Table of contents
+
+#### ImageComparison
+- [Set ImageComparison pixel tolerance level will have no effect](#set-imagecomparison-pixel-tolerance-level-will-have-no-effect)
+- [ImageComparison instantiation may be simplified](#imagecomparison-instantiation-may-be-simplified)
+- [Setters of ImageComparison with default values can be omitted](#setters-of-imagecomparison-with-default-values-can-be-omitted)
+
 ## Set ImageComparison pixel tolerance level will have no effect
 
 In the setter of `ImageComparison.setPixelToleranceLevel(double)` there is a condition that the value should be 0.0 <= level < 1, otherwise nothing is set.

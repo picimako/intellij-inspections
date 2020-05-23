@@ -3,14 +3,33 @@
 - Selenium website: https://selenium.dev
 - Selenium on GitHub: https://github.com/SeleniumHQ/selenium
 
+## Table of contents
+
+#### Locators
+- [Use css locator strategy instead of xpath.](#use-css-locator-strategy-instead-of-xpath)
+- [id, className and tagName selector values should not contain whitespace](#id-classname-and-tagname-selector-values-should-not-contain-whitespace)
+- [CSS selector matching a tag name may be defined with tagName locator strategy](#css-selector-matching-a-tag-name-may-be-defined-with-tagname-locator-strategy)
+
+#### @FindBy
+- [FindBy: id based CSS selector value should not start with \#](#findby-id-based-css-selector-value-should-not-start-with-)
+- [FindBy: className based CSS selector value should not start with a dot](#findby-classname-based-css-selector-value-should-not-start-with-a-dot)
+
+#### By
+- [By: id based CSS selector value should not start with \#](#by-id-based-css-selector-value-should-not-start-with-)
+- [By: className based CSS selector value should not start with a dot](#by-classname-based-css-selector-value-should-not-start-with-a-dot)
+- [By or WebElement is used in String concatenation](#by-or-webelement-is-used-in-string-concatenation)
+
+#### Actions
+- [The Actions#keyDown and Actions#keyUp methods accept only modifier keys](#the-actionskeydown-and-actionskeyup-methods-accept-only-modifier-keys)
+- [Certain consecutive calls from Actions can be simplified](#certain-consecutive-calls-from-actions-can-be-simplified)
+
 ## Use css locator strategy instead of xpath.
 
 Some projects may want to enforce using CSS selectors over XPath. This may happen because of a couple of things:
 - developers'/testers' preference
 - CSS selectors' better general performance over XPath
 - Xpath engines may differ between browsers
-- based on the application under test, CSS selectors are enough (maybe combined with JQuery selectors), and there's no
-need for xpath's capabilities.
+- based on the application under test, CSS selectors are enough (maybe combined with JQuery selectors), and there's no need for xpath's capabilities.
 
 This inspection highlights `@FindBy` annotations using xpath as locator strategy:
 
@@ -194,7 +213,7 @@ This inspection has support for all standard HTML tags listed on the [W3C School
 ## By or WebElement is used in String concatenation
 
 It can happen that you want to concatenate multiple CSS selector snippets because of parameterization or such.
-However one may make the mistake of concatenating a `By` or `WebElement` object to a String which won't result in a valid CSS selector.
+However, one may make the mistake of concatenating a `By` or `WebElement` object to a String which won't result in a valid CSS selector.
 These inspections are meant to mark this issue.
 
 | Compliant code | Non-compliant code |

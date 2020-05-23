@@ -3,6 +3,42 @@
 - Mockito website: https://site.mockito.org
 - Mockito on GitHub: https://github.com/mockito/mockito
 
+## Table of contents
+
+#### Mocking / Spying
+- [Mockito cannot mock/spy final classes](#mockito-cannot-mockspy-final-classes)
+- [MockitoAnnotations.initMocks() argument cannot be null](#mockitoannotationsinitmocks-argument-cannot-be-null)
+- ['<method_name>' is a *void method* and it *cannot* be stubbed with a *return value*!](#method_name-is-a-void-method-and-it-cannot-be-stubbed-with-a-return-value)
+- [@Mock extraInterfaces attribute is provided with at least one non-interface type](#mock-extrainterfaces-attribute-is-provided-with-at-least-one-non-interface-type)
+- [Mockito.mock() extraInterfaces() requires at least one interface](#mockitomock-extrainterfaces-requires-at-least-one-interface)
+- [Only void methods can doNothing()](#only-void-methods-can-donothing)
+- [Cannot call abstract real method on java object! Calling real methods is only possible when mocking non-abstract method.](#cannot-call-abstract-real-method-on-java-object-calling-real-methods-is-only-possible-when-mocking-non-abstract-method)
+- [Incorrect use of API detected](#incorrect-use-of-api-detected)
+
+#### Verification
+- [Mockito.times/atLeast/atMost: Negative value is not allowed here.](#mockitotimesatleastatmost-negative-value-is-not-allowed-here)
+- [InOrder calls: Negative and zero values are not allowed here.](#inorder-calls-negative-and-zero-values-are-not-allowed-here)
+- [Mockito.calls() is only intended to work with InOrder](#mockitocalls-is-only-intended-to-work-with-inorder)
+- [Missing method call for verify(mock)](#missing-method-call-for-verifymock)
+- [verifyNoMoreInteractions() and verifyZeroInteractions() requires at least one argument](#verifynomoreinteractions-and-verifyzerointeractions-requires-at-least-one-argument)
+- [Mockito.inOrder() requires at least one argument](#mockitoinorder-requires-at-least-one-argument)
+- [Negative value of duration is not allowed as argument of timer methods (after(), timeout())](#negative-value-of-duration-is-not-allowed-as-argument-of-timer-methods-after-timeout)
+- [X is not implemented to work with InOrder wrapped inside an Y](#x-is-not-implemented-to-work-with-inorder-wrapped-inside-an-y)
+- [This verification method is not implemented to work with InOrder](#this-verification-method-is-not-implemented-to-work-with-inorder)
+- [times(1) call may be removed. Mockito.verify(mockObject) behaves the same.](#times1-call-may-be-removed-mockitoverifymockobject-behaves-the-same)
+
+#### ArgumentCaptor
+- [@Captor field must be of the type ArgumentCaptor](#captor-field-must-be-of-the-type-argumentcaptor)
+- [ArgumentCaptor field should define a generic type](#argumentcaptor-field-should-define-a-generic-type)
+
+#### Mockito annotations
+- [You cannot have more than one Mockito annotation on a field!](#you-cannot-have-more-than-one-mockito-annotation-on-a-field)
+- [This combination of annotations is not permitted on a single field](#this-combination-of-annotations-is-not-permitted-on-a-single-field)
+
+#### Mockito matchers
+- [Mockito matcher is not used with static import](#mockito-matcher-is-not-used-with-static-import)
+- [Some (AdditionalMatchers) arguments don't use argument matchers. Either none or all of them must use matchers.](#some-additionalmatchers-arguments-dont-use-argument-matchers-either-none-or-all-of-them-must-use-matchers)
+
 ## Licensing
 Please let me know if using the same exact exception messages as the descriptions of the inspections is not permitted due to licensing issues.
 I am happy to change them, it just made sense and I think it is clearer to use the same messages here too.
@@ -897,7 +933,7 @@ For this type of exception/error the only examples I found so far are `Mockito.o
 </searchConfiguration>
 ```
 
-## times(1) call may be removed. Mockito.verify(mockObject) behaves the same.  
+## times(1) call may be removed. Mockito.verify(mockObject) behaves the same.
 
 This inspection is based on the fact that calling `Mockito.verify(mockObject)` without calling `times()` works the same as `Mockito.verify(mockObject, times(1))`,
 thus calling `times(1)` may be removed.
@@ -928,9 +964,3 @@ try {
     <constraint name="times" regexp="times" within="" contains="" />
 </searchConfiguration>
 ```
----------------------------------------
----------------------------------------
-Parkolópálya:
-misplacedArgumentMatcher
-cannotVerifyToString (csak warning)
-wrongTypeOfArgumentToReturn

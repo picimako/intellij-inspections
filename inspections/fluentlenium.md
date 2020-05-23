@@ -1,10 +1,39 @@
 # FluentLenium
 
-FluentLenium inspections are now also available in [FluentLenium's repository](https://github.com/FluentLenium/FluentLenium/tree/develop/fluentlenium-ide-support/intellij/inspections)
+FluentLenium inspections are also available in [FluentLenium's repository](https://github.com/FluentLenium/FluentLenium/tree/develop/fluentlenium-ide-support/intellij/inspections)
 which were added in [FluentLenium/711](https://github.com/FluentLenium/FluentLenium/issues/711).
 
 - FluentLenium website: https://fluentlenium.com
 - FluentLenium on GitHub: https://github.com/FluentLenium/FluentLenium/
+
+## Table of contents
+
+#### @FluentConfiguration
+- [@FluentConfiguration has remoteUrl but webDriver is not defined as "remote"](#fluentconfiguration-has-remoteurl-but-webdriver-is-not-defined-as-remote)
+- [@FluentConfiguration has webDriver defined as "remote" but there is no remoteUrl](#fluentconfiguration-has-webdriver-defined-as-remote-but-there-is-no-remoteurl)
+- [If a JUnit test class is annotated as @RunWith(Cucumber.class), having @FluentConfiguration will have no effect.](#if-a-junit-test-class-is-annotated-as-runwithcucumberclass-having-fluentconfiguration-will-have-no-effect)
+
+#### FluentPage / @PageUrl
+- [@PageUrl annotated class should extend FluentPage](#pageurl-annotated-class-should-extend-fluentpage)
+- [The value of the @PageUrl annotation must start with /, http://, https://](#the-value-of-the-pageurl-annotation-must-start-with--http-https)
+- [FluentPage.hasExpectedUrl() call is not valid without @PageUrl annotation](#fluentpagehasexpectedurl-call-is-not-valid-without-pageurl-annotation)
+- [FluentPage.hasExpectedElements() call is not valid without @FindBy annotation](#fluentpagehasexpectedelements-call-is-not-valid-without-findby-annotation)
+
+#### WebDriverFactory / CapabilitiesFactory
+- [CapabilitiesFactory and WebDriverFactory implementations must be annotated as @FactoryName to provide a reference to them](#capabilitiesfactory-and-webdriverfactory-implementations-must-be-annotated-as-factoryname-to-provide-a-reference-to-them)
+- [The class is annotated as @FactoryName but doesn't implement WebDriverFactory or CapabilitiesFactory](#the-class-is-annotated-as-factoryname-but-doesnt-implement-webdriverfactory-or-capabilitiesfactory)
+- [The value of the @FactoryName annotation is either empty or consists only of whitespaces](#the-value-of-the-factoryname-annotation-is-either-empty-or-consists-only-of-whitespaces)
+
+#### Components and component injection
+- [@Page annotated field is instantiated explicitly. Instantiation can be removed as the field is injected by FluentLenium.](#page-annotated-field-is-instantiated-explicitly-instantiation-can-be-removed-as-the-field-is-injected-by-fluentlenium)
+- [@Page annotated field is static. It should be used as an instance field](#page-annotated-field-is-static-it-should-be-used-as-an-instance-field)
+- [FluentList declaration (using @Find… annotation) should be parameterized](#fluentlist-declaration-using-find-annotation-should-be-parameterized)
+- [Certain FluentWebElement calls can be simplified](#certain-fluentwebelement-calls-can-be-simplified)
+
+#### FluentLeniumAssertions
+- [There is no actual assertion called from FluentLeniumAssertions](#there-is-no-actual-assertion-called-from-fluentleniumassertions)
+- [Element attribute isEqualTo() assertion may be replaced with hasAttributeValue()](#element-attribute-isequalto-assertion-may-be-replaced-with-hasattributevalue)
+- [Unnecessary double validation of element presence. Apply quick fix to remove the second assertion.](#unnecessary-double-validation-of-element-presence-apply-quick-fix-to-remove-the-second-assertion)
 
 ## @FluentConfiguration has remoteUrl but webDriver is not defined as "remote"
 
@@ -188,7 +217,7 @@ assertion is called on the object.
 </searchConfiguration>
 ```
 
-## @Page annotated field is instantiated explicitly. Instantiation can be removed as the field is injected by FluentLenium
+## @Page annotated field is instantiated explicitly. Instantiation can be removed as the field is injected by FluentLenium.
 
 The `@Page` annotation is meant to be used on fields that one wants to inject into the class thus they are meant to be initialized explicitly.
 

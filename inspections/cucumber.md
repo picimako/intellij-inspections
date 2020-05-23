@@ -3,6 +3,32 @@
 - Cucumber website: https://cucumber.io
 - Cucumber on GitHub: https://github.com/cucumber/cucumber-jvm
 
+## Table of contents
+
+#### Hooks
+- [When a hook declares an argument it must be of type Scenario](#when-a-hook-declares-an-argument-it-must-be-of-type-scenario)
+- [Hooks must declare 0 or 1 arguments](#hooks-must-declare-0-or-1-arguments)
+- [Single Cucumber tag expression within a tagged hook annotation should start with an @ character](#single-cucumber-tag-expression-within-a-tagged-hook-annotation-should-start-with-an--character)
+
+#### @CucumberOptions
+- [You must supply an output argument to certain plugins](#you-must-supply-an-output-argument-to-certain-plugins)
+- [@CucumberOptions glue and extraGlue attributes cannot be specified at the same time](#cucumberoptions-glue-and-extraglue-attributes-cannot-be-specified-at-the-same-time)
+- [Single Cucumber tag expression should start with an @ character](#single-cucumber-tag-expression-should-start-with-an--character)
+
+#### JUnit test class configuration
+- [Classes annotated with @RunWith(Cucumber.class) must not define any Step Definition or Hook methods](#classes-annotated-with-runwithcucumberclass-must-not-define-any-step-definition-or-hook-methods)
+- [JUnit @Rule annotated fields and methods have no effect on JUnit classes with @RunWith(Cucumber.class) annotation](#junit-rule-annotated-fields-and-methods-have-no-effect-on-junit-classes-with-runwithcucumberclass-annotation)
+
+#### Parameter types
+- [Explicit parameter type converter definition is not necessary for an enum type](#explicit-parameter-type-converter-definition-is-not-necessary-for-an-enum-type)
+
+#### Step definitions
+- [Step pattern contains incomplete parameter placeholder](#step-pattern-contains-incomplete-parameter-placeholder)
+- [Step pattern contains unregistered parameter type](#step-pattern-contains-unregistered-parameter-type)
+- [You're not allowed to extend classes that define Step Definitions or hooks](#youre-not-allowed-to-extend-classes-that-define-step-definitions-or-hooks)
+- [Step definition method is not implemented, has no body](#step-definition-method-is-not-implemented-has-no-body)
+- [Cucumber step definition method is not used in any Gherkin feature file](#cucumber-step-definition-method-is-not-used-in-any-gherkin-feature-file)
+
 ## Licensing
 Please let me know if using the same exact exception messages as the descriptions of the inspections is not permitted due to licensing issues.
 I am happy to change them, it just made sense, and I think it is clearer to use the same messages here too.
@@ -10,7 +36,7 @@ I am happy to change them, it just made sense, and I think it is clearer to use 
 ## General information
 
 Package naming was updated with [Cucumber 4.5.0](https://github.com/cucumber/cucumber-jvm/blob/master/CHANGELOG.md#450-2019-06-30),
-but the inspection below have support for 2 or 3 different packaging structures where possible and was not forgot about to update.
+but the inspections below have support for 2 or 3 different packaging where possible.
 
 ## When a hook declares an argument it must be of type Scenario
 

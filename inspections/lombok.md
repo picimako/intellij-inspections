@@ -7,12 +7,31 @@ which is already an essential part of working with Lombok in IntelliJ.
 - Lombok on GitHub: https://github.com/rzwitserloot/lombok
 - Lombok IntelliJ plugin on GitHub: https://github.com/mplushnikov/lombok-intellij-plugin
 
+## Table of contents
+
+#### Logging
+- [Slf4j Logger is defined explicitly. Use Lombok @Slf4j annotation instead](#slf4j-logger-is-defined-explicitly-use-lombok-slf4j-annotation-instead)
+
+#### @Builder
+- [@NonNull annotation is applied to a @Singular field. @Singular fields have no way to be set as null](#nonnull-annotation-is-applied-to-a-singular-field-singular-fields-have-no-way-to-be-set-as-null)
+- [@Builder.Default field is not initialized. Either remove the annotation or initialize the field explicitly](#builderdefault-field-is-not-initialized-either-remove-the-annotation-or-initialize-the-field-explicitly)
+- [Static field in a @Builder class is annotated as @Builder.Default, which has no effect. It can be removed](#static-field-in-a-builder-class-is-annotated-as-builderdefault-which-has-no-effect-it-can-be-removed)
+- [Field in a non-@Builder class is annotated as @Builder.Default. It has no effect, thus can be removed](#field-in-a-non-builder-class-is-annotated-as-builderdefault-it-has-no-effect-thus-can-be-removed)
+- [Explicit @Singular field initialization as empty collection can be removed, @Singular itself initializes it as an empty collection](#explicit-singular-field-initialization-as-empty-collection-can-be-removed-singular-itself-initializes-it-as-an-empty-collection)
+
+#### @NonNull
+- [Lombok @NonNull is used on a method parameter. You may replace it with an explicit check e.g. java.util.Objects.requireNonNull](#lombok-nonnull-is-used-on-a-method-parameter-you-may-replace-it-with-an-explicit-check-eg-javautilobjectsrequirenonnull)
+- [Primitive type field, method parameter or local variable is annotated as Lombok @NonNull](#primitive-type-field-method-parameter-or-local-variable-is-annotated-as-lombok-nonnull)
+
+#### @Cleanup
+- [Variable is annotated as Lombok @Cleanup. Use native Java try-with-resources statement instead](#variable-is-annotated-as-lombok-cleanup-use-native-java-try-with-resources-statement-instead)
+
 ## Request for addition to Lombok
 There is already a GitHub issue created for Lombok to have these inspections reviewed and added in some form: [Lombok IntelliJ plugin/594](https://github.com/mplushnikov/lombok-intellij-plugin/issues/594)
 
 ## Slf4j Logger is defined explicitly. Use Lombok @Slf4j annotation instead
 
-There are couple of Lombok annotations for various logger APIs, so one might want to use (enforce the usage, or migrate to) one of these annotations
+There are a couple of Lombok annotations for various logger APIs, so one might want to use (enforce the usage, or migrate to) one of these annotations
 instead of using explicit logger field definitions. This inspection checks for explicit Slf4j logger field definitions, but with some type updates
 other libraries can be validated as well.
 
