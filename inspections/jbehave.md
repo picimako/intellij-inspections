@@ -372,6 +372,8 @@ properties?.value?.endsWith(',')
 
 ## One or more meta filters' format is incorrect.
 
+### In the @UsingEmbedder annotation
+
 JBehave provides the option to filter executed stories based on meta filters, in multiple ways. One way is to define it via the `@UsingEmbedder` annotation's `metaFilters` attribute. For the supported formats please head over to the official [Meta filtering documentation](https://jbehave.org/reference/latest/meta-filtering.html).
 
 This inspection aims to highlight format problems when the Default meta matcher is used. This also means that if this inspection is added but you use a different meta matcher, like the Groovy one, it will flag all meta matcher values as incorrect.
@@ -411,5 +413,62 @@ def hasCorrectFormat(PsiLiteralExpression literal) {
     <constraint name="UsingEmbedder" regexp="org\.jbehave\.core\.annotations\.UsingEmbedder" within="" contains="" />
     <constraint name="metaFilters" regexp="metaFilters" target="true" within="" contains="" />
     <constraint name="filters" within="" contains="" />
+</searchConfiguration>
+```
+
+### In Embedder.useMetaFilters()
+
+Meta filters can also be configured via the calling `Embedder.useMetaFilters()`. It accepts as parameter a list, so there is a little bit of limitation that this template has. It can detect incorrect meta filter values when the following static factory methods are used:
+- `java.util.List#of`
+- `java.util.Arrays#asList`
+- `java.util.Collections#singletonList`
+- `com.google.common.collect.ImmutableList#of`
+
+| Compliant code | Non-compliant code |
+|---|---|
+| `embedder.useMetaFilters(List.of("+smoke -skip"))` | `embedder.useMetaFilters(List.of("+smoke --skip"))` |
+| `embedder.useMetaFilters(Collections.singletonList("+smoke *"))` | `embedder.useMetaFilters(Collections.singletonList("smoke *"))` |
+| `embedder.useMetaFilters(Arrays.asList("+smoke", "-skip"))` | `embedder.useMetaFilters(Arrays.asList("+ smoke", "-skip"))` |
+| `embedder.useMetaFilters(ImmutableList.of("+smoke this that", "-skip"))` | `embedder.useMetaFilters(ImmutableList.of("+smoke this $that", "-skip"))` |
+
+**Script filter (Complete Match):**
+
+```groovy
+import com.intellij.psi.*
+
+def collectionTypes = ["java.util.Arrays", "java.util.List", "java.util.Collections", "com.google.common.collect.ImmutableList"]
+
+if (collectionTypes.contains(ListProvider.canonicalText)) {
+        def listCreationMethodNames = ["of", "asList", "singletonList"]
+        if (listCreationMethodNames.contains(methodNameOf(creation))) {
+                if (filters instanceof PsiLiteralExpression) {
+                        return !hasCorrectFormat(filters)
+                } else if (filters instanceof java.util.Collection) {
+                        return filters.any { it instanceof PsiLiteralExpression && !hasCorrectFormat(it) }
+                } else {
+                        return false
+                }
+        }
+}
+return false
+
+def hasCorrectFormat(PsiLiteralExpression filter) {    
+        return filter.literalElementType == JavaTokenType.STRING_LITERAL && filter?.value?.matches('([+-]([\\w\\*]+ ?)+)+')
+}
+
+String methodNameOf(PsiMethodCallExpression expr) {
+    expr.firstChild.referenceName
+}
+```
+
+**Template:**
+
+```xml
+<searchConfiguration name="Embedder.userMetaFilters: one or more meta filters' format is incorrect." text="$Instance$.useMetaFilters($ListProvider$.$creation$($filters$))" recursive="true" caseInsensitive="true" type="JAVA" pattern_context="default">
+    <constraint name="__context__" script="&quot;import com.intellij.psi.*&#10;&#10;def collectionTypes = [&quot;java.util.Arrays&quot;, &quot;java.util.List&quot;, &quot;java.util.Collections&quot;, &quot;com.google.common.collect.ImmutableList&quot;]&#10;&#10;if (collectionTypes.contains(ListProvider.canonicalText)) {&#10;&#9;def listCreationMethodNames = [&quot;of&quot;, &quot;asList&quot;, &quot;singletonList&quot;]&#10;&#9;if (listCreationMethodNames.contains(methodNameOf(creation))) {&#10;&#9;&#9;if (filters instanceof PsiLiteralExpression) {&#10;&#9;&#9;&#9;return !hasCorrectFormat(filters)&#10;&#9;&#9;} else if (filters instanceof java.util.Collection) {&#10;&#9;&#9;&#9;return filters.any { it instanceof PsiLiteralExpression &amp;&amp; !hasCorrectFormat(it) }&#10;&#9;&#9;} else {&#10;&#9;&#9;&#9;return false&#10;&#9;&#9;}&#10;&#9;}&#10;}&#10;return false&#10;&#10;def hasCorrectFormat(PsiLiteralExpression filter) {    &#10;&#9;return filter.literalElementType == JavaTokenType.STRING_LITERAL &amp;&amp; filter?.value?.matches('([+-]([\\w\\*]+ ?)+)+')&#10;}&#10;&#10;String methodNameOf(PsiMethodCallExpression expr) {&#10;    expr.firstChild.referenceName&#10;}&quot;" within="" contains="" />
+    <constraint name="Instance" nameOfExprType="org\.jbehave\.core\.embedder\.Embedder" minCount="0" within="" contains="" />
+    <constraint name="creation" within="" contains="" />
+    <constraint name="filters" maxCount="2147483647" target="true" within="" contains="" />
+    <constraint name="ListProvider" within="" contains="" />
 </searchConfiguration>
 ```
