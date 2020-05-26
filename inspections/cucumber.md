@@ -322,7 +322,7 @@ def hasIncorrectSingleTag(PsiLiteralExpression expression) {
 </searchConfiguration>
 ```
 
-## Single Cucumber tag expression within a tagged hook annotation should start with an @ character.
+## Single Cucumber tag expression within a tagged hook should start with an @ character.
 
 Based on the official documentation of the [Cucumber Tag Expressions](https://cucumber.io/docs/cucumber/api/#tag-expressions), tags in a tag expression
 must be defined with the `@` character, so when only a single tag is defined as the value of a tagged hook annotation
@@ -330,19 +330,21 @@ that value must start with `@` otherwise Cucumber won't be able to filter by tha
 
 | Compliant code | Non-compliant code |
 |---|---|
-| <pre>@After("@sometag")</pre> | <pre>@After("sometag")</pre> |
-| <pre>@Before("@sometag")</pre> | <pre>@Before("sometag")</pre> |
+| <pre>@After("@sometag")<br>public void after() {<br>}</pre> | <pre>@After("sometag")<br>public void after() {<br>}</pre> |
+| <pre>@Before("@sometag")<br>public void before() {<br>}</pre> | <pre>@Before("sometag")<br>public void before() {<br>}</pre> |
+| <pre>public StepDefClass() {<br>    Before("@sometag", () -> {});<br>}</pre> | <pre>public StepDefClass() {<br>    Before("sometag", () -> {});<br>}</pre> |
+| <pre>public StepDefClass() {<br>    After("@sometag", () -> {});<br>}</pre> | <pre>public StepDefClass() {<br>    After("sometag", () -> {});<br>}</pre> |
 
-This inspection supports annotations from the following packages:
-- `cucumber.api.java` (deprecated in Cucumber-JVM 4.5.0)
-- `io.cucumber.java`
+### Supported classes, packages
 
-Supported hook annotations: `@Before`, `@BeforeStep`, `@After`, `@AfterStep`
+- Annotations are supported from the following packages: `cucumber.api.java` (deprecated in Cucumber-JVM 4.5.0), `io.cucumber.java`
+- Supported hook annotations: `@Before`, `@BeforeStep`, `@After`, `@AfterStep`
+- Supported hook methods for Java8 format (in `io.cucumber.java8.En`): `Before()`, `BeforeStep()`, `After()`, `AfterStep()`
 
-**Script filter ($TAG_EXPRESSION$)**
+**Script filter ($pattern$)**
 
 ```groovy
-!pattern?.value?.contains(" ") && !pattern?.value?.startsWith("@") 
+!pattern?.value?.contains(" ") && !pattern?.value?.startsWith("@")
 ```
 
 **Template:**
@@ -357,6 +359,30 @@ Supported hook annotations: `@Before`, `@BeforeStep`, `@After`, `@AfterStep`
     <constraint name="ParamType" within="" contains="" />
     <constraint name="pattern" script="&quot;!pattern?.value?.contains(&quot; &quot;) &amp;&amp; !pattern?.value?.startsWith(&quot;@&quot;) &quot;" target="true" within="" contains="" />
     <constraint name="HookAnnotation" regexp="(cucumber\.api\.java|io\.cucumber\.java)\.(Before|BeforeStep|After|AfterStep)" maxCount="2147483647" within="" contains="" />
+</searchConfiguration>
+```
+
+### Java8 format support
+
+**Script filter ($tagExpression$)**
+
+```groovy
+!tagExpression?.value?.contains(" ") && !tagExpression?.value?.startsWith("@")
+```
+
+**Script filter ($Hook$)**
+
+```groovy
+Hook.resolveMethod()?.getContainingClass()?.getQualifiedName()?.matches("(cucumber\\.api\\.java8\\.|io\\.cucumber\\.java8\\.).*")
+```
+
+```xml
+<searchConfiguration name="Single Cucumber tag expression in a tagged hook should start with an @ character" text="$Java8BaseStepDefInterface$.$Hook$(&quot;$tagExpression$&quot;, $Parameters$);" recursive="true" caseInsensitive="true" type="JAVA" pattern_context="default">
+  <constraint name="__context__" within="" contains="" />
+  <constraint name="Parameters" maxCount="2147483647" within="" contains="" />
+  <constraint name="Java8BaseStepDefInterface" minCount="0" within="" contains="" />
+  <constraint name="tagExpression" script="&quot;!tagExpression?.value?.contains(&quot; &quot;) &amp;&amp; !tagExpression?.value?.startsWith(&quot;@&quot;) &quot;" target="true" within="" contains="" />
+  <constraint name="Hook" script="&quot;Hook.resolveMethod()?.getContainingClass()?.getQualifiedName()?.matches(&quot;(cucumber\\.api\\.java8\\.|io\\.cucumber\\.java8\\.).*&quot;)&quot;" regexp="After|AfterStep|Before|BeforeStep" within="" contains="" />
 </searchConfiguration>
 ```
 
