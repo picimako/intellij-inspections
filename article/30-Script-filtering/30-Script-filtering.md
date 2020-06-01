@@ -79,8 +79,13 @@ You can read more about PSI elements in the official [IntelliJ SDK DevGuide](htt
 ## \_\_context__ variable
 > The **\_\_context__** variable is an artificial variable. All variables used in a pattern can be accessed from the Script Constraints. **\_\_context__** corresponds to the Complete Match variable.
 
-There are a few Existing templates that provide examples for using this variable, though I haven't been able to completely wrap my head around them:
-- *classes*
+The `__context__` variable may be used in both user defined template variables and in the Complete Match variable as well, however its
+meaning differs depending on where it is used.
+
+In Script filters added to user defined template variables (the ones enclosed by `$` symbols, e.g. `$Class$`) they always mean the node represented by that
+template variable, so there it doesn't matter if you refer to it by the name of the variable or by `__context__`.
+
+- *classes* existing template:
     ```java
     Template:
         class $Class$ {}
@@ -89,16 +94,16 @@ There are a few Existing templates that provide examples for using this variable
         !__context__.interface && !__context__.enum
     ```
 
-- *Static fields that are not final*
-    ```java
-    Template:
-        class $Class$ {
-            static $Type$ $Variable$ = $Init$;
-        }
+When `__context__` is used in the Script filter of the Complete Match variable, it always refers to the PSI type representing the whole template, regardless
+of there is a user defined template variable for that type/node in the template, or there isn't one. Below you can find a few examples, in which template what
+the `__context__` variable means in the Complete Match variable. 
 
-    $Variable$ Script filter:
-        !__context__.hasModifierProperty("final")
-    ```
+| Existing template name | Template text | \_\_context__ in Complete Match (PSI type - template variable) |
+|---|---|---|
+| fields of class | <pre>class $Class$ { <br>  $FieldType$ $Field$ = $Init$;<br>}</pre> | `PsiClass` - `$Class$` |
+| javadoc annotated methods and constructors | <pre>/**<br> * $Comment$<br> * @$Tag$ $TagValue$<br> */<br>$Type$ $Method$($ParameterType$ $Parameter$);</pre> | `PsiMethod` - `$Method$` |
+| javadoc tags | `/** @$Tag$ $TagValue$ */` | `PsiMethod` - no template variable |
+| try statements without resources and catch blocks | <pre>try ($ResourceType$ $resource$ = $init$; $expression$) {<br>  $TryStatement$;<br>} catch($ExceptionType$ $Exception$) {<br>  $CatchStatement$;<br>} | `PsiTryStatement` - no template variable |
 
 ## Complete Match filters
 Filters may be written for Complete Match as well, when no template variable is selected in the editor, though "only" Script filter is allowed,
