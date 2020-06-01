@@ -24,10 +24,11 @@ If you find any issues in the articles, tutorials or in any of the inspections, 
 If you like my work and the contents of this repo, please consider buying me delicious coffee:
 <a href="https://www.buymeacoffee.com/picimako" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/default-white.png" alt="Buy Me A Coffee" style="height: 49px !important;width: 150px !important;" ></a>
 
+On my Buy Me a Coffee page I also publish a post every other week about the recent changes and updates of this repository and the IJnspector blog as well.
+
 ## Future plans
 
 New inspections and inspections for new Java libraries are continuously added, and they also serve as a nice basis for future IntelliJ plugins.
 
 Libraries that are planned to be covered next:
-- [JBehave](https://jbehave.org)
 - [JavaHamcrest](https://github.com/hamcrest/JavaHamcrest)
