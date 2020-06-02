@@ -436,12 +436,13 @@ def hasPlaceholderOpeningOrClosingCurlyBracket(def pattern) {
 **Template:**
 
 ```xml
-<searchConfiguration name="Step pattern contains incomplete parameter placeholder." text="$Java8BaseStepDefInterface$.$Step$(&quot;$stepPattern$&quot;, ($Parameters$) -&gt; {});" recursive="true" caseInsensitive="true" type="JAVA" pattern_context="default">
+<searchConfiguration name="Step pattern contains incomplete parameter placeholder." text="@$StepAnnotation$(value = &quot;$stepPattern$&quot;)&#10;void $stepDefinitionMethod$($ParameterType$ $parameter$);" recursive="true" caseInsensitive="true" type="JAVA" pattern_context="member">
     <constraint name="__context__" within="" contains="" />
-    <constraint name="stepPattern" script="&quot;if (stepPattern?.value?.matches('.*(?&lt;!\\\\)\\{.*')) {&#10;&#9;def parameterTypes = &quot;(int|float|word|string|biginteger|bigdecimal|byte|short|long|double)&quot;&#10;&#9;def incompleteStepPattern = &quot;(?&lt;!\\\\)\\{&quot; + parameterTypes + &quot;(?![a-zA-Z\\}])|(?&lt;![a-zA-Z\\{])&quot; + parameterTypes + &quot;\\}&quot;&#10;&#9;def matcher = stepPattern?.value =~ incompleteStepPattern&#10;&#9;return matcher ? true : false&#10;}&#10;false&quot;" target="true" within="" contains="" />
-    <constraint name="Step" script="&quot;Step.resolveMethod().getContainingClass().getQualifiedName().matches(&quot;(cucumber\\.api\\.java8\\.|io\\.cucumber\\.java8\\.).*&quot;)&quot;" regexp="Given|When|Then|And|But" within="" contains="" />
-    <constraint name="Parameters" minCount="0" maxCount="2147483647" within="" contains="" />
-    <constraint name="Java8BaseStepDefInterface" minCount="0" within="" contains="" />
+    <constraint name="stepPattern" script="&quot;if (hasPlaceholderOpeningOrClosingCurlyBracket(stepPattern)) {&#10;    def parameterTypes = &quot;(int|float|word|string|biginteger|bigdecimal|byte|short|long|double)&quot;&#10;    def incompleteStepPattern = &quot;(?&lt;!\\\\)\\{&quot; + parameterTypes + &quot;(?![a-zA-Z\\}])|(?&lt;![a-zA-Z\\{])&quot; + parameterTypes + &quot;\\}&quot;&#10;    def matcher = stepPattern?.value =~ incompleteStepPattern&#10;    return matcher ? true : false&#10;}&#10;&#10;return false&#10;&#10;def hasPlaceholderOpeningOrClosingCurlyBracket(def pattern) {&#10;    pattern?.value?.matches('.*(((?&lt;!\\\\)\\{)|(})).*')&#10;}&quot;" target="true" within="" contains="" />
+    <constraint name="stepDefinitionMethod" within="" contains="" />
+    <constraint name="ParameterType" within="" contains="" />
+    <constraint name="parameter" minCount="0" maxCount="2147483647" within="" contains="" />
+    <constraint name="StepAnnotation" regexp="(cucumber\.api\.java|io\.cucumber\.java)\.en\.(Given|When|Then|And|But)" within="" contains="" />
 </searchConfiguration>
 ```
 
