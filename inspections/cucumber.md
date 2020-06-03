@@ -446,6 +446,67 @@ def hasPlaceholderOpeningOrClosingCurlyBracket(def pattern) {
 </searchConfiguration>
 ```
 
+### Replace template variant
+
+The following one is a Replace template that also provides a quick fix for fixing the incomplete placeholders, adding either the missing opening or closing curly braces
+to each incomplete placeholder in the step pattern.
+
+Please note that this template (for now) doesn't handle escaped opening braces, e.g.:
+
+```java
+@Then("the image should point to \\{string")
+public void the_image_should_point_to(String url) {
+}
+```
+
+**Script filter ($correctedPattern$)**
+
+```groovy
+//This is necessary to treat the { as a literal character and not as a quantifier
+//in the input string
+import static java.util.regex.Pattern.quote
+
+def parameterTypes = "(int|float|word|string|biginteger|bigdecimal|byte|short|long|double)"
+def missingOpeningMatcher = stepPattern?.value =~ "((?<![a-zA-Z\\{])" + parameterTypes + "\\})"
+def missingClosingMatcher = stepPattern?.value =~ "((?<!\\\\)\\{" + parameterTypes + "(?![a-zA-Z\\}]))"
+
+def corrected = stepPattern?.value
+def correctedTypes = []
+
+while (missingOpeningMatcher.find()) {
+    def incompletePlaceholder = missingOpeningMatcher.group(0)
+    if (!correctedTypes.contains(incompletePlaceholder)) {
+        corrected = corrected.replaceAll(incompletePlaceholder, '{' + incompletePlaceholder)
+        correctedTypes.add(incompletePlaceholder)
+    }
+}
+
+while (missingClosingMatcher.find()) {
+    def incompletePlaceholder = missingClosingMatcher.group(0)
+    if (!correctedTypes.contains(incompletePlaceholder)) {
+        corrected = corrected.replaceAll(quote(incompletePlaceholder), incompletePlaceholder + '}')
+        correctedTypes.add(incompletePlaceholder)
+    }
+}
+
+corrected
+```
+
+**Template:**
+
+```xml
+
+<replaceConfiguration name="Step pattern contains incomplete parameter placeholder." text="@$StepAnnotation$(value = &quot;$stepPattern$&quot;)&#10;void $stepDefinitionMethod$($ParameterType$ $parameter$);" recursive="false" caseInsensitive="true" type="JAVA" pattern_context="member" reformatAccordingToStyle="true" shortenFQN="true" replacement="&quot;$correctedPattern$&quot;">
+    <constraint name="__context__" within="" contains="" />
+    <constraint name="stepPattern" script="&quot;if (hasPlaceholderOpeningOrClosingCurlyBracket(stepPattern)) {&#10;    def parameterTypes = &quot;(int|float|word|string|biginteger|bigdecimal|byte|short|long|double)&quot;&#10;    def incompleteStepPattern = &quot;(?&lt;!\\\\)\\{&quot; + parameterTypes + &quot;(?![a-zA-Z\\}])|(?&lt;![a-zA-Z\\{])&quot; + parameterTypes + &quot;\\}&quot;&#10;    def matcher = stepPattern?.value =~ incompleteStepPattern&#10;    return matcher ? true : false&#10;}&#10;&#10;return false&#10;&#10;def hasPlaceholderOpeningOrClosingCurlyBracket(def pattern) {&#10;    pattern?.value?.matches('.*(((?&lt;!\\\\)\\{)|(})).*')&#10;}&quot;" target="true" within="" contains="" />
+    <constraint name="stepDefinitionMethod" within="" contains="" />
+    <constraint name="ParameterType" within="" contains="" />
+    <constraint name="parameter" minCount="0" maxCount="2147483647" within="" contains="" />
+    <constraint name="StepAnnotation" regexp="(cucumber\.api\.java|io\.cucumber\.java)\.en\.(Given|When|Then|And|But)" within="" contains="" />
+    <variableDefinition name="correctedPattern" script="&quot;//This is necessary to treat the { as a literal character and not as a quantifier&#10;//in the input string&#10;import static java.util.regex.Pattern.quote&#10;&#10;def parameterTypes = &quot;(int|float|word|string|biginteger|bigdecimal|byte|short|long|double)&quot;&#10;def missingOpeningMatcher = stepPattern?.value =~ &quot;((?&lt;![a-zA-Z\\{])&quot; + parameterTypes + &quot;\\})&quot;&#10;def missingClosingMatcher = stepPattern?.value =~ &quot;((?&lt;!\\\\)\\{&quot; + parameterTypes + &quot;(?![a-zA-Z\\}]))&quot;&#10;&#10;def corrected = stepPattern?.value&#10;def correctedTypes = []&#10;&#10;while (missingOpeningMatcher.find()) {&#10;&#9;def incompletePlaceholder = missingOpeningMatcher.group(0)&#10;&#9;if (!correctedTypes.contains(incompletePlaceholder)) {&#10;&#9;&#9;corrected = corrected.replaceAll(incompletePlaceholder, '{' + incompletePlaceholder)&#10;&#9;&#9;correctedTypes.add(incompletePlaceholder)&#10;&#9;}&#10;}&#10;&#10;while (missingClosingMatcher.find()) {&#10;&#9;def incompletePlaceholder = missingClosingMatcher.group(0)&#10;&#9;if (!correctedTypes.contains(incompletePlaceholder)) {&#10;&#9;&#9;corrected = corrected.replaceAll(quote(incompletePlaceholder), incompletePlaceholder + '}')&#10;&#9;&#9;correctedTypes.add(incompletePlaceholder)&#10;&#9;}&#10;}&#10;&#10;corrected&quot;" />
+</replaceConfiguration>
+```
+
 ### Java8 format support
 
 If you are using Java8 type step definitions the following inspection can detect problems in that form:
@@ -456,14 +517,30 @@ If you are using Java8 type step definitions the following inspection can detect
 Step.resolveMethod().getContainingClass().getQualifiedName().matches("(cucumber\\.api\\.java8\\.|io\\.cucumber\\.java8\\.).*")
 ```
 
+**Template:**
+
 ```xml
 <searchConfiguration name="Step pattern contains incomplete parameter placeholder." text="$Java8BaseStepDefInterface$.$Step$(&quot;$stepPattern$&quot;, $Parameters$);" recursive="true" caseInsensitive="true" type="JAVA" pattern_context="default">
     <constraint name="__context__" within="" contains="" />
     <constraint name="stepPattern" script="&quot;if (hasPlaceholderOpeningOrClosingCurlyBracket(stepPattern)) {&#10;&#9;def parameterTypes = &quot;(int|float|word|string|biginteger|bigdecimal|byte|short|long|double)&quot;&#10;&#9;def incompleteStepPattern = &quot;(?&lt;!\\\\)\\{&quot; + parameterTypes + &quot;(?![a-zA-Z\\}])|(?&lt;![a-zA-Z\\{])&quot; + parameterTypes + &quot;\\}&quot;&#10;&#9;def matcher = stepPattern?.value =~ incompleteStepPattern&#10;&#9;return matcher ? true : false&#10;}&#10;&#10;return false&#10;&#10;def hasPlaceholderOpeningOrClosingCurlyBracket(def pattern) {&#10;&#9;pattern?.value?.matches('.*(((?&lt;!\\\\)\\{)|(})).*')&#10;}&quot;" target="true" within="" contains="" />
-    <constraint name="Step" script="&quot;Step.resolveMethod().getContainingClass().getQualifiedName().matches(&quot;(cucumber\\.api\\.java8\\.|io\\.cucumber\\.java8\\.).*&quot;)&quot;" regexp="Given|When|Then|And|But" within="" contains="" />
+    <constraint name="Step" script="&quot;Step?.resolveMethod()?.getContainingClass()?.getQualifiedName()?.matches(&quot;(cucumber\\.api\\.java8\\.|io\\.cucumber\\.java8\\.).*&quot;)&quot;" regexp="Given|When|Then|And|But" within="" contains="" />
     <constraint name="Parameters" maxCount="2" within="" contains="" />
     <constraint name="Java8BaseStepDefInterface" minCount="0" within="" contains="" />
 </searchConfiguration>
+```
+
+#### Replace template for Java8 format
+
+```xml
+
+<replaceConfiguration name="Step pattern contains incomplete parameter placeholder." text="$Java8BaseStepDefInterface$.$Step$(&quot;$stepPattern$&quot;, $Parameters$);" recursive="false" caseInsensitive="true" type="JAVA" pattern_context="default" reformatAccordingToStyle="true" shortenFQN="true" replacement="&quot;$correctedPattern$&quot;">
+    <constraint name="__context__" within="" contains="" />
+    <constraint name="stepPattern" script="&quot;if (hasPlaceholderOpeningOrClosingCurlyBracket(stepPattern)) {&#10;&#9;def parameterTypes = &quot;(int|float|word|string|biginteger|bigdecimal|byte|short|long|double)&quot;&#10;&#9;def incompleteStepPattern = &quot;(?&lt;!\\\\)\\{&quot; + parameterTypes + &quot;(?![a-zA-Z\\}])|(?&lt;![a-zA-Z\\{])&quot; + parameterTypes + &quot;\\}&quot;&#10;&#9;def matcher = stepPattern?.value =~ incompleteStepPattern&#10;&#9;return matcher ? true : false&#10;}&#10;&#10;return false&#10;&#10;def hasPlaceholderOpeningOrClosingCurlyBracket(def pattern) {&#10;&#9;pattern?.value?.matches('.*(((?&lt;!\\\\)\\{)|(})).*')&#10;}&quot;" target="true" within="" contains="" />
+    <constraint name="Step" script="&quot;Step?.resolveMethod()?.getContainingClass()?.getQualifiedName()?.matches(&quot;(cucumber\\.api\\.java8\\.|io\\.cucumber\\.java8\\.).*&quot;)&quot;" regexp="Given|When|Then|And|But" within="" contains="" />
+    <constraint name="Parameters" maxCount="2" within="" contains="" />
+    <constraint name="Java8BaseStepDefInterface" minCount="0" within="" contains="" />
+    <variableDefinition name="correctedPattern" script="&quot;//This is necessary to treat the { as a literal character and not as a quantifier&#10;//in the input string&#10;import static java.util.regex.Pattern.quote&#10;&#10;def parameterTypes = &quot;(int|float|word|string|biginteger|bigdecimal|byte|short|long|double)&quot;&#10;def missingOpeningMatcher = stepPattern?.value =~ &quot;((?&lt;![a-zA-Z\\{])&quot; + parameterTypes + &quot;\\})&quot;&#10;def missingClosingMatcher = stepPattern?.value =~ &quot;((?&lt;!\\\\)\\{&quot; + parameterTypes + &quot;(?![a-zA-Z\\}]))&quot;&#10;&#10;def corrected = stepPattern?.value&#10;def correctedTypes = []&#10;&#10;while (missingOpeningMatcher.find()) {&#10;&#9;def incompletePlaceholder = missingOpeningMatcher.group(0)&#10;&#9;if (!correctedTypes.contains(incompletePlaceholder)) {&#10;&#9;&#9;corrected = corrected.replaceAll(incompletePlaceholder, '{' + incompletePlaceholder)&#10;&#9;&#9;correctedTypes.add(incompletePlaceholder)&#10;&#9;}&#10;}&#10;&#10;while (missingClosingMatcher.find()) {&#10;&#9;def incompletePlaceholder = missingClosingMatcher.group(0)&#10;&#9;if (!correctedTypes.contains(incompletePlaceholder)) {&#10;&#9;&#9;corrected = corrected.replaceAll(quote(incompletePlaceholder), incompletePlaceholder + '}')&#10;&#9;&#9;correctedTypes.add(incompletePlaceholder)&#10;&#9;}&#10;}&#10;&#10;corrected&quot;" />
+</replaceConfiguration>
 ```
 
 ## Step pattern contains unregistered parameter type
