@@ -198,150 +198,43 @@ These are based on the exception handling happening in [`org.mockito.internal.co
 
 For a bit more details see the [`@Captor` annotation's javadoc](https://javadoc.io/doc/org.mockito/mockito-core/latest/org/mockito/Captor.html).
 
-This is a collection of Replace templates that are most useful when all of them used, but it is up to everyone's needs which ones are actually used.
-
 ### Matching types other than primitive types and ArgumentCaptor
 
 | Compliant code/Replacement | Non-compliant code |
 |---|---|
-| <pre>@Captor<br>private ArgumentCaptor<String> captor;</pre> | <pre>@Captor<br>private String captor;</pre> |
+| <pre>@Captor<br>private ArgumentCaptor<List<String>> captor;</pre> | <pre>@Captor<br>private List<String> captor;</pre> |
+| <pre>@Captor<br>private ArgumentCaptor<Integer> captor;</pre> | <pre>@Captor<br>private int captor;</pre> |
 
 Since this is a replace template it provides a quick fix to replace the type with an argument captor.
-Since the Search target of the template is the field type, the quick fix suggestion is visible only when the Alt+Enter menu is opened having
-the cursor on the field type.
+Since the Search target of the template is the field type, the quick fix suggestion is visible only when the Alt+Enter menu is opened having the cursor on the field type.
 
-This inspection doesn't support ArgumentCaptor without a generic type, and the Java primitives because at least the latter ones need a bit more complex logic to map them to their
-boxed type. For the latter ones please check out the inspections in the next section.
+This inspection
+- doesn't support ArgumentCaptor without a generic type,
+- doesn't support fixing primitive type arrays
+- supports finding and fixing Java primitives.
+
+**Script filter ($type$):**
+
+```groovy
+if (FieldType.text.matches('byte|short|int|long|float|double|boolean|char')) {
+	def types = [byte:"java.lang.Byte", short:"java.lang.Short", int:"java.lang.Integer", long:"java.lang.Long", float:"java.lang.Float", double:"java.lang.Double", boolean:"Boolean", char:"Character"]
+	return types[FieldType.text]
+}
+FieldType.text
+```
 
 **Template:**
 
 ```xml
-<replaceConfiguration name="@Captor field must be of the type ArgumentCaptor. Apply quick fix to wrap current type in ArgumentCaptor." text="class $Class$ {&#10;    @$CaptorAnnotation$()&#10;    @Modifier(&quot;Instance&quot;) $FieldType$ $Field$ = $Init$;&#10;}" recursive="true" caseInsensitive="true" type="JAVA" reformatAccordingToStyle="true" shortenFQN="true" replacement="org.mockito.ArgumentCaptor&lt;$FieldType$&gt;">
+<replaceConfiguration name="@Captor field must be of the type ArgumentCaptor. Apply quick fix to wrap current type in ArgumentCaptor." text="@$CaptorAnnotation$()&#10;@Modifier(&quot;Instance&quot;) $FieldType$ $Field$ = $Init$;" recursive="false" caseInsensitive="true" type="JAVA" pattern_context="member" reformatAccordingToStyle="true" shortenFQN="true" replacement="org.mockito.ArgumentCaptor&lt;$type$&gt;">
     <constraint name="__context__" within="" contains="" />
-    <constraint name="Class" within="" contains="" />
-    <constraint name="FieldType" regexp="(org\.mockito\.ArgumentCaptor|byte|short|int|long|float|double|boolean|char)" target="true" negateName="true" within="" contains="" />
+    <constraint name="FieldType" regexp="org.mockito.ArgumentCaptor" target="true" negateName="true" within="" contains="" />
     <constraint name="Field" withinHierarchy="true" maxCount="2147483647" within="" contains="" />
     <constraint name="Init" minCount="0" within="" contains="" />
     <constraint name="CaptorAnnotation" regexp="org\.mockito\.Captor" within="" contains="" />
+    <variableDefinition name="type" script="&quot;if (FieldType.text.matches('byte|short|int|long|float|double|boolean|char')) {&#10;&#9;def types = [byte:&quot;java.lang.Byte&quot;, short:&quot;java.lang.Short&quot;, int:&quot;java.lang.Integer&quot;, long:&quot;java.lang.Long&quot;, float:&quot;java.lang.Float&quot;, double:&quot;java.lang.Double&quot;, boolean:&quot;Boolean&quot;, char:&quot;Character&quot;]&#10;&#9;return types[FieldType.text]&#10;}&#10;FieldType.text&quot;" />
 </replaceConfiguration>
 ```
-
-### Individual templates for each primitive types
-
-To be able to replace the primitive types with their non-primitive variants, each needs its own separate replace template to
-be able to apply a proper quick fix.
-
-Each matches a single primitive type for the field type, and nothing else.
-
-NOTE: primitive type arrays are not handled by these inspections.
-
-<details>
-  <summary>Expand to see inspections for primitive types...</summary>
-  
-  **byte**
-  
-  ```xml
-  <replaceConfiguration name="@Captor field must be of the type ArgumentCaptor. Apply quick fix to wrap current type [byte] in ArgumentCaptor." text="class $Class$ {&#10;    @$CaptorAnnotation$()&#10;    @Modifier(&quot;Instance&quot;) $FieldType$ $Field$ = $Init$;&#10;}" recursive="true" caseInsensitive="true" type="JAVA" reformatAccordingToStyle="true" shortenFQN="true" replacement="org.mockito.ArgumentCaptor&lt;java.lang.Byte&gt;">
-      <constraint name="__context__" within="" contains="" />
-      <constraint name="Class" within="" contains="" />
-      <constraint name="FieldType" regexp="byte" target="true" within="" contains="" />
-      <constraint name="Field" withinHierarchy="true" maxCount="2147483647" within="" contains="" />
-      <constraint name="Init" minCount="0" within="" contains="" />
-      <constraint name="CaptorAnnotation" regexp="org\.mockito\.Captor" within="" contains="" />
-  </replaceConfiguration>
-  ```
-  
-  **short**
-  
-  ```xml
-  <replaceConfiguration name="@Captor field must be of the type ArgumentCaptor. Apply quick fix to wrap current type [short] in ArgumentCaptor." text="class $Class$ {&#10;    @$CaptorAnnotation$()&#10;    @Modifier(&quot;Instance&quot;) $FieldType$ $Field$ = $Init$;&#10;}" recursive="true" caseInsensitive="true" type="JAVA" reformatAccordingToStyle="true" shortenFQN="true" replacement="org.mockito.ArgumentCaptor&lt;java.lang.Short&gt;">
-      <constraint name="__context__" within="" contains="" />
-      <constraint name="Class" within="" contains="" />
-      <constraint name="FieldType" regexp="short" target="true" within="" contains="" />
-      <constraint name="Field" withinHierarchy="true" maxCount="2147483647" within="" contains="" />
-      <constraint name="Init" minCount="0" within="" contains="" />
-      <constraint name="CaptorAnnotation" regexp="org\.mockito\.Captor" within="" contains="" />
-  </replaceConfiguration>
-  ```
-  
-  **int**
-  
-  ```xml
-  <replaceConfiguration name="@Captor field must be of the type ArgumentCaptor. Apply quick fix to wrap current type [int] in ArgumentCaptor." text="class $Class$ {&#10;    @$CaptorAnnotation$()&#10;    @Modifier(&quot;Instance&quot;) $FieldType$ $Field$ = $Init$;&#10;}" recursive="true" caseInsensitive="true" type="JAVA" reformatAccordingToStyle="true" shortenFQN="true" replacement="org.mockito.ArgumentCaptor&lt;java.lang.Integer&gt;">
-      <constraint name="__context__" within="" contains="" />
-      <constraint name="Class" within="" contains="" />
-      <constraint name="FieldType" regexp="int" target="true" within="" contains="" />
-      <constraint name="Field" withinHierarchy="true" maxCount="2147483647" within="" contains="" />
-      <constraint name="Init" minCount="0" within="" contains="" />
-      <constraint name="CaptorAnnotation" regexp="org\.mockito\.Captor" within="" contains="" />
-  </replaceConfiguration>
-  ```
-  
-  **long**
-  
-  ```xml
-  <replaceConfiguration name="@Captor field must be of the type ArgumentCaptor. Apply quick fix to wrap current type [long] in ArgumentCaptor." text="class $Class$ {&#10;    @$CaptorAnnotation$()&#10;    @Modifier(&quot;Instance&quot;) $FieldType$ $Field$ = $Init$;&#10;}" recursive="true" caseInsensitive="true" type="JAVA" reformatAccordingToStyle="true" shortenFQN="true" replacement="org.mockito.ArgumentCaptor&lt;java.lang.Long&gt;">
-      <constraint name="__context__" within="" contains="" />
-      <constraint name="Class" within="" contains="" />
-      <constraint name="FieldType" regexp="long" target="true" within="" contains="" />
-      <constraint name="Field" withinHierarchy="true" maxCount="2147483647" within="" contains="" />
-      <constraint name="Init" minCount="0" within="" contains="" />
-      <constraint name="CaptorAnnotation" regexp="org\.mockito\.Captor" within="" contains="" />
-  </replaceConfiguration>
-  ```
-  
-  **float**
-  
-  ```xml
-  <replaceConfiguration name="@Captor field must be of the type ArgumentCaptor. Apply quick fix to wrap current type [float] in ArgumentCaptor." text="class $Class$ {&#10;    @$CaptorAnnotation$()&#10;    @Modifier(&quot;Instance&quot;) $FieldType$ $Field$ = $Init$;&#10;}" recursive="true" caseInsensitive="true" type="JAVA" reformatAccordingToStyle="true" shortenFQN="true" replacement="org.mockito.ArgumentCaptor&lt;java.lang.Float&gt;">
-      <constraint name="__context__" within="" contains="" />
-      <constraint name="Class" within="" contains="" />
-      <constraint name="FieldType" regexp="float" target="true" within="" contains="" />
-      <constraint name="Field" withinHierarchy="true" maxCount="2147483647" within="" contains="" />
-      <constraint name="Init" minCount="0" within="" contains="" />
-      <constraint name="CaptorAnnotation" regexp="org\.mockito\.Captor" within="" contains="" />
-  </replaceConfiguration>
-  ```
-  
-  **double**
-  
-  ```xml
-  <replaceConfiguration name="@Captor field must be of the type ArgumentCaptor. Apply quick fix to wrap current type [double] in ArgumentCaptor." text="class $Class$ {&#10;    @$CaptorAnnotation$()&#10;    @Modifier(&quot;Instance&quot;) $FieldType$ $Field$ = $Init$;&#10;}" recursive="true" caseInsensitive="true" type="JAVA" reformatAccordingToStyle="true" shortenFQN="true" replacement="org.mockito.ArgumentCaptor&lt;java.lang.Double&gt;">
-      <constraint name="__context__" within="" contains="" />
-      <constraint name="Class" within="" contains="" />
-      <constraint name="FieldType" regexp="double" target="true" within="" contains="" />
-      <constraint name="Field" withinHierarchy="true" maxCount="2147483647" within="" contains="" />
-      <constraint name="Init" minCount="0" within="" contains="" />
-      <constraint name="CaptorAnnotation" regexp="org\.mockito\.Captor" within="" contains="" />
-  </replaceConfiguration>
-  ```
-  
-  **boolean**
-  
-  ```xml
-  <replaceConfiguration name="@Captor field must be of the type ArgumentCaptor. Apply quick fix to wrap current type [boolean] in ArgumentCaptor." text="class $Class$ {&#10;    @$CaptorAnnotation$()&#10;    @Modifier(&quot;Instance&quot;) $FieldType$ $Field$ = $Init$;&#10;}" recursive="true" caseInsensitive="true" type="JAVA" reformatAccordingToStyle="true" shortenFQN="true" replacement="org.mockito.ArgumentCaptor&lt;java.lang.Boolean&gt;">
-      <constraint name="__context__" within="" contains="" />
-      <constraint name="Class" within="" contains="" />
-      <constraint name="FieldType" regexp="boolean" target="true" within="" contains="" />
-      <constraint name="Field" withinHierarchy="true" maxCount="2147483647" within="" contains="" />
-      <constraint name="Init" minCount="0" within="" contains="" />
-      <constraint name="CaptorAnnotation" regexp="org\.mockito\.Captor" within="" contains="" />
-  </replaceConfiguration>
-  ```
-  
-  **char**
-  
-  ```xml
-  <replaceConfiguration name="@Captor field must be of the type ArgumentCaptor. Apply quick fix to wrap current type [char] in ArgumentCaptor." text="class $Class$ {&#10;    @$CaptorAnnotation$()&#10;    @Modifier(&quot;Instance&quot;) $FieldType$ $Field$ = $Init$;&#10;}" recursive="true" caseInsensitive="true" type="JAVA" reformatAccordingToStyle="true" shortenFQN="true" replacement="org.mockito.ArgumentCaptor&lt;java.lang.Character&gt;">
-      <constraint name="__context__" within="" contains="" />
-      <constraint name="Class" within="" contains="" />
-      <constraint name="FieldType" regexp="char" target="true" within="" contains="" />
-      <constraint name="Field" withinHierarchy="true" maxCount="2147483647" within="" contains="" />
-      <constraint name="Init" minCount="0" within="" contains="" />
-      <constraint name="CaptorAnnotation" regexp="org\.mockito\.Captor" within="" contains="" />
-  </replaceConfiguration>
-  ```
-</details>
 
 ## ArgumentCaptor field should define a generic type
 
