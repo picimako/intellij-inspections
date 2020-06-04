@@ -198,8 +198,6 @@ These are based on the exception handling happening in [`org.mockito.internal.co
 
 For a bit more details see the [`@Captor` annotation's javadoc](https://javadoc.io/doc/org.mockito/mockito-core/latest/org/mockito/Captor.html).
 
-### Matching types other than primitive types and ArgumentCaptor
-
 | Compliant code/Replacement | Non-compliant code |
 |---|---|
 | <pre>@Captor<br>private ArgumentCaptor<List<String>> captor;</pre> | <pre>@Captor<br>private List<String> captor;</pre> |
