@@ -39,7 +39,7 @@ the set value is incorrect, e.g. a negative number or a number greater than the 
 There are also default values assigned to the variable/node. If the default ones are set the Count filter is removed from the list of filters.
 
 ### Count filter defaults
-I'm going the default values and whether it is possible to add a Count filter, for a couple of the probably more commonly used nodes:
+I'm going to list the default values and whether it is possible to add a Count filter, for a couple of the probably more commonly used nodes, below.
 
 In general the default min and max value seems to be 1-1 (I didn't try every possible option). The allowed values however can differ.
 The list below either states that no Count filter is available, or what the min and max values are.
