@@ -8,12 +8,14 @@
 #### Hooks
 - [When a hook declares an argument it must be of type Scenario](#when-a-hook-declares-an-argument-it-must-be-of-type-scenario)
 - [Hooks must declare 0 or 1 arguments](#hooks-must-declare-0-or-1-arguments)
-- [Single Cucumber tag expression within a tagged hook annotation should start with an @ character](#single-cucumber-tag-expression-within-a-tagged-hook-annotation-should-start-with-an--character)
+- [Single Cucumber tag expression within a tagged hook annotation should start with an @ character](#single-cucumber-tag-expression-within-a-tagged-hook-should-start-with-an--character)
+- [Cucumber tag expression in a tagged hook annotation should not start with ), (), or or and.](#cucumber-tag-expression-in-a-tagged-hook-annotation-should-not-start-with---or-or-and)
 
 #### @CucumberOptions
 - [You must supply an output argument to certain plugins](#you-must-supply-an-output-argument-to-certain-plugins)
 - [@CucumberOptions glue and extraGlue attributes cannot be specified at the same time](#cucumberoptions-glue-and-extraglue-attributes-cannot-be-specified-at-the-same-time)
 - [Single Cucumber tag expression should start with an @ character](#single-cucumber-tag-expression-should-start-with-an--character)
+- [Cucumber tag expression should not start with ), (), or or and.](#cucumber-tag-expression-should-not-start-with---or-or-and)
 
 #### JUnit test class configuration
 - [Classes annotated with @RunWith(Cucumber.class) must not define any Step Definition or Hook methods](#classes-annotated-with-runwithcucumberclass-must-not-define-any-step-definition-or-hook-methods)
@@ -376,6 +378,8 @@ that value must start with `@` otherwise Cucumber won't be able to filter by tha
 Hook.resolveMethod()?.getContainingClass()?.getQualifiedName()?.matches("(cucumber\\.api\\.java8\\.|io\\.cucumber\\.java8\\.).*")
 ```
 
+**Template:**
+
 ```xml
 <searchConfiguration name="Single Cucumber tag expression in a tagged hook should start with an @ character" text="$Java8BaseStepDefInterface$.$Hook$(&quot;$tagExpression$&quot;, $Parameters$);" recursive="true" caseInsensitive="true" type="JAVA" pattern_context="default">
   <constraint name="__context__" within="" contains="" />
@@ -383,6 +387,121 @@ Hook.resolveMethod()?.getContainingClass()?.getQualifiedName()?.matches("(cucumb
   <constraint name="Java8BaseStepDefInterface" minCount="0" within="" contains="" />
   <constraint name="tagExpression" script="&quot;!tagExpression?.value?.contains(&quot; &quot;) &amp;&amp; !tagExpression?.value?.startsWith(&quot;@&quot;) &quot;" target="true" within="" contains="" />
   <constraint name="Hook" script="&quot;Hook.resolveMethod()?.getContainingClass()?.getQualifiedName()?.matches(&quot;(cucumber\\.api\\.java8\\.|io\\.cucumber\\.java8\\.).*&quot;)&quot;" regexp="After|AfterStep|Before|BeforeStep" within="" contains="" />
+</searchConfiguration>
+```
+
+# Cucumber tag expression should not start with ), (), or or and.
+
+Although Cucumber has flexible tag expressions, some constructs are still considered invalid, and throw tag expression syntax error during parsing.
+
+This inspection is not a comprehensive template for checking any and all kinds of syntax errors, just some minor issues at the start of tag expressions.
+
+| Compliant code | Non-compliant code |
+|---|---|
+| `@CucumberOptions(tags = "sometag")` | `@CucumberOptions(tags = ") sometag")` |
+| `@CucumberOptions(tags = "sometag")` | `@CucumberOptions(tags = "and sometag")` |
+| `@CucumberOptions(tags = { "@sometag", "@anothertag" })` | `@CucumberOptions(tags = { "() sometag", "or @anothertag" })` |
+
+The compliant code snippets are not strict examples, of course there might be other fixes/solutions based on the tests to run.
+
+This inspection supports this annotation from the following packages:
+- `cucumber.api` (deprecated in Cucumber-JVM 4.5.0)
+- `io.cucumber.junit`
+- `io.cucumber.testng`
+
+**Script filter (Complete Match):**
+
+```groovy
+import com.intellij.psi.*
+
+if (tagExpressions instanceof PsiLiteralExpression) {
+	return hasIncorrectExpressionStart(tagExpressions)
+} else if (tagExpressions instanceof PsiArrayInitializerMemberValue) {
+	def expressions = tagExpressions?.initializers
+	return expressions.any { it instanceof PsiLiteralExpression && hasIncorrectExpressionStart(it) }
+} else {
+	return false
+}
+
+def hasIncorrectExpressionStart(PsiLiteralExpression expression) {    
+	return expression.literalElementType == JavaTokenType.STRING_LITERAL && !expression?.value?.isEmpty() && expression?.value?.matches("^(\\)|\\(\\)|or|and).*")
+}
+```
+
+**Template:**
+
+```xml
+<searchConfiguration name="Cucumber tag expression should not start with ), (), or or and." text="@$CucumberOptions$(tags = $tagExpressions$)&#10;class $Class$ {&#10;}" recursive="true" caseInsensitive="true" type="JAVA" pattern_context="default">
+    <constraint name="__context__" script="&quot;import com.intellij.psi.*&#10;&#10;if (tagExpressions instanceof PsiLiteralExpression) {&#10;&#9;return hasIncorrectExpressionStart(tagExpressions)&#10;} else if (tagExpressions instanceof PsiArrayInitializerMemberValue) {&#10;&#9;def expressions = tagExpressions?.initializers&#10;&#9;return expressions.any { it instanceof PsiLiteralExpression &amp;&amp; hasIncorrectExpressionStart(it) }&#10;} else {&#10;&#9;return false&#10;}&#10;&#10;def hasIncorrectExpressionStart(PsiLiteralExpression expression) {    &#10;&#9;return expression.literalElementType == JavaTokenType.STRING_LITERAL &amp;&amp; !expression?.value?.isEmpty() &amp;&amp; expression?.value?.matches(&quot;^(\\)|\\(\\)|or|and).*&quot;)&#10;}&quot;" within="" contains="" />
+    <constraint name="Class" within="" contains="" />
+    <constraint name="CucumberOptions" regexp="(cucumber\.api|io\.cucumber\.junit|io\.cucumber\.testng)\.CucumberOptions" within="" contains="" />
+    <constraint name="tagExpressions" target="true" within="" contains="" />
+</searchConfiguration>
+```
+
+# Cucumber tag expression in a tagged hook annotation should not start with ), (), or or and.
+
+Although Cucumber has flexible tag expressions, some constructs are still considered invalid, and throw tag expression syntax error during parsing.
+
+This inspection is not a comprehensive template for checking any and all kinds of syntax errors, just some minor issues at the start of tag expressions.
+
+| Compliant code | Non-compliant code |
+|---|---|
+| <pre>@After("@sometag")<br>public void after() {<br>}</pre> | <pre>@After("() sometag")<br>public void after() {<br>}</pre> |
+| <pre>@Before("@sometag")<br>public void before() {<br>}</pre> | <pre>@Before(") sometag")<br>public void before() {<br>}</pre> |
+| <pre>public StepDefClass() {<br>    Before("@sometag", () -> {});<br>}</pre> | <pre>public StepDefClass() {<br>    Before("or sometag", () -> {});<br>}</pre> |
+| <pre>public StepDefClass() {<br>    After("@sometag", () -> {});<br>}</pre> | <pre>public StepDefClass() {<br>    After("and sometag", () -> {});<br>}</pre> |
+
+### Supported classes, packages
+
+- Annotations are supported from the following packages: `cucumber.api.java` (deprecated in Cucumber-JVM 4.5.0), `io.cucumber.java`
+- Supported hook annotations: `@Before`, `@BeforeStep`, `@After`, `@AfterStep`
+- Supported hook methods for Java8 format (in `io.cucumber.java8.En`): `Before()`, `BeforeStep()`, `After()`, `AfterStep()`
+
+**Script filter ($pattern$):**
+
+```groovy
+!pattern?.value?.isEmpty() && pattern?.value?.matches("^(\\)|\\(\\)|or|and).*")
+```
+
+**Template:**
+
+```xml
+<searchConfiguration name="Cucumber tag expression in a tagged hook annotation should not start with ), (), or or and." text="class $Class$ {&#10;    @$HookAnnotation$(value = $pattern$)&#10;    $ReturnType$ $Method$($ParamType$ $param$);&#10;}" recursive="true" caseInsensitive="true" type="JAVA" pattern_context="default">
+    <constraint name="__context__" within="" contains="" />
+    <constraint name="Class" within="" contains="" />
+    <constraint name="Method" maxCount="2147483647" within="" contains="" />
+    <constraint name="ReturnType" within="" contains="" />
+    <constraint name="param" minCount="0" maxCount="2147483647" within="" contains="" />
+    <constraint name="ParamType" within="" contains="" />
+    <constraint name="pattern" script="&quot;!pattern?.value?.isEmpty() &amp;&amp; pattern?.value?.matches(&quot;^(\\)|\\(\\)|or|and).*&quot;)&quot;" target="true" within="" contains="" />
+    <constraint name="HookAnnotation" regexp="(cucumber\.api\.java|io\.cucumber\.java)\.(Before|BeforeStep|After|AfterStep)" maxCount="2147483647" within="" contains="" />
+</searchConfiguration>
+```
+
+### Java8 format support
+
+**Script filter ($tagExpression$)**
+
+```groovy
+!tagExpression?.value?.isEmpty() && tagExpression?.value?.matches("^(\\)|\\(\\)|or|and).*")
+```
+
+**Script filter ($Hook$)**
+
+```groovy
+Hook.resolveMethod()?.getContainingClass()?.getQualifiedName()?.matches("(cucumber\\.api\\.java8\\.|io\\.cucumber\\.java8\\.).*")
+```
+
+**Template:**
+
+```xml
+<searchConfiguration name="Cucumber tag expression in a tagged hook annotation should not start with ), (), or or and." text="$Java8BaseStepDefInterface$.$Hook$(&quot;$tagExpression$&quot;, $Parameters$);" recursive="true" caseInsensitive="true" type="JAVA" pattern_context="default">
+    <constraint name="__context__" within="" contains="" />
+    <constraint name="Parameters" maxCount="2147483647" within="" contains="" />
+    <constraint name="Java8BaseStepDefInterface" minCount="0" within="" contains="" />
+    <constraint name="tagExpression" script="&quot;!tagExpression?.value?.isEmpty() &amp;&amp; tagExpression?.value?.matches(&quot;^(\\)|\\(\\)|or|and).*&quot;)&quot;" target="true" within="" contains="" />
+    <constraint name="Hook" script="&quot;Hook.resolveMethod()?.getContainingClass()?.getQualifiedName()?.matches(&quot;(cucumber\\.api\\.java8\\.|io\\.cucumber\\.java8\\.).*&quot;)&quot;" regexp="After|AfterStep|Before|BeforeStep" within="" contains="" />
 </searchConfiguration>
 ```
 
