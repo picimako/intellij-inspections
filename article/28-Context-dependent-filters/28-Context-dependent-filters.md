@@ -19,13 +19,13 @@ class $Class$ {
 }
 ```
 
-For instance you can create an inspection validating fields with a certain annotation applied to them, and there can be any number of such fields.
+For instance, you can create an inspection validating fields with a certain annotation applied to them, and there can be any number of such fields.
 
 What you can do is add a Count filter to the `$Field$` variable setting it to *1-Unlimited*. Now it would be straightforward to add a Count filter for `$FieldType$` as well,
-however you can't. My strong guess is that IntelliJ is clever and it knows that a field declaration cannot be done without having a field type, thus it prevents us from
+however you can't. IntelliJ is clever, and it knows that a field declaration cannot be done without having a field type, thus it prevents us from
 setting values for `$FieldType$` and `$Field$` that would interfere with each other.
 
-Considering all this the filter values *1-Unlimited* will be applied to both variable together.
+Considering all of this, the filter values *1-Unlimited* will be applied to both variables together.
 
 ### Fallback to default values
 Consider the same template as in the last section, we'll look into the `$Init$` variable.
@@ -34,14 +34,14 @@ As it turns out IntelliJ is more clever than I thought. In terms of a field the 
 it determines whether we are talking about declaration or initialization.
 
 The allowed min and max counts are also displayed as a watermark in the field when you clear the field. The field border also turns red, highlighting an error that
-the set value is incorrect, e.g. a negative number or a number greater than the allowed max value.
+the set value is incorrect, e.g. a negative number, or a number greater than the allowed max value.
 
 There are also default values assigned to the variable/node. If the default ones are set the Count filter is removed from the list of filters.
 
 ### Count filter defaults
 I'm going to list the default values and whether it is possible to add a Count filter, for a couple of the probably more commonly used nodes, below.
 
-In general the default min and max value seems to be 1-1 (I didn't try every possible option). The allowed values however can differ.
+In general the default min and max values seem to be *1-1* (I didn't try every possible option). The allowed values however can differ.
 The list below either states that no Count filter is available, or what the min and max values are.
 
 - **class:** no Count filter
@@ -67,6 +67,6 @@ Java language elements that don't fall into this category are, to name a couple 
 - Field type
 - Field name
 
-In case of template variables that reflect these elements/nodes, type filter is disabled, so that users are not mislead about what is a valid construct and what is not.
+In case of template variables that reflect these elements/nodes, Type filter is not available, so that users are not mislead about what is a valid construct and what is not.
 
-If you want to specify the reference to the type you can use Text filter setting the full reference to the class, interface, etc.
+If you want to specify the reference to the type, you can use Text filter setting the full reference to the class, interface, etc.
