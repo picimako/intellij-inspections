@@ -7,11 +7,11 @@ These templates are created via IntelliJ's built-in creation dialogs, that are s
 
 You can find all the inspections created in the tutorials in [tutorial-inspections.md](tutorial/summary/tutorial-inspections.md).
 
-For the whole collection of inspections you can browse through the **inspections** folder, templates are organized by Java libraries.
+For the whole collection of inspections you can browse through the **inspections** folder. Templates are organized by Java libraries.
 
-## How to add them?
+## How to use them?
 
-All you need to do is to copy the desired `searchConfiguration`s and `replaceConfiguration`s into
+All you need to do is copy the desired `searchConfiguration`s and `replaceConfiguration`s into
 * your project's IDEA config under `<Your project>\.idea\inspectionProfiles\Project_Default.xml`, or
 * to the default IDEA global config under `<User home>\.IdeaIC2019.1\config\inspection\Default.xml`
 
@@ -20,15 +20,3 @@ To configure your git project for these inspections please read through the [How
 ## Contribution and support
 
 If you find any issues in the articles, tutorials or in any of the inspections, please create a GitHub issue in this project.
-
-If you like my work and the contents of this repo, please consider buying me delicious coffee:
-<a href="https://www.buymeacoffee.com/picimako" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/default-white.png" alt="Buy Me A Coffee" style="height: 49px !important;width: 150px !important;" ></a>
-
-On my Buy Me a Coffee page I also publish a post every other week about the recent changes and updates of this repository and the IJnspector blog as well.
-
-## Future plans
-
-New inspections and inspections for new Java libraries are continuously added, and they also serve as a nice basis for future IntelliJ plugins.
-
-Libraries that are planned to be covered next:
-- [JavaHamcrest](https://github.com/hamcrest/JavaHamcrest)
