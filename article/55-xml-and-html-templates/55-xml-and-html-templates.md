@@ -1,4 +1,4 @@
-XML and HTML templates
+# XML and HTML templates
 
 In this article I will give you details and examples on how XML and HTML specific structural search templates can be assembled. I will use the predefined templates coming from IntelliJ, extended with my own examples to cover different aspects.
 
