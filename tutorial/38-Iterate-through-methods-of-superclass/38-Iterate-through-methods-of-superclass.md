@@ -62,7 +62,8 @@ The next step is to iterate through the methods of the superclass:
 ```groovy
 PsiElement superclass = Parent.resolve();
 if (superclass instanceof PsiClass) {
-	for (PsiMethod method : superclass.getMethods()) {
+    //PsiMethod
+	for (method in superclass.getMethods()) {
 	}
 }
 ```
@@ -72,8 +73,9 @@ Now that we have access to individual methods, we can inspect their annotations,
 ```groovy
 PsiElement superclass = Parent.resolve();
 if (superclass instanceof PsiClass) {
-	for (PsiMethod method : superclass.getMethods()) {
-		for (PsiAnnotation methodAnnotation : method.getAnnotations()) {
+	for (method in superclass.getMethods()) {
+        //PsiAnnotation
+		for (methodAnnotation in method.getAnnotations()) {
 		}
 	}
 }
@@ -87,11 +89,13 @@ To be able to check whether the qualified name is a step or a hook annotation we
 therefore I introduced a simple list (`stepAnnotations`) with some of the annotations, and also added the actual check:
 
 ```groovy
-def stepAnnotations = ["cucumber.api.java.en.Given", "cucumber.api.java.en.When", "cucumber.api.java.en.Then"]
+def stepAnnotations = ["cucumber.api.java.en.Given",
+                       "cucumber.api.java.en.When",
+                       "cucumber.api.java.en.Then"]
 PsiElement superclass = Parent.resolve();
 if (superclass instanceof PsiClass) {
-	for (PsiMethod method : superclass.getMethods()) {
-		for (PsiAnnotation methodAnnotation : method.getAnnotations()) {
+    for (method in superclass.getMethods()) {
+        for (methodAnnotation in method.getAnnotations()) {
             if (stepAnnotations.contains(methodAnnotation.getQualifiedName())) {
 				return true
 			}
@@ -107,11 +111,13 @@ looks as follows:
 ```groovy
 import com.intellij.psi.*
 
-def stepAnnotations = ["cucumber.api.java.en.Given", "cucumber.api.java.en.When"]
+def stepAnnotations = ["cucumber.api.java.en.Given",
+                       "cucumber.api.java.en.When",
+                       "cucumber.api.java.en.Then"]
 PsiElement superclass = Parent.resolve();
 if (superclass instanceof PsiClass) {
-	for (PsiMethod method : superclass.getMethods()) {
-		for (PsiAnnotation methodAnnotation : method.getAnnotations()) {
+    for (method in superclass.getMethods()) {
+        for (methodAnnotation in method.getAnnotations()) {
 			if (stepAnnotations.contains(methodAnnotation.getQualifiedName())) {
 				return true
 			}
@@ -138,8 +144,8 @@ The inspection message in case of this template will look like this:
 and below you can find the XML representation of the inspection:
 
 ```xml
-<searchConfiguration name="Classes defining Step Definitions or hooks are not allowed to be extended." text="class $Class$ extends $Parent$ {}" recursive="true" caseInsensitive="true" type="JAVA" pattern_context="default">
-    <constraint name="__context__" script="&quot;import com.intellij.psi.*&#10;&#10;def stepAnnotations = [&quot;cucumber.api.java.en.Given&quot;, &quot;cucumber.api.java.en.When&quot;, &quot;cucumber.api.java.en.Then&quot;]&#10;PsiElement superclass = Parent.resolve();&#10;if (superclass instanceof PsiClass) {&#10;&#9;for (PsiMethod method : superclass.getMethods()) {&#10;&#9;&#9;for (PsiAnnotation methodAnnotation : method.getAnnotations()) {&#10;&#9;&#9;&#9;if (stepAnnotations.contains(methodAnnotation.getQualifiedName())) {&#10;&#9;&#9;&#9;&#9;return true&#10;&#9;&#9;&#9;}&#10;&#9;&#9;}&#10;&#9;}&#10;}&#10;false&quot;" within="" contains="" />
+<searchConfiguration name="Classes defining Step Definitions or hooks are not allowed to be extended." text="class $Class$ extends $Parent$ {}" recursive="true" type="JAVA" pattern_context="default" case_sensitive="true">
+    <constraint name="__context__" script="&quot;import com.intellij.psi.*&#10;&#10;def stepAnnotations = [&quot;cucumber.api.java.en.Given&quot;,&#10;                       &quot;cucumber.api.java.en.When&quot;,&#10;                       &quot;cucumber.api.java.en.Then&quot;]&#10;PsiElement superclass = Parent.resolve();&#10;if (superclass instanceof PsiClass) {&#10;    for (method in superclass.getMethods()) {&#10;        for (methodAnnotation in method.getAnnotations()) {&#10;            if (stepAnnotations.contains(methodAnnotation.getQualifiedName())) {&#10;                return true&#10;            }&#10;        }&#10;    }&#10;}&#10;false&quot;" within="" contains="" />
     <constraint name="Class" within="" contains="" />
     <constraint name="Parent" target="true" within="" contains="" />
 </searchConfiguration>

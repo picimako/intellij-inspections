@@ -28,7 +28,7 @@ with the following configuration:
 
 - `$ImageComparison$` - Type filter: *com.github.romankh3.image.comparison.ImageComparison*
 - `$threshold$` - Script filter:
-    ```java
+    ```groovy
     try {
         threshold?.text?.toDouble() == 5
     } catch (NumberFormatException e) {
@@ -95,13 +95,13 @@ iterate on exactly.
 A good start seemed to be looking into the children of that node. So for a method call like:
 `imageComparison.setThreshold(5).setMinimalRectangleSize(5);` some of the data I thought might be useful were:
 
-| Variable query | Result |
-|---|---|
-| <pre>setterMethod.firstChild</pre> | <pre>PsiReferenceExpression:imageComparison.setThreshold(5).setMinimalRectangleSize</pre> |
-| <pre>setterMethod.firstChild.getType()</pre> | <pre>PsiType:ImageComparison</pre> |
+| Variable query                                          | Result                                                                                    |
+|---------------------------------------------------------|-------------------------------------------------------------------------------------------|
+| <pre>setterMethod.firstChild</pre>                      | <pre>PsiReferenceExpression:imageComparison.setThreshold(5).setMinimalRectangleSize</pre> |
+| <pre>setterMethod.firstChild.getType()</pre>            | <pre>PsiType:ImageComparison</pre>                                                        |
 | <pre>setterMethod.firstChild.getOriginalElement()</pre> | <pre>PsiReferenceExpression:imageComparison.setThreshold(5).setMinimalRectangleSize</pre> |
-| <pre>setterMethod.firstChild.firstChild</pre> | <pre>PsiMethodCallExpression:imageComparison.setThreshold(5)</pre> |
-| <pre>setterMethod.getType()</pre> | <pre>PsiType:ImageComparison</pre> |
+| <pre>setterMethod.firstChild.firstChild</pre>           | <pre>PsiMethodCallExpression:imageComparison.setThreshold(5)</pre>                        |
+| <pre>setterMethod.getType()</pre>                       | <pre>PsiType:ImageComparison</pre>                                                        |
 
 Checking the structure of the method calls in the PsiViewer plugin we can see that each method call is a `PsiMethodCallExpression` containing a `PsiReferenceExpression`,
 and so on, until it reaches the caller object. Based on this we can can rely on handling `$setterMethod$` as an instance of `PsiMethodCallExpression`.
@@ -130,37 +130,42 @@ This is the point where a call chain with only setter methods are properly valid
 ```groovy
 import com.intellij.psi.*;
 
-def setterDefaults = [setPixelToleranceLevel: 0.1f, setThreshold: 5, setRectangleLineWidth: 1, setMinimalRectangleSize: 1, setMaximalRectangleCount: -1, setDrawExcludedRectangles: false]
+def setterDefaults = [setPixelToleranceLevel: 0.1f,
+                      setThreshold: 5,
+                      setRectangleLineWidth: 1,
+                      setMinimalRectangleSize: 1,
+                      setMaximalRectangleCount: -1,
+                      setDrawExcludedRectangles: false]
 
 //Store the currently inspected part of the method chain.
 //PsiExpression is the closest common superclass of PsiMethodCallExpression and PsiReferenceExpression
 PsiExpression methodCall = setterMethod
 
-//This iterates through the method call in a reverse order, from the last to the first
+//This iterates through the method calls in a reverse order, from the last to the first
 while (methodCall instanceof PsiMethodCallExpression) {
-    def methodName = methodNameOf(methodCall)
-    def methodParamValue = methodParamValueOf(methodCall)
-
     //If the current method's parameter value is equal to its default value,
     //then mark the call as incorrect
-    if (methodParamValue == setterDefaults[methodName]) {
+    if (methodParamValueOf(methodCall) == setterDefaults[methodNameOf(methodCall)])
         return true
-    }
 
-    //Move on to the next method in the chain
-    methodCall = methodCall.firstChild?.firstChild //firstChild: PsiReferenceExpression, firstChild.firstChild: PsiMethodCallExpression
+    //Move on to the next call in the chain
+    // firstChild: PsiReferenceExpression
+    // firstChild.firstChild: PsiMethodCallExpression
+    methodCall = methodCall.firstChild?.firstChild
 }
 
 return false //fallback return value
 
-//Retrieves the method name
 String methodNameOf(PsiMethodCallExpression expr) {
-    expr.firstChild.referenceName //firstChild: PsiReferenceExpression
+    //firstChild: PsiReferenceExpression
+    expr.firstChild.referenceName
 }
 
 //Retrieves the method's parameter value from the 'expressions' property
 Object methodParamValueOf(PsiMethodCallExpression expr) {
-    expr.lastChild.expressions[0].value //lastChild: PsiExpressionList, lastChild.expressions[0]: PsiLiteralExpression
+    //lastChild: PsiExpressionList
+    //lastChild.expressions[0]: PsiLiteralExpression
+    expr.lastChild.expressions[0].value
 }
 ```
 
@@ -183,8 +188,7 @@ Since there may be methods in `ImageComparison` that have 0, 1 or more parameter
     //...
    
     while (methodCall instanceof PsiMethodCallExpression) {
-        def methodName = methodNameOf(methodCall)
-        if (!methodName.startsWith("set")) {
+        if (!methodNameOf(methodCall).startsWith("set")) {
             //Move on to the next method in the chain
             methodCall = methodCall.firstChild?.firstChild
             continue

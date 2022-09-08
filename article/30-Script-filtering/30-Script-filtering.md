@@ -98,12 +98,12 @@ When `__context__` is used in the Script filter of the Complete Match variable, 
 of there is a user defined template variable for that type/node in the template, or there isn't one. Below you can find a few examples, in which template what
 the `__context__` variable means in the Complete Match variable. 
 
-| Existing template name | Template text | \_\_context__ in Complete Match (PSI type - template variable) |
-|---|---|---|
-| fields of class | <pre>class $Class$ { <br>  $FieldType$ $Field$ = $Init$;<br>}</pre> | `PsiClass` - `$Class$` |
-| javadoc annotated methods and constructors | <pre>/**<br> * $Comment$<br> * @$Tag$ $TagValue$<br> */<br>$Type$ $Method$($ParameterType$ $Parameter$);</pre> | `PsiMethod` - `$Method$` |
-| javadoc tags | `/** @$Tag$ $TagValue$ */` | `PsiMethod` - no template variable |
-| try statements without resources and catch blocks | <pre>try ($ResourceType$ $resource$ = $init$; $expression$) {<br>  $TryStatement$;<br>} catch($ExceptionType$ $Exception$) {<br>  $CatchStatement$;<br>} | `PsiTryStatement` - no template variable |
+| Existing template name                            | Template text                                                                                                                                            | \_\_context__ in Complete Match (PSI type - template variable) |
+|---------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------|----------------------------------------------------------------|
+| fields of class                                   | <pre>class $Class$ { <br>  $FieldType$ $Field$ = $Init$;<br>}</pre>                                                                                      | `PsiClass` - `$Class$`                                         |
+| javadoc annotated methods and constructors        | <pre>/**<br> * $Comment$<br> * @$Tag$ $TagValue$<br> */<br>$Type$ $Method$($ParameterType$ $Parameter$);</pre>                                           | `PsiMethod` - `$Method$`                                       |
+| javadoc tags                                      | `/** @$Tag$ $TagValue$ */`                                                                                                                               | `PsiMethod` - no template variable                             |
+| try statements without resources and catch blocks | <pre>try ($ResourceType$ $resource$ = $init$; $expression$) {<br>  $TryStatement$;<br>} catch($ExceptionType$ $Exception$) {<br>  $CatchStatement$;<br>} | `PsiTryStatement` - no template variable                       |
 
 ## Complete Match filters
 Filters may be written for Complete Match as well, when no template variable is selected in the editor, though "only" Script filter is allowed,
@@ -161,11 +161,11 @@ Upon logging there are two visual cues to know that the logging has happened:
 ![error_message_log](images/30-script-filtering-error-message-log.PNG)
 - a Notification popup appears with the log message and an icon according to the log level:
 
-| Log level | Notification popup |
-|---|---|
-| info | ![info_notification](images/30-script-filtering-info-notification.PNG) |
-| warn | ![warn_notification](images/30-script-filtering-warn-notification.PNG) |
-| error | ![error_notification](images/30-script-filtering-error-notification.PNG) |
+| Log level | Notification popup                                                       |
+|-----------|--------------------------------------------------------------------------|
+| info      | ![info_notification](images/30-script-filtering-info-notification.PNG)   |
+| warn      | ![warn_notification](images/30-script-filtering-warn-notification.PNG)   |
+| error     | ![error_notification](images/30-script-filtering-error-notification.PNG) |
 
 The Event Log entry is in the following format: `(<template_variable_name>:<line_number>) <log_message>`, where
 - **<template_variable_name>** is the name of the template variable whose Script filter the logging happened in.

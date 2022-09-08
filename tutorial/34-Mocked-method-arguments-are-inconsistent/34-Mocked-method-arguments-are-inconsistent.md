@@ -111,26 +111,30 @@ it.resolveMethod().getContainingClass().getQualifiedName() == "org.mockito.Argum
 You can find the whole script filter below, with some comments to make it easier to understand what is happening: 
 
 ```groovy
+import com.intellij.psi.PsiMethodCallExpression
+
 boolean hasOnlyMatchers = true
 boolean hasMatcher = false
+
 arguments.each { it ->
-	//If the argument is a method call
-    if (it instanceof com.intellij.psi.PsiMethodCallExpression) {
-    	//A method call from ArgumentMatchers
-    	try {
-            if (it.resolveMethod().getContainingClass().getQualifiedName() == "org.mockito.ArgumentMatchers") {
-                hasMatcher = true
-            //A method call from a non-ArgumentMatchers class
-            } else {
-                hasOnlyMatchers = false
-            }
-        //NullPointerException may happen on 'it' when an argument implementation is not complete
-    	} catch (NullPointerException npe) {
-    	    false
-    	}
-    //Not a method call, but an other type of expression
-    } else {
-    	hasOnlyMatchers = false
+    //If the argument is not a method call, but an other type of expression
+    if (!(it instanceof PsiMethodCallExpression)) {
+        hasOnlyMatchers = false
+        return
+    }
+    //If the argument is a method call
+    try {
+        //A method call from ArgumentMatchers
+        if (it.resolveMethod()
+                .getContainingClass()
+                .getQualifiedName() == "org.mockito.ArgumentMatchers")
+            hasMatcher = true
+        //A method call from a non-ArgumentMatchers class
+        else
+            hasOnlyMatchers = false
+        //NPE may happen on 'it' when an argument implementation is not complete
+    } catch (NullPointerException npe) {
+        false
     }
 }
 
